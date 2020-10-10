@@ -1,0 +1,13 @@
+A = 5
+REPEAT 2:
+    A = A + 4
+    REPEAT 5:
+        REPEAT 6:
+            A = A + 5
+        PEPEAT 4:
+            A = A + 6
+        A = A + 7
+    A = A + 8
+    REPEAT 5:
+        A = A + 4
+

@@ -1,0 +1,34 @@
+;recusion
+(define (expt b n)
+	(if (= n 0)
+		1
+		(* b (expt b (- n 1)))))
+
+;iteration
+(define (expt b n)
+	(expt-iter b n 1))
+
+(define (expt-iter b counter product)
+	(if (= counter 0)
+		product
+		(expt-iter b (- counter 1) (* b product))))
+
+;fast-recursion
+;n is odd : b^n = b * b^(n-1)
+;n is even: b^n = (b^(n/2)) * b^(n-1)
+(define (fast-expt b n)
+	(cond ((= n 0) 1)
+		  ((even? n) (square (fast-expt b (/ n 2)))
+		  (else (* b (fast-expt b (- n 1)))))))
+	
+(define (even? n) (= (% n 2) 0))
+(define (square x) (* x x))
+
+;fast-iteration
+;(b^n)=(b^2)^(n/2)
+(define (fast-expt-iter b n)
+	(define (iter b n res)
+		(cond ((= n 0) res)	
+			  ((even? n) (iter (square b) (/ n 2) res))
+			  (else (iter b (- n 1) (* res b)))))
+	(iter b n 1))

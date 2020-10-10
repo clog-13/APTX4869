@@ -1,0 +1,24 @@
+;; Sample Code
+multiply_40:
+	mov ax, [dx]
+	add ax, ax
+	add ax, ax
+	add ax, ax
+	add ax, ax
+	
+	mov bx, ax
+	add ax, ax
+	add ax, bx
+	ret
+;; Demo Code
+multiply_40_demo:
+	move ax, [dx]
+	add ax, ax
+	add ax, ax
+	add ax, ax
+
+	mov bx, ax
+
+	add ax, ax
+	add ax, bx
+	ret

@@ -1,0 +1,16 @@
+;a*b = a*2*b/2
+(define (fast-*-byadd a b)
+	(define (double x) (+ x x))
+	(define (balve x) (/ x 2))
+	(define (helper a b res)
+		(cond ((= b 0) res)
+			  ((even? b) (helper (double a) (balve b) res))
+			  (else (helper a (- b 1) (+ a res)))))
+	(helper a b 0))
+
+(define (* a b)
+	(if (= b 0)
+		0
+		(+ a (* a (- b 1)))))
+
+

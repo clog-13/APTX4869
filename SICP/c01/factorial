@@ -1,0 +1,9 @@
+(define (factorial n)
+    (define (iter res cout)
+        (if (> cout n)
+	    res
+	    (iter (* res cout)
+		  (+ cout 1))))
+(iter 1 1))
+
+		
