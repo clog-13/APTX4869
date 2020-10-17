@@ -1,28 +1,41 @@
-import java.io.PrintWriter;
-import java.util.PriorityQueue;
+import java.util.*;
 
 class Draft {
+    static int N, W, cnt = 0;
+    static long res = 0;
+    static long[] arr;
+    static boolean[] vis = new boolean[50];
+
     public static void main(String[] args) {
-        int lval = 0xfedcba98 << 32;
-        int rval = 0xfedcba98 >> 36;
-        int uval = 0xfedcba98 >> 40;
-        System.out.printf("%x\n", lval);
-        System.out.printf("%x\n", rval);
-        System.out.printf("%x\n", uval);
+        Scanner sc = new Scanner(System.in);
+        W = sc.nextInt();
+        N = sc.nextInt();
+        arr = new long[N];
+        for (int i = 0; i < N; i++) arr[i] = (long) sc.nextInt();
+        Arrays.sort(arr);
 
-        char c = 'B';
-        int n = 10;
-        switch (c) {
-            case 'A': n+=2;
-            case 'B': n+=4;
-            case 'C': n+=5; break;
-            default: n++;
+        for (int i = N-1; i >= 0; i--) {
+            if (!vis[i]) {
+                vis[i] = true;
+                cnt += dfs(i, arr[i]);
+                res++;
+            }
+            if (cnt == N) {
+                System.out.println(res);
+                return;
+            }
         }
-        System.out.println(n);
+    }
 
-        PriorityQueue<Integer> pq=  new PriorityQueue<>((a, b) -> (b-a));
-        pq.add(1);
-        pq.add(0);
-        System.out.println(pq.poll());
+    private static int dfs(int start, long sum) {
+        int c = 1;
+        for (int i = start-1; i >= 0; i--) {
+            if (!vis[i] && sum+arr[i] <= W) {
+                vis[i] = true;
+                sum += arr[i];
+                c++;
+            }
+        }
+        return c;
     }
 }

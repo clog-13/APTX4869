@@ -1,5 +1,28 @@
 {
     "files.associations": {
-        "utility": "cpp"
+        "utility": "cpp",
+        "algorithm": "cpp",
+        "deque": "cpp",
+        "memory": "cpp",
+        "xutility": "cpp",
+        "xmemory0": "cpp",
+        "exception": "cpp",
+        "iosfwd": "cpp",
+        "istream": "cpp",
+        "new": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "typeinfo": "cpp",
+        "xfacet": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp",
+        "xlocnum": "cpp",
+        "xmemory": "cpp",
+        "xstddef": "cpp",
+        "xstring": "cpp"
     }
 }
