@@ -1,24 +1,17 @@
 import java.util.*;
 
 class Solution {
-
     public static void main(String[] args) {
-        Solution sol = new Solution();
-        System.out.println(sol.countVowelStrings(33));
+        System.out.println(Integer.toBinaryString(7));
     }
 
-    public int countVowelStrings(int n) {
-        int[][] dp = new int[n+1][5];
-        for (int i = 0; i < 5; i++) dp[1][i] = 1;
-        for (int t = 2; t <= n; t++) {
-            for (int i = 0; i < 5; i++) {
-                for (int j = i; j < 5; j++) {
-                    dp[t][i] += dp[t-1][j];
-                }
-            }
+    public int minOperations(int[] nums) {
+        int res = 0, max = 0;
+        for (int num : nums) {
+            max = Math.max(max, num);
+            res += Integer.bitCount(num);   // 二进制有几个 1
         }
-        int res = 0;
-        for (int i = 0; i < 5; i++) res += dp[n][i];
+        res += Integer.toBinaryString(max).length() - 1;
         return res;
     }
 }
