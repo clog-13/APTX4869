@@ -1,40 +1,224 @@
-import java.util.*;
+import java.util.Scanner;
 
 class Main {
-    static int N, M, maxN = 30, INF = 0x3f3f3f3f, res = INF;
-    static int[] minv = new int[maxN], mins = new int[maxN];
-    static int[] H = new int[maxN], R = new int[maxN];
+    int N = 16;
+    int[] ones = new int[1<<N], cnt_log = new int[1<<N];
+    int[][] state = new int[N][N];
+    int[][][] backup_state = new int[N*N+1][N][N], backup_stateTmp = new int[N*N+1][N][N];
+    char[][] arr = new char[N][N];
+    char[][][] backup_arr = new char[N*N+1][N][N];
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        N = sc.nextInt(); M = sc.nextInt();
-        for (int i = 1; i <= M; i++) {  // 剪枝：预处理最小的体积和表面积
-            minv[i] = minv[i-1] + i*i * i;
-            mins[i] = mins[i-1] + 2*i * i;
-        }
-
-        H[M+1] = R[M+1] = INF;
-        dfs(M, 0, 0);   // 剪枝：搜索顺序的优化
-        if (res == INF) System.out.println(0);
-        else System.out.println(res);
+        new Main().run();
     }
 
-    private static void dfs(int dep, int v, int s) {
-        if (v + minv[dep] > N) return;  // 剪枝：估计的最小面积比给定的大是不合法的
-        if (s + mins[dep] >= res) return;   // 剪枝：估计的最小面积比当前答案大是不优秀的
-        if (s + 2*(N-v)/R[dep+1] >= res) return;    // 剪枝：鬼畜的数学剪枝
-
-        if (dep == 0) {
-            if (v == N) res = Math.min(res, s);
-            return;
+    private void run() {
+        for (int i = 0; i < N; i++) cnt_log[1<<i] = i;
+        for (int i = 0; i < (1<<N); i++) {
+            for (int j = i; j > 0; j -= lowbit(j)) ones[i]++;
         }
 
-        for (int r = Math.min((int)Math.sqrt(N-v), R[dep+1]-1); r >= dep; r--) {    // 剪枝：缩小上下边界
-            for (int h = Math.min((N-v)/r/r, H[dep+1]-1); h >= dep; h--) {
-                R[dep] = r; H[dep] = h;
-                int t = dep==M ? r*r : 0;   // 底面积
-                dfs(dep-1, v + r*r*h, s + 2*r*h + t);
+        Scanner sc = new Scanner(System.in);
+        next: while (sc.hasNext()) {
+            for (int i = 0; i < N; i++) {
+                String str = sc.nextLine().trim();
+                if (str.length() == 0) continue next;
+                arr[i] = str.toCharArray();
             }
+            init();
+
+            int cnt = 0;
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    if (arr[i][j] != '-') draw(i, j, arr[i][j]-'A');
+                    else cnt++;
+                }
+            }
+
+            dfs(cnt);
+
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) System.out.print(arr[i][j]);
+                System.out.println();
+            }
+            System.out.println();
+        }
+    }
+
+    private boolean dfs(int cnt) {
+        if (cnt == 0) return true;
+
+        int bknt = cnt;
+        copy(state, backup_state[bknt]);
+        copy(arr, backup_arr[bknt]);
+
+        // case 1
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (arr[i][j] == '-') {
+                    if (state[i][j] == 0) {
+                        copy(backup_state[bknt], state);
+                        copy(backup_arr[bknt], arr);
+                        return false;
+                    }
+                    if (ones[state[i][j]] == 1) {
+                        draw(i, j, cnt_log[state[i][j]]);
+                        cnt--;
+                    }
+                }
+            }
+        }
+
+        // case 2
+        for (int i = 0; i < N; i++) {
+            int sor = 0, sand = (1<<N)-1, drawn = 0;
+            for (int j = 0; j < N; j++) {
+                sand &= ~(sor & state[i][j]);
+                sor |= state[i][j];
+                if (arr[i][j] != '-') drawn |= state[i][j];
+            }
+
+            if (sor != (1<<N)-1) {
+                copy(backup_state[bknt], state);
+                copy(backup_arr[bknt], arr);
+                return false;
+            }
+
+            for (int j = sand; j > 0; j -= lowbit(j)) {
+                int t = lowbit(j);
+                if ((drawn & t) == 0) {
+                    for (int k = 0; k < N; k++) {
+                        if ((state[i][k] & t) != 0) {
+                            draw(i, k, cnt_log[t]);
+                            cnt--;
+                        }
+                    }
+                }
+            }
+        }
+
+        // case 3
+        for (int i = 0; i < N; i++) {
+            int sor = 0, sand = (1<<N)-1, drawn = 0;
+            for (int j = 0; j < N; j++) {
+                sand &= ~(sor & state[j][i]);
+                sor |= state[j][i];
+                if (arr[j][i] != '-') drawn |= state[j][i];
+            }
+
+            if (sor != (1<<N)-1) {
+                copy(backup_state[bknt], state);
+                copy(backup_arr[bknt], arr);
+                return false;
+            }
+
+            for (int j = sand; j > 0; j -= lowbit(j)) {
+                int t = lowbit(j);
+                if ((drawn & t) == 0) {
+                    for (int k = 0; k < N; k++) {
+                        if ((state[k][i] & t) != 0) {
+                            draw(k, i, cnt_log[t]);
+                            cnt--;
+                        }
+                    }
+                }
+            }
+        }
+
+        // case 4
+        for (int i = 0; i < N; i++) {
+            int sor = 0, sand = (1<<N)-1, drawn = 0;
+            for (int j = 0; j < N; j++) {
+                int sx = i/4*4, sy = i%4*4;
+                int dx = j/4,   dy = j%4;
+                int s = state[sx+dx][sy+dy];
+                sand &= ~(sor & s);
+                sor |= s;
+                if (arr[sx+dx][sy+dy] != '-') drawn |= s;
+            }
+
+            if (sor != (1<<N)-1) {
+                copy(backup_state[bknt], state);
+                copy(backup_arr[bknt], arr);
+                return false;
+            }
+
+            for (int j = sand; j > 0; j -= lowbit(j)) {
+                int t = lowbit(j);
+                if ((drawn & t) == 0) {
+                    for (int k = 0; k < N; k++) {
+                        int sx = i/4*4, sy = i%4*4;
+                        int dx = k/4,   dy = k%4;
+                        if ((state[sx+dx][sy+dy] & t) != 0) {
+                            draw(sx+dx, sy+dy, cnt_log[t]);
+                            cnt--;
+                        }
+                    }
+                }
+            }
+        }
+
+        // case 5
+        if (cnt == 0) return true;
+
+        // case 6
+        int x = -1, y = -1, opts = 20;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (arr[i][j] == '-' && ones[state[i][j]] < opts) {
+                    opts = ones[state[i][j]];
+                    x = i; y = j;
+                }
+            }
+        }
+
+        copy(state, backup_stateTmp[bknt]);
+        for (int i = state[x][y]; i > 0; i -= lowbit(i)) {
+            copy(backup_stateTmp[bknt], state);
+            draw(x, y, cnt_log[lowbit(i)]);
+            if (dfs(cnt-1)) return true;
+        }
+
+        copy(backup_state[bknt], state);
+        copy(backup_arr[bknt], arr);
+        return false;
+    }
+
+    private void draw(int x, int y, int c) {
+        arr[x][y] = (char) (c+'A');
+        for (int i = 0; i < N; i++) {
+            state[x][i] &= ~(1 << c);
+            state[i][y] &= ~(1 << c);
+        }
+
+        int sx = x/4*4, sy = y/4*4;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                state[sx+i][sy+j] &= ~(1 << c);
+            }
+        }
+
+        state[x][y] = 1<<c;
+    }
+
+    private void init() {
+        for (int i = 0; i < N; i++) for (int j = 0; j < N; j++) {
+            state[i][j] = (1<<N)-1;
+        }
+    }
+
+    private int lowbit(int n) {
+        return n & (-n);
+    }
+
+    private void copy(int[][] src, int[][] backup) {
+        for (int i = 0; i < src.length; i++) {
+            System.arraycopy(src[i], 0, backup[i], 0, src[0].length);
+        }
+    }
+    private void copy(char[][] src, char[][] backup) {
+        for (int i = 0; i < src.length; i++) {
+            System.arraycopy(src[i], 0, backup[i], 0, src[0].length);
         }
     }
 }
