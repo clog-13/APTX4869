@@ -139,7 +139,7 @@ bool bfs_box(PII man, PII box, Node &end) {
 int main() {
     int T = 1;
     while (cin >> N >> M, N || M) {
-        printf("Maze #%d\N", T ++ );
+        printf("Maze #%d\n", T ++ );
         
         for (int i = 0; i < N; i ++ ) cin >> arr[i];
         PII man, box;
