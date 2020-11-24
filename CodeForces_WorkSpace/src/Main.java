@@ -4,11 +4,8 @@ import java.util.*;
 public class Main {
     static int N, M, maxN = 30010;
     static int idx, qidx;
-    static int[] info = new int[maxN];
-    static int[] from = new int[maxN];
-    static int[] to = new int[maxN];
-    static int[] qv = new int[maxN];
-    static int[] cout = new int[maxN];
+    static int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
+    static int[] qv = new int[maxN], cout = new int[maxN];
     static BitSet[] dist = new BitSet[maxN];
 
     public static void main(String[] args) throws IOException {

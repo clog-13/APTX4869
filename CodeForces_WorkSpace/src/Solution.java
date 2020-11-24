@@ -4,8 +4,6 @@ class Solution {
     public static void main(String[] args) {
         double dd = 15.0;
         System.out.println(dd/60.0);
-
-        System.out.println(Integer.toBinaryString(7));
     }
 
     public int minOperations(int[] nums) {
