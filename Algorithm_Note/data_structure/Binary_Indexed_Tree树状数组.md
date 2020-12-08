@@ -18,28 +18,28 @@ C8 = C4 + C6 + C7 + A8 = A1 + A2 + A3 + A4 + A5 + A6 + A7 + A8
 class BinaryIndexTree {
     int[] pre_sum;
 
-    public BinaryIndexTree(int[] arr, int N) {
-        pre_sum = new int[N+1];
-        for(int i = 0; i < N; i++) {
-            update(i+1, arr[i]);            
+    public BinaryIndexTree(int[] arr) {
+        pre_sum = new int[arr.length+1];
+        for(int i = 0; i < arr.length; i++) {
+            update(i+1, arr[i]);	// 下标必须从 1 开始!!!         
         }
     }
 
-    /**
-     * 返回最低位的 1（的值）
-     */
+    // 返回最低位的 1（的值）
     private int lowbit(int x) {
-    	return x & (-x);
-//        return x & (x ^ (x-1));
+        // x & (x ^ (x-1));
+    	return x & (-x);	// -x 的值， 其实就是在x的值的基础上进行按位取反(~x)之后在增加1所得
     }
 
+    // 更新idx的值 (pre_sum里有多个值会被修改)
     private void update(int idx, int x) {
-        while(idx <= pre_sum.length) {
+        while (idx <= pre_sum.length) {
             pre_sum[idx] += x;
             idx += lowbit(idx);
         }
     }
 
+    // 0~idx的前缀和
     private int query(int idx) {
         int res = 0;
         while (idx > 0) {
@@ -53,29 +53,7 @@ class BinaryIndexTree {
 
 **理解 lowbit() ：**
 - update() 对应向后的箭头
-
 - query() 对应向前的箭头
 
 ![](pic/Binary_Indexed_Tree02.png)
----
 ![](pic/Binary_Indexed_Tree03.png)
-
-```java
-// TEST
-public static void main(String[] args) {
-    int[] t = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
-    BinaryIndexTree bit = new BinaryIndexTree(t);
-    for(int i = 0; i < t.length; i++)
-        System.out.println(bit.sum(i, i+1));
-
-    int tmp = 16;
-    for(int i = 0; i < t.length; i++) {
-        bit.update(i+1, tmp--);        
-    }
-
-    for(int i = 0; i < t.length; i++) {
-        System.out.println(bit.query(i+1)-query(i));        
-    }
-}
-```
-

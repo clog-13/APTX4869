@@ -85,7 +85,7 @@ public void inOrderTraverse1(TreeNode root) {
 
 
 
-2）非递归实现，有了上面前序的解释，中序也就比较简单了，相同的道理。只不过访问的顺序移到出栈时。代码如下：
+2）非递归实现，有了上面前序的解释，中序也就比较简单了，相同的道理。只不过输出的顺序移到出栈时。代码如下：
 
 ```java
 public void inOrderTraverse2(TreeNode root) {
@@ -122,13 +122,34 @@ public void postOrderTraverse1(TreeNode root) {
 
 2）非递归的代码
 
-略
+```java
+public static void postorderTraversal(TreeNode root) {
+    Stack<TreeNode> treeNodeStack = new Stack<TreeNode>();
+    TreeNode node = root, lastVisit = root;
+    while (node != null || !treeNodeStack.isEmpty()) {
+        while (node != null) {
+            treeNodeStack.push(node);
+            node = node.left;
+        }
+        node = treeNodeStack.peek();	// 查看当前栈顶元素
+        // 如果其右子树也为空 || 右子树已经访问，则可以直接输出当前节点的值
+        if (node.right == null || node.right == lastVisit) {
+            System.out.print(node.val + " ");
+            treeNodeStack.pop();
+            lastVisit = node;
+            node = null;
+        } else {   
+            node = node.right;	// 否则，继续遍历右子树
+        }
+    }
+}
+```
+
+
 
 ## 四、广度优先遍历（层次遍历）
 
 层次遍历的代码比较简单，只需要一个队列即可，先在队列中加入根结点。之后对于任意一个结点来说，在其出队列的时候，访问之。同时如果左孩子和右孩子有不为空的，入队列。代码如下：
-
-
 
 ```java
 public void levelTraverse(TreeNode root) {
@@ -140,12 +161,8 @@ public void levelTraverse(TreeNode root) {
         TreeNode node = queue.poll();
         System.out.print(node.val+"  ");
         
-        if (node.left != null) {
-            queue.offer(node.left);
-        }
-        if (node.right != null) {
-            queue.offer(node.right);
-        }
+        if (node.left != null) queue.offer(node.left);
+        if (node.right != null) queue.offer(node.right);
     }
 }
 ```
@@ -153,7 +170,7 @@ public void levelTraverse(TreeNode root) {
 
 ## 五、深度优先遍历
 
-其实深度遍历就是上面的前序、中序和后序。但是为了保证与广度优先遍历相照应，也写在这。代码也比较好理解，其实就是前序遍历，代码如下：
+其实深度遍历就是上面的前序遍历。但是为了保证与广度优先遍历相照应，也写在这。代码也比较好理解，其实就是前序遍历，代码如下：
 
 ```java
 public void depthOrderTraverse(TreeNode root) {
@@ -163,17 +180,11 @@ public void depthOrderTraverse(TreeNode root) {
 		stack.push(root);
 		while (!stack.isEmpty()) {
 			TreeNode node = stack.pop();
-			System.out.print(node.val+"  ");
+			System.out.print(node.val + "  ");
             
-			if (node.right != null) {
-				stack.push(node.right);
-			}
-			if (node.left != null) {
-				stack.push(node.left);
-			}
+            if (node.left != null) stack.push(node.left);
+			if (node.right != null) stack.push(node.right);
 		}
 	}
 }
 ```
-
-

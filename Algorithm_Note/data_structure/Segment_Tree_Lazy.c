@@ -18,6 +18,7 @@
 #define rson ((node<<1) | 1)
 #define mid ((le+ri) >> 1)
 #define maxn 100010
+
 int segTree[maxn*4];
 int lazy[maxn];
 int arr[maxn];
