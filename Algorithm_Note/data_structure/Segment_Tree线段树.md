@@ -40,7 +40,7 @@ class Main {
         int mid = (segs[root].le + segs[root].ri) >> 1;
         int res = 0;
         if (le <= mid) res = query(root<<1, le, ri);
-        if (ri > mid) res += query(((root<<1) | 1), le, ri);
+        if (ri > mid) res += query((root<<1) | 1, le, ri);
         return res;
     }
 
