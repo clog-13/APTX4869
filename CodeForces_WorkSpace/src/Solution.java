@@ -1,41 +1,29 @@
 import java.util.*;
 
 public class Solution {
-    public int eatenApples(int[] apples, int[] days) {
-        PriorityQueue<Apple> pq = new PriorityQueue<>(Comparator.comparingInt(x -> x.valid));
-        int res = 0;
-        int N = apples.length;
-        for (int i = 1; i <= N; i++) {
-            pq.add(new Apple(apples[i-1], i + days[i-1]));
-            while (!pq.isEmpty()) {
-                Apple cur = pq.poll();
-                if (cur.remain == 0 || cur.valid <= i) continue;
-                res++;
-                cur.remain--;
-                pq.add(cur);
-                break;
+
+    public static void main(String[] args) {
+        String[] paths = {"root/a 1.txt(abcd) 2.txt(efgh)", "root/c 3.txt(abcd)", "root/c/d 4.txt(efgh)", "root 4.txt(efgh)"};
+        new Solution().findDuplicate(paths);
+    }
+
+    public List < List < String >> findDuplicate(String[] paths) {
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (String path: paths) {
+            String[] arr = path.split(" ");
+            for (int i = 1; i < arr.length; i++) {
+                String[] name_cont = arr[i].split("\\(");
+                name_cont[1] = name_cont[1].replace(")", "");
+                List<String> list = map.getOrDefault(name_cont[1], new ArrayList<>());
+                list.add(arr[0] + "/" + name_cont[0]);
+                map.put(name_cont[1], list);
             }
         }
 
-        for (int i = N + 1; !pq.isEmpty(); ) {
-            while (!pq.isEmpty()) {
-                Apple cur = pq.poll();
-                if (cur.remain == 0 || cur.valid <= i) continue;
-                int used = Math.min(cur.remain, cur.valid-i);
-                i += used;
-                res += used;
-                break;
-            }
+        List<List<String>> res = new ArrayList<>();
+        for (String key : map.keySet()) {
+            if (map.get(key).size() > 1) res.add(map.get(key));
         }
         return res;
-    }
-}
-
-class Apple {
-    int remain, valid;
-
-    public Apple(int remain, int valid) {
-        this.remain = remain;
-        this.valid = valid;
     }
 }
