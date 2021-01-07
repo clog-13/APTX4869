@@ -1,6 +1,7 @@
 import java.util.*;
 
 public class Main {
+    int N, M;
 
     public static void main(String[] args) {
         new Main().init();
@@ -8,38 +9,52 @@ public class Main {
 
     void init() {
         Scanner sc = new Scanner(System.in);
+        while (sc.hasNext()) {
+            N = sc.nextInt(); M = sc.nextInt();
+            PII[] mchs = new PII[N], taks = new PII[M];
+            for (int i = 0; i < N; i++) mchs[i] = new PII(sc.nextInt(), sc.nextInt());
+            for (int i = 0; i < M; i++) taks[i] = new PII(sc.nextInt(), sc.nextInt());
 
-        List<Integer>[] list = new List[14];
-        for (int i = 0; i <= 13; i++) list[i] = new ArrayList<>();
+            Arrays.sort(mchs);
+            Arrays.sort(taks);
 
-        for (int i = 1; i <= 13; i++) {
-            String[] str = sc.nextLine().split("\\s+");
-            for (String t : str) list[i].add(change(t.charAt(0)));
+
         }
 
-        int[] cout = new int[14];
-        for (int i = 0; i < 4; i++) {
-            int t = list[13].get(i);
-
-            while (t != 13) {
-                cout[t]++;
-                int num = list[t].get(list[t].size()-1);
-                list[t].remove(list[t].size()-1);
-                t = num;
-            }
-        }
-
-        int res = 0;
-        for (int i = 1; i <= 13; i++) if (cout[i] == 4) res++;
-        System.out.println(res);
     }
+//        while (cin >> n >> m)
+//        {
+//            for (int i = 0; i < n; i ++ ) cin >> mchs[i].first >> mchs[i].second;
+//            for (int i = 0; i < m; i ++ ) cin >> tasks[i].first >> tasks[i].second;
+//            sort(mchs, mchs + n);
+//            sort(tasks, tasks + m);
+//            multiset<int> ys;
+//            LL cnt = 0, res = 0;
+//            for (int i = m - 1, j = n - 1; i >= 0; i -- )
+//            {
+//                while (j >= 0 && mchs[j].first >= tasks[i].first) ys.insert(mchs[j -- ].second);
+//                auto it = ys.lower_bound(tasks[i].second);
+//                if (it != ys.end())
+//                {
+//                    cnt ++ ;
+//                    res += 500 * tasks[i].first + 2 * tasks[i].second;
+//                    ys.erase(it);
+//                }
+//            }
+//            cout << cnt << ' ' << res << endl;
+//        }
 
-    private static Integer change(char ch) {
-        if (ch=='A')  return 1;
-        else if (ch>='2' && ch<='9') return ch-'0';
-        else if (ch=='0') return 10;
-        else if (ch=='J') return 11;
-        else if (ch=='Q') return 12;
-        else return 13;
+    static class PII implements Comparable<PII> {
+        int first, second;
+
+        public PII(int f, int s) {
+            first = f; second = s;
+        }
+
+        @Override
+        public int compareTo(PII pii) {
+            if (this.first == pii.first) return this.second - pii.second;
+            else return this.first - pii.first;
+        }
     }
 }
