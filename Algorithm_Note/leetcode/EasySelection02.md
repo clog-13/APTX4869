@@ -87,3 +87,143 @@ int maxRepeating(char * sequence, char * word){
 }
 ```
 
+
+
+# 1700. 无法吃午餐的学生数量
+
+学校的自助午餐提供圆形和方形的三明治，分别用数字 `0` 和 `1` 表示。所有学生站在一个队列里，每个学生要么喜欢圆形的要么喜欢方形的。
+餐厅里三明治的数量与学生的数量相同。所有三明治都放在一个 **栈** 里，每一轮：
+
+- 如果队列最前面的学生 **喜欢** 栈顶的三明治，那么会 **拿走它** 并离开队列。
+- 否则，这名学生会 **放弃这个三明治** 并回到队列的尾部。
+
+这个过程会一直持续到队列里所有学生都不喜欢栈顶的三明治为止。
+
+给你两个整数数组 `students` 和 `sandwiches` ，其中 `sandwiches[i]` 是栈里面第 `i` 个三明治的类型（`i = 0` 是栈的顶部）， `students[j]` 是初始队列里第 `j` 名学生对三明治的喜好（`j = 0` 是队列的最开始位置）。请你返回无法吃午餐的学生数量。
+
+
+
+**示例：**
+
+```
+输入：students = [1,1,1,0,0,1], sandwiches = [1,0,0,0,1,1]
+输出：3
+```
+
+```java
+int next(int n, int* arr, int size) {
+	if (n == size) n = 0;
+	while (arr[n] == 2) {
+		n++;
+		if (n == size) n = 0;
+	}
+	return n;
+}
+
+int countStudents(int* students, int studentsSize, int* sandwiches, int sandwichesSize) {
+	int front = 0, top = 0;
+	while (top < sandwichesSize) {
+		if (students[front] == sandwiches[top]) {
+			top++;
+			if (top == sandwichesSize) break;
+			students[front] = 2;
+			front = next(front+1, students, studentsSize);
+		} else {
+			int temp = front;
+			while (students[front] != sandwiches[top]) {
+				front = next(front+1, students, studentsSize);
+				if (front == temp) break;
+			}
+			if (front == temp) break;
+		}
+	}
+
+	return sandwichesSize - top;
+}
+```
+
+
+
+# 面试题 01.02. 判定是否互为字符重排
+
+给定两个字符串 `s1` 和 `s2`，请编写一个程序，确定其中一个字符串的字符重新排列后，能否变成另一个字符串。
+
+**示例：**
+
+```
+输入: s1 = "abc", s2 = "bca"
+输出: true 
+```
+
+```java
+bool CheckPermutation(char* s1, char* s2){
+    char bucket_s1[256] = {0};
+    char bucket_s2[256] = {0};
+
+    while (*s1) bucket_s1[*s1++]++;
+    while (*s2) bucket_s2[*s2++]++;
+
+    for (int i = 0; i < 256; i++) {
+        if (bucket_s1[i] != bucket_s2[i]) return false;
+    }
+
+    return true;
+}
+```
+
+
+
+# 面试题 02.06. 回文链表
+
+编写一个函数，检查输入的链表是否是回文的。
+
+**示例：**
+
+```
+输入： 1->2->2->1
+输出： true 
+```
+
+```java
+struct ListNode* reverseList(struct ListNode* head) {
+    struct ListNode *pre = NULL, *cur = head;
+    while (cur != NULL) {
+        struct ListNode* nex = cur->next;
+        cur->next = pre;
+        pre = cur;
+        cur = nex;
+    }
+    return pre;
+}
+
+struct ListNode* endOfFirstHalf(struct ListNode* head) {
+    struct ListNode *fast = head, *slow = head;
+    while (fast->next != NULL && fast->next->next != NULL) {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    return slow;
+}
+
+bool isPalindrome(struct ListNode* head) {
+    if (head == NULL) return true;
+
+    // 找到前半部分链表的尾节点, 并反转后半部分链表
+    struct ListNode* firstHalfEnd = endOfFirstHalf(head);
+    struct ListNode* secondHalfStart = reverseList(firstHalfEnd->next);
+
+    // 判断
+    struct ListNode *p1 = head, *p2 = secondHalfStart;
+    bool res = true;
+    while (res && p2 != NULL) {
+        if (p1->val != p2->val) res = false;
+        p1 = p1->next;
+        p2 = p2->next;
+    }
+
+    // 还原链表
+    firstHalfEnd->next = reverseList(secondHalfStart);
+    return res;
+}
+```
+
