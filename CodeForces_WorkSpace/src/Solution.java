@@ -1,7 +1,7 @@
 import java.util.*;
 
 class Solution {
-    public int minOperations(int[] target, int[] arr) {
+    public void minOperations(int[] target, int[] arr) {
         Segment_Tree_Max st = new Segment_Tree_Max();
         st.build(1, 1, target.length);
     }
