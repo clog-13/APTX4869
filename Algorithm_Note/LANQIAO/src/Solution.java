@@ -1,34 +1,57 @@
-import java.util.*;
-
 class Solution {
 
     public static void main(String[] args) {
         Solution sol = new Solution();
-        sol.mostVisited(2, new int[]{2,1,2,1,2,1,2,1,2});
+            sol.maxAbsoluteSum(new int[]{1,-3,2,3,-4});
     }
 
-
-    public List<Integer> mostVisited(int n, int[] rounds) {
-        List<Integer> res = new ArrayList<Integer>();
-        int[] cout = new int[110];
-        int max = 0;
-
-        outer:
-        for (int i = 0; i < rounds.length-1; i++) {
-            for (int j = rounds[i]; ; j++) {
-                while (j > n) j -= n;
-                if (j == rounds[i+1]) continue outer;
-
-                cout[j]++;
-                max = Math.max(max, cout[j]);
+    public int maxAbsoluteSum(int[] nums) {
+        int[] arr = new int[nums.length];
+        int idx = 0, flag = nums[0]>=0 ? 1 : -1;
+        for (int n : nums) {
+            if (n*flag < 0 || n<0&&flag>0) {
+                flag = flag>0? -1 : 1;
+                idx++;
             }
+            arr[idx] += n;
         }
-        cout[rounds[rounds.length-1]]++;
-        max = Math.max(max, cout[rounds[rounds.length-1]]);
 
-        for (int i = 0; i < cout.length; i++) {
-            if (cout[i] == max) {
-                res.add(i);
+        int[] preSum = new int[idx+2];
+        for (int i = 1; i <= idx+1; i++) {
+            preSum[i] = preSum[i-1] + nums[i-1];
+        }
+        int le = 0, ri = idx, res = 0;
+        while (le <= ri) {
+            int sum = preSum[ri+1] - preSum[le];
+            res = Math.max(res, Math.abs(sum));
+            if (sum >= 0) {
+                if (nums[le]*nums[ri] >= 0) {
+                    if (nums[le] < nums[ri]) {
+                        le++;
+                    } else {
+                        ri--;
+                    }
+                } else {
+                    if (nums[le] < 0) {
+                        le++;
+                    } else {
+                        ri--;
+                    }
+                }
+            } else {
+                if (nums[le]*nums[ri] >= 0) {
+                    if (nums[le] < nums[ri]) {
+                        ri--;
+                    } else {
+                        le++;
+                    }
+                } else {
+                    if (nums[le] < 0) {
+                        ri--;
+                    } else {
+                        le++;
+                    }
+                }
             }
         }
         return res;
