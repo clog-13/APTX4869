@@ -88,8 +88,9 @@ class Main {
                 arr[i] = sc.nextInt();
             }
 
+            // dp[a][b][c][d][e]代表从后往前每排人数分别为a, b, c, d, e的所有方案的集合
             long[][][][][] dp = new long[arr[0]+1][arr[1]+1][arr[2]+1][arr[3]+1][arr[4]+1];
-            dp[0][0][0][0][0] = 1;
+            dp[0][0][0][0][0] = 1;  
             for (int a = 0; a <= arr[0]; a++) {
                 for (int b = 0; b <= Math.min(a, arr[1]); b++) {
                     for (int c = 0; c <= Math.min(b, arr[2]); c++) {
