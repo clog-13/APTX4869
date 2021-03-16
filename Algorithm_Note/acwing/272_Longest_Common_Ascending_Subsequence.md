@@ -37,7 +37,7 @@
 ```java
 import java.util.*;
 
-public class Main {
+class Main {
     static int maxN = 3010;
     static int[] arr = new int[maxN], brr = new int[maxN];
     static int[][] dp = new int[maxN][maxN];
@@ -49,21 +49,22 @@ public class Main {
         for (int i = 1; i <= N; i++) brr[i] = sc.nextInt();
 
         for (int i = 1; i <= N; i++) {
-            
-            int max = 1;
+            int max = 1;  // a里以b[i]结尾的最长(公共上升子序列)长度 + 1(当前a[i])
             for (int j = 1; j <= N; j++) {
-                dp[i][j] = dp[i-1][j];
-                if (arr[i] ==brr[j]) dp[i][j] = Math.max(dp[i-1][j], max);
-                if (arr[i] > brr[j]) max = Math.max(max, dp[i-1][j] + 1);
+                dp[i][j] = dp[i-1][j];  
+                if (brr[j] < arr[i]) max = Math.max(max, dp[i-1][j] + 1);
+                if (brr[j]== arr[i]) dp[i][j] = max; 
             }
-            
-            // int max = 1;
-            // for (int j = 1; j <= N; j++) {
-            //     dp[i][j] = dp[i-1][j];
-            //     if (arr[i] > brr[j]) max = Math.max(max, dp[i-1][j] + 1);
-            //     if (arr[i] ==brr[j]) dp[i][j] = Math.max(dp[i-1][j], max);
-            // }
         }
+        // 最长上升子序列 的 二維數組DP寫法
+        // for (int i = 1; i <= N; i++) {
+        //     int max = 1;
+        //     for (int j = 1; j <= N; j++) {
+        //         dp[i][j] = dp[i-1][j];
+        //         if (arr[j] < arr[i]) max = Math.max(max, dp[i-1][j] + 1);
+        //         if (j <= i) dp[i][i] = max;
+        //     }
+        // }
 
         int res = 0;
         for (int i = 1; i <= N; i++) res = Math.max(res, dp[N][i]);
