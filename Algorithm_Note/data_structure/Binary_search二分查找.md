@@ -49,8 +49,8 @@ int left_bound(int[] nums, int target) {
 
 ```java
 int right_bound(int[] nums, int target) {
-    if (nums.length == 0) return -1;
-    int left = 0, right = nums.length;
+    int left = 0;
+    int right = nums.length;
 
     while (left < right) {
         int mid = (left + right) >> 1;
