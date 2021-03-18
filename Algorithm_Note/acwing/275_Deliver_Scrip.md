@@ -37,6 +37,29 @@
 >34
 
 ## DP
+
+1、f[i1, j1, i2, j2]表示所有从 (1,1) 分别走到(i1,j1),(i2,j2)的路径的最大值
+
+2、由于走两次可以看成是两条路径同时走，因此k表示两条路线当前走到的各自的横纵坐标之和k \== i1 + j1 \== i2 + j2
+
+注意：在i1 + j1 \== i2 + j2时，两条路径走到的当前格子可能（只是可能）重合
+
+因为 k−1 \== i1 + j1 − 1 \== i2 + j2 − 1
+
+由f\[i1]\[j1−1]\[i2]\[j2−1] 转化为 f\[k−1]\[i1]\[i2]
+
+同理可得：（一个格子只能被取一次）
+
+f\[i1−1]\[j1]\[i2−1]\[j2]\==f[k−1]\[i1−1][i2−1]
+
+f\[i1]\[j1−1]\[i2−1]\[j2]\==f[k−1]\[i1][i2−1]
+
+f\[i1−1]\[j1]\[i2]\[j2−1]\==f[k−1]\[i1−1][i2]
+
+
+
+f\[k]\[i1]\[i2] 表示从(1, 1)和(1, 1)分别走到(i1, k-i1)和(i2, k-i2)的路径最大值
+
 ```java
 import java.util.*;
 
@@ -64,18 +87,21 @@ public class Main {
         int[][][] f = new int[maxN << 1][maxN][maxN];
 
         for (int k = 2 ; k <= R+C ; k++) {
-            int le = Math.max(1, k-C);      // 1 <= x1 <= R, 1 <= k-x1 (y1) <= C
+            // le:至少已經走了 C 步，則至少需要從 k-C 行開始
+            // ri:1 <= x <= R,
+            int le = Math.max(1, k-C);
             int ri = Math.min(k-1, R);
             for (int x1 = le; x1 <= ri; x1++) {
                 for (int x2 = le; x2 <= ri; x2++) {
                     int v = cost[x1][k-x1];
                     if (x1 != x2) v += cost[x2][k-x2];
 
+                    // k = x1+y1 = x2+y2
                     int t = 0;
-                    t = Math.max(t, f[k-1][x1][x2]);
-                    t = Math.max(t, f[k-1][x1][x2-1]);
-                    t = Math.max(t, f[k-1][x1-1][x2]);
-                    t = Math.max(t, f[k-1][x1-1][x2-1]);
+                    t = Math.max(t, f[k-1][x1][x2]);      // dp[x1][y1-1][x2][y2-1]
+                    t = Math.max(t, f[k-1][x1][x2-1]);    // dp[x1][y1-1][x2-1][y2]
+                    t = Math.max(t, f[k-1][x1-1][x2]);    // dp[x1-1][y1][x2][y2-1]
+                    t = Math.max(t, f[k-1][x1-1][x2-1]);  // dp[x1-1][y1][x2-1][y2]
                     f[k][x1][x2] = t + v;
                 }
             }
@@ -110,4 +136,3 @@ public class Main {
 }
 ```
 
-.
