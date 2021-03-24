@@ -120,7 +120,7 @@ class Main {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); S = sc.nextInt();
         
-        for (int i = 0; i < maxN; i++) list[i] = new ArrayList<>();
+        for (int i = 1; i <= N; i++) list[i] = new ArrayList<>();
         int root = 0;
         for (int i = 1; i <= N; i++) {
             size[i] = sc.nextInt(); vals[i] = sc.nextInt();
@@ -139,9 +139,9 @@ class Main {
         for (int i = 0; i < list[u].size(); i++) {
             int t = list[u].get(i);
             dfs(t);
-            for (int j = S; j >= size[u]; j--) {  // 01背包
-                for (int k = 0; k <= j-size[u]; k++) {  // 可选的子节点
-                    dp[u][j] = Math.max(dp[u][j], dp[u][j-k]+dp[t][k]);
+            for (int s = S; s >= size[u]; s--) {  // 01背包
+                for (int k = 0; k <= s-size[u]; k++) {  // 可选的子节点
+                    dp[u][s] = Math.max(dp[u][s], dp[u][s-k]+dp[t][k]);
                 }
             }
         }
