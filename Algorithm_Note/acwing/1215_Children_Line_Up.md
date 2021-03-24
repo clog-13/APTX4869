@@ -26,8 +26,7 @@ n 个小朋友站成一排。
 
 #### 数据范围
 
-1≤n≤100000,
-0≤Hi≤1000000
+1≤n≤100000, 0≤Hi≤1000000
 
 #### 输入样例：
 
@@ -66,8 +65,8 @@ public class Main {
         }
 
         for (int i = 1; i <= N; i++) {  // 正序找比当前数大的
-            update((int) data[i]);
-//            exa[i] = query(maxN-1) - query((int) data[i]);
+            update((int) data[i]);  // preSum 存储的是个数
+//           cout[i] = query(maxN-1) - query((int) data[i]);
              cout[i] = i - query((int) data[i]); // 当前一共 i 个数，所以query(maxN-1) == i
         }
         Arrays.fill(preSum, 0);
