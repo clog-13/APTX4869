@@ -2,7 +2,7 @@
 
 设一个n个节点的二叉树tree的中序遍历为（1,2,3,…,n），其中数字1,2,3,…,n为节点编号。
 
-每个节点都有一个分数（均为正整数），记第i个节点的分数为didi，tree及它的每个子树都有一个加分，任一棵子树subtree（也包含tree本身）的加分计算方法如下：     
+每个节点都有一个分数（均为正整数），记第i个节点的分数为di，tree及它的每个子树都有一个加分，任一棵子树subtree（也包含tree本身）的加分计算方法如下：     
 
 subtree的左子树的加分 × subtree的右子树的加分 ＋ subtree的根的分数 
 
@@ -50,13 +50,17 @@ n<30
 
 ## DP
 
-题目要求目标树符合中序遍历为（1,2,3,…,n），中序可以看作把树扁平化后的数组(换句话说，数组间元素的相对位置等于 相同相对位置 树的中序遍历)
+题目要求目标树符合中序遍历为（1,2,3,…,n），
 
-![](C:\APTX4869\Algorithm_Note\acwing\pic\479.png)
+中序可以看作把树扁平化后的数组(换句话说，数组间元素的相对位置等于 相同相对位置 树的中序遍历)
 
-中序遍历：1 2 3 4 5 6 7 8
+![](pic\479.png)
+
+中序遍历：8, 4, 2, 5, 1, 6, 3, 7
 
 所以用区间DP模板就可以了，最后递归输出前序
+
+注：不同的二叉树可能生成同一个序列，也就是同一个序列，按中序遍历可以生成多个不同的二叉树
 
 ```java
 import java.io.*;
@@ -76,12 +80,12 @@ public class Main {
             for (int le = 1; le+len-1 <= N; le++) {
                 int ri = le+len-1;
                 for (int mid = le; mid <= ri; mid++) {
-                    int left = mid==le ? 1 : dp[le][mid-1];
-                    int right = mid==ri ? 1 : dp[mid+1][ri];
-                    int sco = left * right + arr[mid];
-                    if (le == ri) sco = arr[mid];
-                    if (dp[le][ri] < sco) {
-                        dp[le][ri] = sco;
+                    int ls = mid==le ? 1 : dp[le][mid-1];
+                    int rs = mid==ri ? 1 : dp[mid+1][ri];
+                    int sum = ls * rs + arr[mid];
+                    if (le == ri) sum = arr[mid];
+                    if (dp[le][ri] < sum) {
+                        dp[le][ri] = sum;
                         root[le][ri] = mid;
                     }
                 }
