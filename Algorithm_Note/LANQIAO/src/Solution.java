@@ -1,45 +1,28 @@
+import java.math.BigInteger;
 import java.util.*;
 
 class Solution {
+
     public static void main(String[] args) {
         Solution sol = new Solution();
-//        sol.maxValue(6, 1, 10);
-//        sol.maxValue(4, 0, 4);
-//        sol.maxValue(9, 3, 16);
-        sol.maxValue(1, 0, 24);
+        String[] s = {"eat", "tea", "tan", "ate", "nat", "bat"};
+        System.out.println(sol.groupAnagrams(s));
     }
 
-    public int maxValue(int n, int idx, int maxSum) {
-        int le = 0, ri = maxSum+1;
-        while (le < ri) {
-            int mid = (le+ri)>>1;
-            if (check((long)mid, (long)n, (long)idx) <= (long)maxSum) {
-                le = mid+1;
-            } else {
-                ri = mid;
+    public List<List<String>> groupAnagrams(String[] strs) {
+        int[] primes = {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
+
+        HashMap<BigInteger, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char[] arr = str.toCharArray();
+            BigInteger sum = new BigInteger("1");
+            for (char c : arr) {
+                sum = sum.multiply(new BigInteger(String.valueOf(primes[c-'a'])));
             }
-        }
-        return le-1;
-    }
 
-    long check(long x, long n, long idx) {
-        if (x==0) return 0;
-        long lc = idx+1, rc = n-idx;
-        long ls = 0, rs = 0;
-        if (x > lc) {
-            ls = lc*(x-lc+1 + x) / 2;
-        } else if (x <= lc) {
-            ls = x*(1 + x) / 2;
-            ls += idx-x+1;
+            if (!map.containsKey(sum)) map.put(sum, new ArrayList<>());
+            map.get(sum).add(str);
         }
-
-        if (x > rc) {
-            rs = rc*(x-rc+1 + x) / 2;
-        } else if (x <= rc) {
-            rs = x*(1 + x) / 2;
-            rs += n-idx-x;
-        }
-        long sum = ls + rs - x;
-        return sum;
+        return new ArrayList<>(map.values());
     }
 }
