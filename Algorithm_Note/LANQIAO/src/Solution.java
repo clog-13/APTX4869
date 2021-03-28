@@ -1,28 +1,26 @@
-import java.math.BigInteger;
-import java.util.*;
-
 class Solution {
-
     public static void main(String[] args) {
-        Solution sol = new Solution();
-        String[] s = {"eat", "tea", "tan", "ate", "nat", "bat"};
-        System.out.println(sol.groupAnagrams(s));
+        new Solution().longestSubarray(new int[]{7,6,5,4,3,8,1}, 2);
     }
 
-    public List<List<String>> groupAnagrams(String[] strs) {
-        int[] primes = {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
+    public int longestSubarray(int[] nums, int limit) {
+        int[] maxq = new int[nums.length], minq = new int[nums.length];
+        int hh1 = 0, tt1 = -1, hh2 = 0, tt2 = -1;
+        int le = 0,ri = 0;
+        while (ri < nums.length) {
+            while (hh1 <= tt1 && nums[ri] > nums[maxq[tt1]]) tt1--;  // 递减(最大在前)
+            while (hh2 <= tt2 && nums[ri] < nums[minq[tt2]]) tt2--;  // 递增(最小在前)
 
-        HashMap<BigInteger, List<String>> map = new HashMap<>();
-        for (String str : strs) {
-            char[] arr = str.toCharArray();
-            BigInteger sum = new BigInteger("1");
-            for (char c : arr) {
-                sum = sum.multiply(new BigInteger(String.valueOf(primes[c-'a'])));
+            maxq[++tt1] = ri; minq[++tt2] = ri;
+
+            if (nums[maxq[hh1]]-nums[minq[hh2]] > limit){
+                while (le >= maxq[hh1]) hh1++;
+                while (le >= minq[hh2]) hh2++;
+                le++;
             }
 
-            if (!map.containsKey(sum)) map.put(sum, new ArrayList<>());
-            map.get(sum).add(str);
+            ri++;
         }
-        return new ArrayList<>(map.values());
+        return ri - le;
     }
 }
