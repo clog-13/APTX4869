@@ -18,8 +18,7 @@
 
 #### 数据范围
 
-0<n≤105,
-0≤ai<2147483648
+0<n≤105, 0≤ai<2147483648
 
 #### 输入样例：
 
@@ -40,6 +39,8 @@
 
 ## 差分
 
+考虑 [1,2,3,4],[4,3,2,1],[1,2,3,4,3,5]
+
 ```java
 import java.util.*;
 
@@ -47,19 +48,15 @@ class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt();
-        long[] data = new long[N+1];
-        long[] diff = new long[N+2];
+        long[] data = new long[N+1], diff = new long[N+2];
         for (int i = 1; i <= N; i++) {
             data[i] = sc.nextLong();
             diff[i] = data[i] - data[i-1];
         }
         long pos = 0, neg = 0;
         for (int i = 2; i <= N; i++) {
-            if (diff[i] > 0) {
-                pos += diff[i];
-            } else {
-                neg -= diff[i];
-            }
+            if (diff[i] > 0) pos += diff[i];
+            else neg -= diff[i];
         }
         System.out.println(Math.max(pos, neg));
         System.out.println(Math.abs(pos-neg)+1);
@@ -67,3 +64,4 @@ class Main {
 }
 ```
 
+.
