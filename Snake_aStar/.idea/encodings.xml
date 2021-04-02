@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/AI/SnakeAi.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/Mode/Snake.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/UI/SnakePanel.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/UI/StartGame.java" charset="GBK" />
+  </component>
+</project>
