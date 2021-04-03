@@ -2,7 +2,7 @@
 
 有一棵二叉苹果树，如果树枝有分叉，一定是分两叉，即没有只有一个儿子的节点。
 
-这棵树共 NN 个节点，编号为 11 至 NN，树根编号一定为 11。
+这棵树共 N 个节点，编号为 1 至 N，树根编号一定为 1。
 
 我们用一根树枝两端连接的节点编号描述一根树枝的位置。
 
@@ -12,9 +12,9 @@
 
 #### 输入格式
 
-第一行包含两个整数 NN 和 QQ，分别表示树的节点数以及要保留的树枝数量。
+第一行包含两个整数 N 和 Q，分别表示树的节点数以及要保留的树枝数量。
 
-接下来 N−1N−1 行描述树枝信息，每行三个整数，前两个是它连接的节点的编号，第三个数是这根树枝上苹果数量。
+接下来 N−1 行描述树枝信息，每行三个整数，前两个是它连接的节点的编号，第三个数是这根树枝上苹果数量。
 
 #### 输出格式
 
@@ -22,9 +22,7 @@
 
 #### 数据范围
 
-1≤Q<N≤100.
-N≠1,
-每根树枝上苹果不超过 30000 个。
+1≤Q<N≤100, N≠1, 每根树枝上苹果不超过 30000 个。
 
 #### 输入样例：
 
@@ -50,7 +48,7 @@ import java.util.*;
 class Main {
     static int maxN = 110, maxM = maxN * 2, N, M;
     static int[][] dp = new int[maxN][maxN];    // dp[i][j]记录i号节点为根的子树中选择j条边的最大价值
-    static int[] info = new int[maxN], cnt = new int[maxN];
+    static int[] info = new int[maxN];
     static int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
     static int idx = 0;
 
@@ -75,22 +73,16 @@ class Main {
         for (int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
             if (t == father) continue;
+            
             dfs(t, u);
-            cnt[u] += cnt[t] + 1;
-
-            for (int c = cnt[u]; c > 0; c--) {  // 循环决策
-                for (int m = 0; m < cnt[u] && m < c; m++) { // 循环该决策不同情况
-                    // m + (c-m-1) = c-1 因为要假设加上现在这条边2
-                    // dp[u][c] = Math.max(dp[u][c], dp[u][m] + dp[t][c-m-1] + val[i]);
-                    dp[u][c] = Math.max(dp[u][c], dp[u][c-m-1] + dp[u][m] + val[i]);
+            
+            for (int m = M; m > 0; m--) {  // 循环决策
+                for (int c = 0; c < m; c++) {  // 循环该决策不同情况
+                    // c + (m-c-1) = m-1 因为要假设加上现在这条边
+                    dp[u][m] = Math.max(dp[u][m], dp[u][c] + dp[t][m-c-1] + val[i]);
+                    // dp[u][m] = Math.max(dp[u][m], dp[u][m-c-1] + dp[t][c] + val[i]);
                 }
             }
-            // for (int c = M; c > 0; c--) {   
-            //     for (int m = 0; m < c; m++) {
-            //         dp[u][c] = Math.max(dp[u][c], dp[u][c-m-1] + dp[t][m] + val[i]);
-            //         // dp[u][c] = Math.max(dp[u][c], dp[u][m] + dp[t][c-m-1] + val[i]);
-            //     }
-            // }
         }
     }
 

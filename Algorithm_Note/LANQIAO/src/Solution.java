@@ -1,26 +1,48 @@
+import java.util.*;
 class Solution {
     public static void main(String[] args) {
-        new Solution().longestSubarray(new int[]{7,6,5,4,3,8,1}, 2);
+        Solution sol = new Solution();
+//        for (int i = 0; i <= 10000_0000; i++) {
+//            int d = i - sol.helper(i);
+
+//        }
+
+
+//        System.out.println(Integer.MIN_VALUE);
+        int[] ar = new int[34];
+        ar[0] = 43;
+        ar[1] = 3;
+        ar[2] = 4;
+        Arrays.sort(ar, 0,3);
+        System.out.println();
     }
 
-    public int longestSubarray(int[] nums, int limit) {
-        int[] maxq = new int[nums.length], minq = new int[nums.length];
-        int hh1 = 0, tt1 = -1, hh2 = 0, tt2 = -1;
-        int le = 0,ri = 0;
-        while (ri < nums.length) {
-            while (hh1 <= tt1 && nums[ri] > nums[maxq[tt1]]) tt1--;  // 递减(最大在前)
-            while (hh2 <= tt2 && nums[ri] < nums[minq[tt2]]) tt2--;  // 递增(最小在前)
+    public int countNicePairs(int[] nums) {
+        int[] rev = new int[nums.length];
+        long[] diff = new long[nums.length];
 
-            maxq[++tt1] = ri; minq[++tt2] = ri;
-
-            if (nums[maxq[hh1]]-nums[minq[hh2]] > limit){
-                while (le >= maxq[hh1]) hh1++;
-                while (le >= minq[hh2]) hh2++;
-                le++;
-            }
-
-            ri++;
+        for (int i = 0; i < nums.length; i++) {
+            rev[i] = helper(nums[i]);
+            diff[i] = (long)nums[i] - (long)rev[i];
+            // n_diff[i] = (long)num[i] - (long)res[i];
         }
-        return ri - le;
+
+        Map<Long, Integer> map = new HashMap<>();
+        int res = 0;
+        for (int i = nums.length-1; i >= 0; i--) {
+            int tarCnt = map.getOrDefault(diff[i], 0);
+            res = (res+tarCnt) % 10000_00009;
+            map.put(diff[i], tarCnt+1);
+        }
+        return res;
+    }
+
+    int helper(int n) {
+        int res = 0;
+        while (n>0) {
+            res = res*10+n%10;
+            n/=10;
+        }
+        return res;
     }
 }
