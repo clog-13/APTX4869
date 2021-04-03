@@ -51,13 +51,10 @@ import java.util.*;
 public class Main {
     static int N, M, maxN = 20010;
     static int idx, qidx;
-    static int[] info = new int[maxN];
-    static int[] from = new int[maxN];
-    static int[] to = new int[maxN];
+    static int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
+    static int[] cout = new int[maxN], dist = new int[maxN];
     static int[] qv = new int[maxN];
-    static int[] cout = new int[maxN];
-    static int[] dist = new int[maxN];
-
+    
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
@@ -69,7 +66,7 @@ public class Main {
             str = br.readLine().split(" ");
             int a = Integer.parseInt(str[0]);
             int b = Integer.parseInt(str[1]);
-            add(a, b);
+            add(b, a);
             cout[a]++;
         }
 
@@ -83,20 +80,14 @@ public class Main {
                     dist[t] = Math.max(dist[t], dist[cur]+1);
                 }
             }
-
+            
             int res = 0;
-            for (int i = 1; i <= N; i++) res += cout[i];
+            for (int i = 1; i <= N; i++) res += dist[i];
             System.out.println(res);
         }
     }
 
-    private static void add(int a, int b) {
-        from[idx]  = info[b];
-        to[idx] = a;
-        info[b] = idx++;
-    }
-
-    private static boolean topsort() {
+    static boolean topsort() {
         Queue<Integer> queue = new LinkedList<>();
         for (int i = 1; i <= N; i++) {
             if (cout[i] == 0) {
@@ -116,6 +107,12 @@ public class Main {
             }
         }
         return qidx == N;
+    }
+
+    static void add(int a, int b) {
+        from[idx]  = info[a];
+        to[idx] = b;
+        info[a] = idx++;
     }
 }
 ```

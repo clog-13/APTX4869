@@ -20,7 +20,7 @@
 
 
 
-## 前缀 + 遍历 + 动态规划
+## 前缀和 + 动态规划
 
 ```java
 class Solution {
@@ -41,24 +41,23 @@ class Solution {
 
 
 
-## 前缀 + 遍历
+## 前缀和 + 遍历
 
 ```java
 class Solution {
     public  int maxSumTwoNoOverlap(int[] A, int L, int M) {
         int N = A.length, dpL[] = new int[N-L+1], dpM[] = new int[N-M+1], res = 0;
-        for (int i = 0; i < L; i++) dpL[0] += A[i];
+
+        for (int i = 0; i < L; i++) dpL[0] += A[i];  // dpL[i]: 当前点往后L个的和
         for (int i = 0; i < M; i++) dpM[0] += A[i];
-        
-        for (int i = 1; i < N-L+1; i++)
-            dpL[i] = dpL[i-1] + A[i+L-1] - A[i-1];
-        for (int i = 1; i < N-M+1; i++)
-            dpM[i] = dpM[i-1] + A[i+M-1] - A[i-1];
+        for (int i = 1; i < N-L+1; i++) dpL[i] = dpL[i-1] + A[i+L-1] - A[i-1];
+        for (int i = 1; i < N-M+1; i++) dpM[i] = dpM[i-1] + A[i+M-1] - A[i-1];
         
         for (int i = 0; i < N - L - M + 1; i++) {
             int offest = N-L-M-i;
-            while (offest >= 0) {  // dpL和dpM保存的是区间和
-                res = Math.max(res, Math.max(dpL[i]+dpM[i+L + offest], dpM[i]+dpL[i+M + offest]));
+            while (offest >= 0) {  // i+L + offest = i+L + N-L-M-i = N-M
+                int tmp = Math.max(dpL[i]+dpM[i+L + offest], dpM[i]+dpL[i+M + offest]);
+                res = Math.max(res, tmp);
                 offest--;
             }
         }
