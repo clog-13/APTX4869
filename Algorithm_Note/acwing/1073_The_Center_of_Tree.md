@@ -60,8 +60,7 @@ class Main {
         Arrays.fill(info, -1);
         for (int i = 1; i < N; i++) {
             String[] str = br.readLine().split(" ");
-            int a = Integer.parseInt(str[0]);
-            int b = Integer.parseInt(str[1]);
+            int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
             int c = Integer.parseInt(str[2]);
             add(a, b, c); add(b, a, c);
         }
