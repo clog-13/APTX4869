@@ -1,56 +1,107 @@
-import java.io.*;
-import java.util.*;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 class Solution {
-    static int N, maxN = 1510, idx = 0;
-    static int[] from = new int[maxN], to = new int[maxN], info = new int[maxN], val = new int[maxN];
-    static boolean[][] st = new boolean[maxN][maxN];
-    static boolean[] has_fa = new boolean[maxN];
-    static int[][] dp = new int[maxN][2];
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+//        System.out.println(sol.orchestraLayout(10000_0000,50000_000, 5000_000));
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine().trim());
+        System.out.println(sol.orchestraLayout(7,2,2));
+        System.out.println(sol.orchestraLayout(7,2,3));
+        System.out.println(sol.orchestraLayout(7,2,4));
+        System.out.println(sol.orchestraLayout(7,3,4));
 
-        Arrays.fill(info, -1);
-        for (int i = 0; i < N; i++) {
-            String[] str = br.readLine().split(" ");
-            int a = Integer.parseInt(str[0]);
-            val[a] = Integer.parseInt(str[1]);
-            for (int j = 0; j < Integer.parseInt(str[2]); j++) {
+        System.out.println(sol.orchestraLayout(7,4,4));
 
-                int b = Integer.parseInt(str[j+3]);
-                if (st[a][b] || st[b][a]) continue;
-                add(a, b);
-                st[a][b] = true;
-                has_fa[b] = true;
+
+        System.out.println(sol.orchestraLayout(7,4,3));
+        System.out.println(sol.orchestraLayout(7,4,2));
+        System.out.println(sol.orchestraLayout(7,3,2));
+
+        System.out.println(sol.orchestraLayout(7,3,3));
+
+
+
+    }
+
+    public int orchestraLayout(int num, int xPos, int yPos) {
+        if (num==1) return 1;
+        if (num==2) {
+            if (xPos==0) {
+                if (yPos==0) return 1;
+                else return 2;
+            } else {
+                if (yPos==0) return 4;
+                else return 3;
             }
         }
 
-        int root = 1;
-        while(has_fa[root]) root++;
-        dfs(root);  // 第一个没有父节点的点
+        int mi = Math.min(Math.min(yPos, num-1-yPos), Math.min(xPos, num-1-xPos));
 
-        if (Math.min(dp[root][0], dp[root][1]) == 0) {
-            System.out.println(Math.max(dp[root][0], dp[root][1]));
-        } else {
-            System.out.println(Math.min(dp[root][0], dp[root][1]));
+        int T = mi, len = num;
+        long cnt = (4L *len-4)*T + (long) T *(T-1)/2*(-8);
+        len -= 2*T;
+
+        long s = cnt%9+1;
+
+        if (xPos == mi) {  //上
+            int tx = mi, ty = mi;
+
+            int d = yPos-ty;
+            s += d;
+            if (s%9==0) return 9;
+            else return (int) (s%9);
+        } else if (xPos == num-1-mi) {  // 下
+            int tx = num-1-mi, ty = num-1-mi;
+            s += 2*len-2;
+
+            int d = ty-yPos;
+            s += d;
+            if (s%9==0) return 9;
+            else return (int) (s%9);
+
+//            for ( ; ty>=mi; ty--) {
+//                s++;
+//                if (tx == xPos && ty == yPos) {
+//                    if (s%9==0) return 9;
+//                    else return (int) (s%9);
+//                }
+//            }
+        } else {  // 左右
+            if (yPos == num-1-mi) {  // 左
+                s += len-1;
+                int tx = mi, ty = num-1-mi;
+
+                int d = xPos-tx;
+                s += d;
+                if (s%9==0) return 9;
+                else return (int) (s%9);
+
+//                for ( ; tx<=num-1-mi; tx++) {
+//                    s++;
+//                    if (tx == xPos && ty == yPos) {
+//                        if (s%9==0) return 9;
+//                        else return (int) (s%9);
+//                    }
+//                }
+            } else {  // 右
+                int tx = num-1-mi, ty = mi;
+                s+=3*len-3;
+
+                int d = tx-xPos;
+                s += d;
+                if (s%9==0) return 9;
+                else return (int) (s%9);
+
+//                for ( ; tx>=mi; tx--) {
+//                    s++;
+//                    if (tx == xPos && ty == yPos) {
+//                        if (s%9==0) return 9;
+//                        else return (int) (s%9);
+//                    }
+//                }
+            }
         }
-    }
 
-    private static void dfs(int u) {
-        dp[u][1] = val[u]; dp[u][0] = 0;
-        for(int i = info[u]; i != -1; i = from[i]) {
-            int t = to[i];
-            dfs(t);
-            dp[u][0] += dp[t][1];
-            dp[u][1] += Math.min(dp[t][0], dp[t][1]);
-        }
-    }
-
-    private static void add(int a, int b) {
-        from[idx] = info[a];
-        to[idx] = b;
-        info[a] = idx++;
     }
 }
