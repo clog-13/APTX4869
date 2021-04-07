@@ -12,7 +12,7 @@
 
 **数据范围**
 
-1≤N,M≤300001≤N,M≤30000
+1≤N,M≤30000
 
 **输入样例：**
 
@@ -45,15 +45,14 @@
 1
 ```
 
-## 拓扑排序 + BitSet
+## 拓扑排序 + BitSet()
 
 ```java
 import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int N, M, maxN = 30010;
-    static int idx, qidx;
+    static int idx, qidx, N, M, maxN = 30010;
     static int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
     static int[] qv = new int[maxN], cout = new int[maxN];
     static BitSet[] dist = new BitSet[maxN];
@@ -61,14 +60,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]);
-        M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
         Arrays.fill(info, -1);
         while (M-- > 0) {
             str = br.readLine().split(" ");
-            int a = Integer.parseInt(str[0]);
-            int b = Integer.parseInt(str[1]);
+            int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
             add(a, b);
             cout[a]++;
         }
@@ -76,7 +73,7 @@ public class Main {
         topsort();
         
         for (int i = 1; i <= N; i++) {
-            dist[i] = new BitSet();
+            dist[i] = new BitSet();  // !!! BitSet
             dist[i].set(i);
         }
         for (int i = 0; i < N; i++) {
@@ -105,7 +102,8 @@ public class Main {
             int cur = queue.poll();
             for (int i = info[cur]; i != -1; i = from[i]) {
                 int t = to[i];
-                if (--cout[t] == 0) {
+                cout[t]--;
+                if (cout[t] == 0) {
                     queue.add(t);
                     qv[qidx++] = t;
                 }
