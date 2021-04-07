@@ -1,4 +1,4 @@
-# 179.八数码（A*算法）
+# 179.八数码
 
 在一个3×3的网格中，1~8这8个数字和一个“X”恰好不重不漏地分布在这3×3的网格中。
 
@@ -65,7 +65,9 @@ x 4 6
 ullddrurdllurdruldr
 ```
 
-## A*
+
+
+## aStar
 
 ```cpp
 #include <iostream>
@@ -100,12 +102,11 @@ string bfs(string start) {
     heap.push({f(start) , start});
     dist[start] = 0;
 
-    while(heap.size()) {
-        auto t = heap.top();
-        heap.pop();
+    while (heap.size()) {
+        auto t = heap.top(); heap.pop();
 
         string state = t.second;
-        if(state == ed) break;  // 如果到达终点就break
+        if (state == ed) break;  // 如果到达终点就break
         int step = dist[state]; // 记录到达state的实际距离
 
         int k = state.find('x');// 确定当前 'x' 的位置
@@ -128,7 +129,7 @@ string bfs(string start) {
     }
 
     string res;
-    while(ed != start) {
+    while (ed != start) {
         res += pre[ed].second;
         ed = pre[ed].first;
     }
@@ -146,13 +147,13 @@ int main() {
     }
 
     int cnt = 0;
-    for(int i = 0 ; i < 8 ; i ++) {
-        for(int j = i + 1 ; j < 8 ; j++) {
+    for (int i = 0 ; i < 8 ; i ++) {
+        for (int j = i + 1 ; j < 8 ; j++) {
             if(seq[i] > seq[j]) cnt++;             
         }
     }
 
-    if(cnt % 2) puts("unsolvable");
+    if (cnt % 2) puts("unsolvable");
     else cout << bfs(start) << endl;
 
     return 0;
