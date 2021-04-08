@@ -10,7 +10,7 @@
 
 4、对于每个 k（2≤k≤m）都存在两个整数 i 和 j （1≤i,j≤k−1，i 和 j 可相等），使得X[k]=X[i]+X[j]。
 
-你的任务是：给定一个整数n，找出符合上述条件的长度m最小的“加成序列”。
+你的任务是：给定一个整数n，找出符合上述条件的长度m**最小的**“加成序列”。
 
 如果有多个满足要求的答案，只需要找出任意一个可行解。
 
@@ -62,34 +62,34 @@ import java.util.*;
 
 public class Main {
     static int N, maxN = 110;
-    static int[] path = new int[maxN];
+    static int[] resArr = new int[maxN];
 
     public static void main(String[] args)  {
         Scanner sc = new Scanner(System.in);
-        path[0] = 1;
+        resArr[0] = 1;
         while (true) {
             N = sc.nextInt(); if (N == 0) break;
 
             int depth = 1;
             while (!dfs(1, depth)) depth++;  // 从第1层开始，最大层是第depth层
-
-            for (int i = 0; i < depth; i++) System.out.print(path[i] + " ");
+            
+            for (int i = 0; i < depth; i++) System.out.print(resArr[i] + " ");
             System.out.println();
         }
     }
 
     static boolean dfs(int u, int depth) {
-        if (u > depth) return false; // 超出限制深度，停止
-        if (path[u - 1] == N) return true;   // 找到答案
+        if (u > depth) return false;  // 超出限制深度，停止
+        if (resArr[u - 1] == N) return true;  // 找到答案
         Set<Integer> set = new HashSet<>();
 
         for (int i = u - 1; i >= 0; i--) {
             for (int j = i; j >= 0; j--) {    // 按组合数的方式枚举
-                int sum = path[i] + path[j];
-                if (sum <= path[u-1] || set.contains(sum) || sum > N) continue;
+                int sum = resArr[i] + resArr[j];
+                if (sum <= resArr[u-1] || set.contains(sum) || sum > N) continue;
 
                 set.add(sum);
-                path[u] = sum;
+                resArr[u] = sum;
 
                 if (dfs(u + 1, depth)) return true;
             }
@@ -98,4 +98,3 @@ public class Main {
     }
 }
 ```
-
