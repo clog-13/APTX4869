@@ -3,19 +3,19 @@
 ## 查找一个数
 
 ```java
-int binarySearch(int[] nums, int target) {
-    int left = 0; 
-    int right = nums.length - 1;
+int binarySearch(int[] nums, int tar) {
+    int le = 0, ri = nums.length - 1;  // ##
 
-    while (left <= right) {
-        int mid = (right + left) >> 1;
-        if (nums[mid] == target) {
-            return mid; 
-        } else if (nums[mid] < target) {
-            left = mid + 1;
-        } else if (nums[mid] > target) {
-            right = mid - 1;
+    while (le <= ri) {
+        int mid = (ri + le) >> 1;
+        if (nums[mid] == tar) {
+            return mid;
+        } else if (nums[mid] < tar) {
+            le = mid + 1;
+        } else if (nums[mid] > tar) {
+            ri = mid - 1;  // ##
         }
+    }
     return -1;
 }
 ```
@@ -25,21 +25,20 @@ int binarySearch(int[] nums, int target) {
 ## 寻找左侧边界
 
 ```java
-int left_bound(int[] nums, int target) {
-    int left = 0;
-    int right = nums.length;
+int left_bound(int[] nums, int tar) {
+    int le = 0, ri = nums.length;  // ##
 
-    while (left < right) {
-        int mid = (left + right) >> 1;
-        if (nums[mid] == target) {
-            right = mid;
-        } else if (nums[mid] < target) {
-            left = mid + 1;
-        } else if (nums[mid] > target) {
-            right = mid;
+    while (le < ri) {
+        int mid = (le + ri) >> 1;
+        if (nums[mid] == tar) {
+            ri = mid;  // ##
+        } else if (nums[mid] < tar) {
+            le = mid + 1;
+        } else if (nums[mid] > tar) {
+            ri = mid;
         }
     }
-    return left;
+    return le;
 }
 ```
 
@@ -48,21 +47,19 @@ int left_bound(int[] nums, int target) {
 ## 寻找右侧边界
 
 ```java
-int right_bound(int[] nums, int target) {
-    int left = 0;
-    int right = nums.length;
+int right_bound(int[] nums, int tar) {
+    int le = 0, ri = nums.length;  // ##
 
-    while (left < right) {
-        int mid = (left + right) >> 1;
-        if (nums[mid] == target) {
-            left = mid + 1;
-        } else if (nums[mid] < target) {
-            left = mid + 1;
-        } else if (nums[mid] > target) {
-            right = mid;
+    while (le < ri) {
+        int mid = (le + ri) >> 1;
+        if (nums[mid] == tar) {
+            le = mid + 1;  // ##
+        } else if (nums[mid] < tar) {
+            le = mid + 1;
+        } else if (nums[mid] > tar) {
+            ri = mid;
         }
     }
-    return left - 1;
+    return le - 1;  // ##
 }
 ```
-

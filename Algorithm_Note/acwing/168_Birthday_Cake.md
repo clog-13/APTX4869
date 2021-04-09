@@ -24,8 +24,7 @@
 
 #### 数据范围
 
-1≤N≤10000,
-1≤M≤20
+1≤N≤10000, 1≤M≤20
 
 #### 输入样例：
 
@@ -45,6 +44,10 @@
 ## DFS + 剪枝
 
 数学剪枝推导：
+
+注意：i=1 表示最上层蛋糕（面积体积最小）
+
+搜索是从下往上搜索，所以这里 N-v 表示的是剩余没被搜索的面积体积总和
 
 ![](pic\168.jpg)
 
@@ -66,13 +69,14 @@ class Main {
 
         H[M+1] = R[M+1] = INF;
         dfs(M, 0, 0);   // 剪枝：搜索顺序的优化
+        
         if (res == INF) System.out.println(0);
         else System.out.println(res);
     }
 
     private static void dfs(int dep, int v, int s) {
         if (v + minv[dep] > N) return;  // 剪枝：估计的最小面积比给定的大是不合法的
-        if (s + mins[dep] >= res) return;   // 剪枝：估计的最小面积比当前答案大是不优秀的
+        if (s + mins[dep] >= res) return;   // 剪枝：估计的最小面积比当前答案大
         if (s + 2*(N-v)/R[dep+1] >= res) return;    // 剪枝：数学剪枝
 
         if (dep == 0) {
@@ -80,10 +84,10 @@ class Main {
             return;
         }
 
-        for (int r = Math.min((int)Math.sqrt(N-v), R[dep+1]-1); r >= dep; r--) {    // 剪枝：缩小上下边界
+        for (int r = Math.min((int)Math.sqrt(N-v), R[dep+1]-1); r >= dep; r--) {    // 剪枝：缩小上边界
             for (int h = Math.min((N-v)/r/r, H[dep+1]-1); h >= dep; h--) {
                 R[dep] = r; H[dep] = h;
-                int t = dep==M ? r*r : 0;   // 底面积
+                int t = dep==M ? r*r : 0;   // 面积(底面积)
                 dfs(dep-1, v + r*r*h, s + 2*r*h + t);
             }
         }
