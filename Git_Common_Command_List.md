@@ -17,11 +17,11 @@
 
 ## 多人协作的工作模式
 
-- 首先，可以试图用git push origin <branch-name>推送自己的修改；
-- 如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
-- 如果合并有冲突，则解决冲突，并在本地提交；
-- 没有冲突或者解决掉冲突后，再用git push origin <branch-name>推送就能成功！
-- 如果git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream-to <branch-name> origin/<branch-name>。
+1. 首先，可以试图用git push origin <branch-name>推送自己的修改；
+2. 如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
+3. 如果合并有冲突，则解决冲突，并在本地提交；
+4. 没有冲突或者解决掉冲突后，再用git push origin <branch-name>推送就能成功！
+5. 如果git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream-to <branch-name> origin/<branch-name>。
 
 
 
@@ -51,14 +51,11 @@ $ git merge origin/master
 ## 一、新建代码库
 
 > ```bash
-> # 在当前目录新建一个Git代码库
-> $ git init
+> $ git init  # 在当前目录新建一个Git代码库
 > 
-> # 新建一个目录，将其初始化为Git代码库
-> $ git init [project-name]
+> $ git init [project-name]  # 新建一个目录，将其初始化为Git代码库
 > 
-> # 下载一个项目和它的整个代码历史
-> $ git clone [url]
+> $ git clone [url]  # 下载一个项目和它的整个代码历史
 > ```
 
 ## 二、配置
@@ -66,33 +63,23 @@ $ git merge origin/master
 Git的设置文件为`.gitconfig`，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。
 
 > ```bash
-> # 显示当前的Git配置
-> $ git config --list/-l
+> $ git config -l/--list  # 显示当前的Git配置
 > 
-> # 编辑Git配置文件
-> $ git config -e [--global]
+> $ git config -e [--global]  # 编辑Git配置文件
 > 
-> # 设置提交代码时的用户信息
-> $ git config [--global] user.name "[name]"
+> $ git config [--global] user.name "[name]"  # 设置提交代码时的用户信息
 > $ git config [--global] user.email "[email address]"
 > ```
 
 ## 三、增加/删除文件
 
 > ```bash
-> # 添加指定文件到暂存区
-> $ git add [file1] [file2] ...
+> $ git add [file1] [file2] ...  # 添加指定文件到暂存区
+> $ git add [dir]  # 添加指定目录到暂存区，包括子目录
 > 
-> # 添加指定目录到暂存区，包括子目录
-> $ git add [dir]
+> git add .  # 添加当前目录下的所有文件到暂存区，操作的对象是当前目录下的所有 增改删变更(. 表示当前目录)
 > 
-> # 添加当前目录的所有文件到暂存区
-> // 操作的对象是当前目录下的所有变更（增+改+删），. 表示当前目录。
-> git add .
-> 
-> // 操作的对象是整个工作区的所有变更（增+改+删），无论当前位于哪个目录下。
-> git add -A
-> git add *
+> git add -A/*  # 操作的对象是整个工作区的所有 增改删变更，无论当前位于哪个目录下
 > 
 > // 表示添加编辑或者删除的文件，不包括新添加的文件
 > git add -u
@@ -113,34 +100,25 @@ Git的设置文件为`.gitconfig`，它可以在用户主目录下（全局配�
 ## 四、代码提交
 
 > ```bash
-> # 提交暂存区到仓库区
-> $ git commit -m [message]
+> $ git commit -m [message]  # 提交暂存区到仓库区
 > 
-> # 提交暂存区的指定文件到仓库区
-> $ git commit [file1] [file2] ... -m [message]
+> $ git commit [file1] [file2] ... -m [message]  # 提交暂存区的指定文件到仓库区
 > 
-> # 提交工作区自上次commit之后的变化，直接到仓库区
-> $ git commit -a
+> $ git commit -a  # 提交工作区自上次commit之后的变化，直接到仓库区
 > 
-> # 提交同时提交内容
-> $ git commit -am	// 不能提交未track的文件
+> $ git commit -am  # 提交同时提交内容，不能提交未track的文件
 > 
-> # 提交时显示所有diff信息
-> $ git commit -v
+> $ git commit -v  # 提交时显示所有diff信息
 > 
-> # 使用一次新的commit，替代上一次提交
-> # 如果代码没有任何新变化，则用来改写上一次commit的提交信息
-> $ git commit --amend -m [message]
+> $ git commit --amend -m [message]  # 使用一次新的commit，替代上一次提交，如果代码没有任何新变化，则用来改写上一次commit的提交信息
 > 
-> # 重做上一次commit，并包括指定文件的新变化
-> $ git commit --amend [file1] [file2] ...
+> $ git commit --amend [file1] [file2] ...  # 重做上一次commit，并包括指定文件的新变化
 > ```
 
 ## 五、分支
 
 > ```bash
-> # 列出所有本地分支
-> $ git branch
+> $ git branch  # 列出所有本地分支
 > 
 > # 列出所有远程分支
 > $ git branch -r
@@ -234,8 +212,8 @@ Git的设置文件为`.gitconfig`，它可以在用户主目录下（全局配�
 
 > ```bash
 > # 丢弃工作区对文件的修改
-> $ git checkout -- .
-> $ git checkout -- Readme.md
+> $ git checkout .
+> $ git checkout Readme.md
 > 
 > # 恢复暂存区的指定文件到工作区
 > $ git checkout [file]
