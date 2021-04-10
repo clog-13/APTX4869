@@ -18,10 +18,7 @@
 
 #### 数据范围
 
-1≤S,T≤N≤1000,
-0≤M≤105,
-1≤K≤1000,
-1≤L≤100
+1≤S,T≤N≤1000, 0≤M≤105, 1≤K≤1000, 1≤L≤100
 
 #### 输入样例：
 
@@ -55,8 +52,7 @@ class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]);
-        M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
         Arrays.fill(info, -1); Arrays.fill(rnfo, -1);
         while (M-- > 0) {
@@ -64,22 +60,22 @@ class Main {
             int a = Integer.parseInt(str[0]);
             int b = Integer.parseInt(str[1]);
             int c = Integer.parseInt(str[2]);
-            add(0, a, b, c);
-            add(1, b, a, c);
+            add(0, a, b, c); add(1, b, a, c);
         }
+        
         str = br.readLine().split(" ");
         S = Integer.parseInt(str[0]);
         E = Integer.parseInt(str[1]);
         K = Integer.parseInt(str[2]);
-        if (S == E) K++;
+        if (S == E) K++;  // “最短路中至少要包含一条边”
 
-        dijkstra();
+        dijkstra();  // 反向遍历每个点最短路
         System.out.println(aStar());
     }
 
     private static void dijkstra() {
         PriorityQueue<PII> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a.dis));
-        heap.add(new PII(E, 0));
+        heap.add(new PII(E, 0));  // 反向
         Arrays.fill(dist, INF);
         dist[E] = 0;
 
@@ -104,7 +100,7 @@ class Main {
 
     private static int aStar() {
         PriorityQueue<PIII> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a.val));
-        heap.add(new PIII(f[S], new PII(S, 0)));
+        heap.add(new PIII(f[S], new PII(S, 0)));  // dijk的最短路做启发值(到E的最短值)
         Arrays.fill(st, 0);
 
         while (!heap.isEmpty()) {
@@ -113,7 +109,7 @@ class Main {
             if (st[ver] >= K) continue;
             st[ver]++;
 
-            if (ver == E && st[ver] == K) return dis;
+            if (ver == E && st[ver] == K) return dis;  // 第K短路
             for (int i = info[ver]; i != -1; i = from[i]) {
                 int t = to[i];
                 if (st[t] < K) {
@@ -145,7 +141,7 @@ class Main {
     }
 
     private static class PIII {
-        int val;
+        int val;  // 启发值
         PII pii;
         public PIII(int v, PII p) {
             val = v;
@@ -185,6 +181,7 @@ class Main {
             G[a].add(new Node(b, c));
             GG[b].add(new Node(a, c));
         }
+        
         str = br.readLine().split(" ");
         S = Integer.parseInt(str[0]);
         E = Integer.parseInt(str[1]);
@@ -198,7 +195,8 @@ class Main {
     private static void spfa() {
         Arrays.fill(dist, INF); dist[E] = 0;
         Queue<Integer> queue = new LinkedList<>();
-        queue.add(E);
+        queue.add(E);  // 反向
+        
         while (!queue.isEmpty()) {
             int cur = queue.poll();
             st[cur] = 0;
@@ -218,25 +216,28 @@ class Main {
     }
 
     private static void aStar() {
-        if (dist[S] == INF) {System.out.println(-1); return;}
+        if (dist[S] == INF) { System.out.println(-1); return; }
         PriorityQueue<PIII> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a.val));
         heap.add(new PIII(0, new PII(S, 0)));
         int cnt = 0;
         while (!heap.isEmpty()) {
             PIII cur = heap.poll();
-            if (cur.pii.ver == E) if (++cnt == K) {
-                System.out.println(cur.pii.dis);
-                return;
+            if (cur.pii.ver == E) {
+                if (++cnt == K) {
+                    System.out.println(cur.pii.dis);
+                    return;
+                }
             }
             for (int i = 0; i < G[cur.pii.ver].size(); i++) {
-                // heap.add(new PIII(dis+val[i]+f[t], new PII(t, dis+val[i])));
                 // dis + val[i] + f[t] = cur.pii.dis + G[cur.pii.ver].get(i).v + f[G[cur.pii.ver].get(i).e];
                 // t = G[cur.pii.ver].get(i).e
                 // dis + val[i] = cur.pii.dis + G[cur.pii.ver].get(i).v
-
+                
+                // heap.add(new PIII(dis+val[i]+f[t], new PII(t, dis+val[i])));
+                // 启发值 路径+终点距离
                 heap.add(new PIII(cur.pii.dis + G[cur.pii.ver].get(i).v + f[G[cur.pii.ver].get(i).e],
-                        new PII(G[cur.pii.ver].get(i).e,
-                                cur.pii.dis + G[cur.pii.ver].get(i).v)));
+                         new PII(G[cur.pii.ver].get(i).e,
+                         cur.pii.dis + G[cur.pii.ver].get(i).v)));
             }
         }
 
@@ -259,8 +260,7 @@ class Main {
         int val;
         PII pii;
         public PIII(int v, PII p) {
-            val = v;
-            pii = p;
+            val = v; pii = p;
         }
     }
 }

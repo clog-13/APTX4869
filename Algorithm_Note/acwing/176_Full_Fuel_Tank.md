@@ -30,11 +30,7 @@
 
 #### 数据范围
 
-1≤N≤1000,
-1≤M≤10000,
-1≤pi≤100,
-1≤d≤100,
-1≤C≤100
+1≤N≤1000, 1≤M≤10000, 1≤pi≤100, 1≤d≤100, 1≤C≤100
 
 #### 输入样例：
 
@@ -72,21 +68,18 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
-        M = sc.nextInt();
+        N = sc.nextInt(); M = sc.nextInt();
         for (int i = 0; i < N; i++) price[i] = sc.nextInt();
+        
         Arrays.fill(info, -1);
         for (int i = 0; i < M; i++) {
-            int a = sc.nextInt();
-            int b = sc.nextInt();
-            int c = sc.nextInt();
+            int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();
             add(a, b, c); add(b, a, c);
         }
+        
         int T = sc.nextInt();
         while (T-- > 0) {
-            C = sc.nextInt();
-            S = sc.nextInt();
-            E = sc.nextInt();
+            C = sc.nextInt(); S = sc.nextInt(); E = sc.nextInt();
             int res = dijkstra(C, S, E);
             if (res == -1) System.out.println("impossible");
             else System.out.println(res);
@@ -94,11 +87,12 @@ public class Main {
     }
 
     private static int dijkstra(int c, int s, int e) {
-        PriorityQueue<Node> heap = new PriorityQueue<>((a, b) -> (a.dis - b.dis));
-        heap.add(new Node(0, s, 0));
         for (int[] d : dist) Arrays.fill(d, INF);
         for (int[] v : vis) Arrays.fill(v, 0);
         dist[s][0] = 0;
+        PriorityQueue<Node> heap = new PriorityQueue<>((a, b) -> (a.dis - b.dis));
+        heap.add(new Node(0, s, 0));
+        
         while (!heap.isEmpty()) {
             Node cur = heap.poll();
             int dis = cur.dis, idx = cur.idx, cout = cur.cout;
@@ -107,7 +101,8 @@ public class Main {
             if (vis[idx][cout] == 1) continue;
             vis[idx][cout] = 1;
 
-            if (cout < c) {
+            // 这里用for或者if都可以,if 也会一直循环到一个能到下一站的油量(现在+1的会加入heap)
+            if (cout < c) {  // 用if 有一种贪心的想法
                 if (dist[idx][cout+1] > dist[idx][cout]+price[idx]) {
                     dist[idx][cout+1] = dist[idx][cout]+price[idx];	// 加上一升油的钱
                     heap.add(new Node(dist[idx][cout+1], idx, cout+1));	// 加上一升油的状态
@@ -116,8 +111,8 @@ public class Main {
             for (int i = info[idx]; i != -1; i = from[i]) {
                 int t = to[i];
                 if (cout >= val[i] && dist[t][cout-val[i]] > dis) {
-                    dist[t][cout-val[i]] = dis;
-                    heap.add(new Node(dis, t, cout-val[i]));
+                    dist[t][cout-val[i]] = dis;  // dis：油价 val[i]：路程
+                    heap.add(new Node(dis, t, cout-val[i]));  // cout：剩余油量
                 }
             }
         }
@@ -136,9 +131,7 @@ public class Main {
         int dis, idx, cout;
 
         public Node(int d, int i, int c) {
-            dis = d;
-            idx = i;
-            cout = c;
+            dis = d; idx = i; cout = c;
         }
     }
 }
