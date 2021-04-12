@@ -89,7 +89,7 @@ public class Main{
         new Main().init();
     }
 
-    private void init() throws IOException {
+    void init() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
@@ -122,7 +122,7 @@ public class Main{
         for (int i = 0; i < N; i++) {
             if (!st[i]) {
                 st[i] = true;
-                res[queue[u]] = i;  // 設 queue第u個字母爲 i
+                res[queue[u]] = i;  // 设 queue第u个字母为 i
                 if (check() && dfs(u+1)) return true;   // check在前有剪枝作用
                 res[queue[u]] = -1;
                 st[i] = false;
@@ -131,19 +131,21 @@ public class Main{
         return false;
     }
 
-    private boolean check() {
-        for (int i = N-1, carry = 0; i >= 0; i--) { // 根據賦值 按列 從后到前 驗證算式
-            int a = res[arr[0][i]-'A'], b = res[arr[1][i]-'A'], c = res[arr[2][i]-'A'];
-            if (a != -1 && b != -1 && c != -1) {
-                if (carry == -1) {  // java -a%b = -a
-                    if ((a+b)%N != c && (a+b+1)%N != c) return false;   // 當前列不匹配
+    boolean check() {
+        for (int i = N-1, carry = 0; i >= 0; i--) { // 根据当前赋值 按列 从后到前 验证算式
+            int a = res[arr[0][i]-'A'], b = res[arr[1][i]-'A'], s = res[arr[2][i]-'A'];
+            if (a != -1 && b != -1 && s != -1) {
+                if (carry == -1) {  // 前面不确定，不能确定是否进位  (tips:java -a%b = -a)
+                    if ((a+b)%N != s && (a+b+1)%N != s) return false;   // 當前列不匹配
                     if (i==0 && a+b >= N) return false; // 最高位還有进位
                 } else {
-                    if ((a+b+carry)%N != c) return false;   // 當前列不匹配
+                    if ((a+b+carry)%N != s) return false;   // 當前列不匹配
                     if (i==0 && a+b+carry >= N) return false;   // 最高位還有进位
                     carry = (a+b+carry) / N;
                 }
-            } else carry = -1;
+            } else {  // 不能确定当前是否进位
+                carry = -1;
+            }
         }
         return true;
     }

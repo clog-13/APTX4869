@@ -24,7 +24,7 @@ drd防御战线由n扇防御门组成。
 
 
 
-## 位運算
+## 位运算
 
 ```java
 import java.io.*;
@@ -53,8 +53,8 @@ class Main {
         }
 
         int res = 0;
-        for (int i = 0; i < 30; i++) {
-            if (M>>i > 0) {
+        for (int i = 0; i < 30; i++) {  // 2^30 = 1_073_741_824
+            if (M>>i > 0) {  // 这里基本只能是 M >> i
                 int a = calc(0, i), b = calc(1, i);
                 if (a >= b) res |= a<<i;
                 else res |= b<<i;

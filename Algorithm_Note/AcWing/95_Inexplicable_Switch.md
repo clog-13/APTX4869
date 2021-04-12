@@ -114,7 +114,7 @@ public class Main {
             for (int i = 0; i < 5; i++) System.arraycopy(arr[i], 0, backups[i], 0, 5);
 
             int step = 0;
-            for (int i = 0; i < 5; i++) {    // 翻转所枚举的情況
+            for (int i = 0; i < 5; i++) {    // 翻转当前枚举的状态的情況
                 if ((state>>i & 1) == 1) {
                     step++;
                     turn(0, i);
@@ -129,7 +129,7 @@ public class Main {
                 }
             }
 
-            boolean flag = true;
+            boolean flag = true;  // 判断假设
             for (int j = 0; j < 5; j++) {
                 if (arr[4][j] == '0') {
                     flag = false;
@@ -140,7 +140,7 @@ public class Main {
             if (flag) res = Math.min(res, step);
             for (int j = 0; j < 5; j++) System.arraycopy(backups[j], 0, arr[j], 0, 5);
         }
-        if(res > 6) return -1;
+        if (res > 6) return -1;
         return res;
     }
 
@@ -157,3 +157,4 @@ public class Main {
 }
 ```
 
+.

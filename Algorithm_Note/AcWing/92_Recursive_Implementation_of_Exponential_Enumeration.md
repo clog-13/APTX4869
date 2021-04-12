@@ -56,8 +56,7 @@ class Main {
         N = Integer.parseInt(br.readLine());
 
         dfs(0, 0);
-        System.out.println("---------------");
-        for (int i = 1; i <= N; i++) dfs(1, 1, i);
+        // for (int i = 1; i <= N; i++) dfs(1, 1, i);
     }
 
     void dfs(int u, int state) {
@@ -86,3 +85,5 @@ class Main {
     }
 }
 ```
+
+.

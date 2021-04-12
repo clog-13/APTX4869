@@ -45,8 +45,7 @@ b) 当出现行和列都满足消除条件且行列共享某个方块时，行�
 
 #### 数据范围
 
-对于30% 的数据，初始棋盘上的方块都在棋盘的最下面一行；
-对于100%的数据，0<n≤5 。
+对于30% 的数据，初始棋盘上的方块都在棋盘的最下面一行； 对于100%的数据，0<n≤5 。
 
 #### 输入样例：
 
@@ -116,7 +115,7 @@ class Main {
         System.arraycopy(cnt, 0, backup_cnt[u], 0, cnt.length);
         
         for (int x = 0; x < 5; x++) {
-            for (int y = 0; y < 7; y++) {
+            for (int y = 0; y < 7; y++) {  // 遍历每个点的所有左移右移情况
                 if (arr[x][y] > 0) {
                     int tx = x+1;
                     if (tx < 5) {
@@ -127,7 +126,7 @@ class Main {
                         System.arraycopy(backup_cnt[u], 0, cnt, 0,  cnt.length);
                     }
                     tx = x-1;
-                    if (tx >= 0 && arr[tx][y] == 0) {
+                    if (tx >= 0 && arr[tx][y] == 0) {  // 左移：只有前一位是 0 才计算（没必要重复计算右移的情况）
                         res[u] = new Node(x, y, -1);
                         move(x, y, tx);
                         if (dfs(u+1)) return true;
@@ -159,14 +158,14 @@ class Main {
                         int le = x, ri = x;
                         while (le-1 >= 0 && arr[le-1][y] == arr[x][y]) le--;
                         while (ri+1 < 5  && arr[ri+1][y] == arr[x][y]) ri++;
-                        if (ri-le+1 >= 3) { // 橫向超過三
+                        if (ri-le+1 >= 3) { // 竖向超過三
                             flag = true;
                             st[x][y] = true;
-                        } else {    // 當前點橫向找不到再找豎向
+                        } else {    // 當前點 竖向找不到再找 横向（减少计算）
                             le = y; ri = y;
                             while (le-1 >= 0 && arr[x][le-1] == arr[x][y]) le--;
                             while (ri+1 < 7  && arr[x][ri+1] == arr[x][y]) ri++;
-                            if (ri-le+1 >= 3) { // 豎向超過三
+                            if (ri-le+1 >= 3) { // 横向超過三
                                 flag = true;
                                 st[x][y] = true;
                             }                           

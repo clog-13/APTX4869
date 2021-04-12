@@ -46,7 +46,7 @@ public class Main {
         }
 
         for (int i = 1; i <= 12; i++) System.out.println(f4[i]);
-
+/*
         Arrays.fill(f5, Integer.MAX_VALUE);
         f5[1] = 1;
         for (int i = 2; i <= 12; i++) {
@@ -54,6 +54,7 @@ public class Main {
                 f5[i] = Math.min(f5[i], 2*f5[j] + f4[i-j]);
             }
         }
+ */
     }
 }
 ```
@@ -70,7 +71,7 @@ public class TowersOfHanoi {
     public static void move(int disks,char N,char M) {  // 实现移动的函数
         System.out.println("第" + (++step) +" 次移动 : " +" 把 "+ disks+" 号圆盘从 " + N +" ->移到->  " + M);
     }
-    //递归实现汉诺塔的函数
+    // 递归实现汉诺塔的函数
     public static void hanoi(int n,char A,char B,char C) {
         if (n == 1) {   // 圆盘只有一个时，只需将其从A塔移到C塔
             TowersOfHanoi.move(1, A, C);    // 将编b号为1的圆盘从A移到C
@@ -93,3 +94,4 @@ public class TowersOfHanoi {
 }
 ```
 
+.
