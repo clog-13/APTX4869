@@ -84,7 +84,7 @@ class Main {
 
         boolean flag = false;
         for (int i = 1; i <= su; i++) {
-            if (up[i] < arr[u]) {
+            if (arr[u] > up[i]) {
                 flag = true;
                 int bk = up[i];
                 up[i] = arr[u];
@@ -94,13 +94,13 @@ class Main {
             }
         }
         if (!flag) {
-            up[su+1] = arr[u];
+            up[su+1] = arr[u];  // 新增防御系统
             if (dfs(u+1, su+1, sd, depth)) return true;
         }
 
         flag = false;
         for (int i = 1; i <= sd; i++) {
-            if (dn[i] > arr[u]) {
+            if (arr[u] < dn[i]) {
                 flag = true;
                 int bk = dn[i];
                 dn[i] = arr[u];
@@ -110,7 +110,7 @@ class Main {
             }
         }
         if (!flag) {
-            dn[sd+1] = arr[u];
+            dn[sd+1] = arr[u];  // 新增防御系统
             if (dfs(u+1, su, sd+1, depth)) return true;
         }
 
@@ -129,19 +129,19 @@ using namespace std;
 const int N = 55;
 int a[N], ans, up[N], down[N], n;
 void dfs(int u, int d, int t) {  // u表示上升的系统个数，d表示下降的系统个数,t表示第t个数
-    if (u + d >= ans) return ;
-    if (t ==  n) {
-        if(u + d < ans)ans = u + d;
-        return ;
+    if (u + d >= ans) return;
+    if (t == n) {
+        if (u+d < ans) ans = u+d;
+        return;
     }
     int i;
     for (i = 1; i <= u; i++)  // 找到第一个末尾数小于a[t]的导弹系统
         if (up[i] < a[t]) break;
-
     int temp = up[i];
     up[i] = a[t];
     dfs(max(u, i), d, t + 1);
-    up[i] = temp;  
+    up[i] = temp;
+    
     for (i = 1; i <= d; i++)  // 找到第一个末尾数大于a[t]的导弹系统
         if (down[i] > a[t]) break;
     temp = down[i];
@@ -151,10 +151,9 @@ void dfs(int u, int d, int t) {  // u表示上升的系统个数，d表示下降
 }
 
 int main(){
-    while(scanf("%d", &n) != EOF && n != 0) {
+    while (scanf("%d", &n) != EOF && n != 0) {
         ans = 100;
-        for(int i = 0; i < n; i++)
-            cin >> a[i];
+        for (int i = 0; i < n; i++) cin >> a[i];
         dfs(0, 0, 0);
         printf("%d\n", ans);
     }
@@ -175,19 +174,18 @@ using namespace std;
 
 const int N = 55;
 
-int n;
-int up[N], down[N], a[N];
+int n, up[N], down[N], a[N];
 
 bool dfs(int depth, int u, int su, int sd) {
     if (su + sd > depth) return false;
-    if (u == n) return true; // u表示的是枚举每个顶点
+    if (u == n) return true;
 
     if (!su || up[su] >= a[u]) {
         up[su + 1] = a[u];
         if (dfs(depth, u + 1, su + 1, sd)) return true;
     } else {
         int l = 1, r = su;
-        while (l < r) { // 坐标
+        while (l < r) {  // 坐标
             int mid = (l + r) >> 1;
             if (up[mid] < a[u]) r = mid;
             else l = mid + 1;
@@ -210,7 +208,7 @@ bool dfs(int depth, int u, int su, int sd) {
         }
         int t = down[l];
         down[l] = a[u];
-        if (dfs(depth, u + 1, su, sd)) return true;
+        if (dfs(depth, u+1, su, sd)) return true;
         down[l] = t;
     }
 
@@ -222,8 +220,7 @@ int main() {
         for (int i = 0; i < n; i ++) cin >> a[i];
 
         int depth = 0;
-
-        while (!dfs(depth, 0, 0, 0)) depth ++; 
+        while (!dfs(depth, 0, 0, 0)) depth++; 
         cout << depth << endl;
     }
     return 0;
