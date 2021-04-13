@@ -2,26 +2,25 @@
 
 求 a 的 b 次方对 p 取模的值。
 
-#### 输入格式
+**输入格式**
 
 三个整数 a,b,p ,在同一行用空格隔开。
 
-#### 输出格式
+**输出格式**
 
 输出一个整数，表示`a^b mod p`的值。
 
-#### 数据范围
+**数据范围**
 
-0≤a,b,p≤109
-数据保证 p≠0
+0≤a,b,p≤109，数据保证 p≠0
 
-#### 输入样例：
+**输入样例：**
 
 ```
 3 2 7
 ```
 
-#### 输出样例：
+**输出样例：**
 
 ```
 2
@@ -29,7 +28,7 @@
 
 
 
-## 非递归快速幂
+## 位运算（非递归）
 
 7^1011 = 7^1000 * 7^10 * 7^1
 
@@ -52,10 +51,8 @@ public class Main{
         long a = sc.nextLong(), b = sc.nextLong(), p = sc.nextLong();
         long res = 1%p;
         while (b > 0) {
-            if ((b&1) == 1) {
-                res = res*a % p;
-            }
-            a = a*a % p;
+            if ((b&1) == 1) res = res*a % p;  // 次方，这里是*
+            a = a*a % p;  // 次方，这里是*
             b >>= 1;
         }
 
@@ -66,7 +63,7 @@ public class Main{
 
 
 
-## 递归快速幂
+## 递归
 
 2^10 = (2^2 * 2^2 * 2^2 * 2^2 * 2^2) = (2^2)^5
 
@@ -82,9 +79,9 @@ public class Main{
     }
 
     private static long divide(long a, long b, long p) {
-        if (b == 0) return 1;
+        if (b == 0) return 1;  // 次方，这里是 1
         if ((b&1) == 1) {
-            return a%p * divide((a%p)*(a%p), (b-1)/2, p)%p;
+            return a%p * divide((a%p)*(a%p), (b-1)/2, p)%p;  // 次方，这里是*
         } else {
             return divide((a%p)*(a%p), b/2, p)%p;
         }
@@ -94,7 +91,7 @@ public class Main{
 
 
 
-# 90. 64位整数乘法
+# 90. a*b
 
 求 a 乘 b 对 p 取模的值。
 
@@ -124,7 +121,7 @@ public class Main{
 2
 ```
 
-### 位运算
+## 位运算（非递归）
 
 例1：
 
@@ -149,9 +146,8 @@ class Main {
         long a = sc.nextLong(), b = sc.nextLong(), c = sc.nextLong();
         long res = 0;
         while (b > 0) {
-            if ((b&1) == 1)
-                res = (res+a) % c;
-            a = (a+a) % c;
+            if ((b&1) == 1) res = (res+a) % c;  // 乘，这里是+
+            a = (a+a) % c;  // 乘，这里是+
             b >>= 1;
         }
         System.out.println(res);
@@ -161,9 +157,9 @@ class Main {
 
 
 
-## 非递归
+## 递归
 
-數據會溢出
+数据会溢出，递归
 
 ```java
 import java.util.*;
@@ -177,14 +173,13 @@ class Main {
     }
 
     private static long divide(long a, long b, long c) {
-        if (b == 0) return 0;
+        if (b == 0) return 0;  // 乘，这里是 0 
         if ((b&1) == 1) {
-            return a%c + divide((a%c)*(2%c), (b-1)/2, c)%c;
+            return a%c + divide((a%c)+(a%c), (b-1)/2, c)%c;  // 乘，这里是+
         } else {
-            return divide((a%c)*(2%c), b/2, c)%c;
+            return divide((a%c)+(a%c), b/2, c)%c;
         }
     }
-
 }
 ```
 
