@@ -4,14 +4,39 @@
 
 ## 求和
 ```java
-class Segment_tree {
-    int maxN = 100010;
-    int[] arr = new int[maxN];
+import java.io.*;
+public class Main {
+    int N, M, maxN = 100010;
+    long[] arr = new long[maxN];
     Node[] segs = new Node[4*maxN];
 
-    public Segment_tree(int[] nums) {
-        System.arraycopy(nums, 0, arr, 1, nums.length);
-        build(1, 1, nums.length+1);
+    public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] str = br.readLine().split(" ");
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
+        str = br.readLine().split(" ");
+        for (int i = 1; i <= N; i++) arr[i] = Integer.parseInt(str[i-1]);
+        build(1, 1, N);
+
+        while (M-- > 0) {
+            str = br.readLine().split(" ");
+            int le = Integer.parseInt(str[1]), ri = Integer.parseInt(str[2]);
+
+            if (str[0].equals("1")) {
+                if (le > ri) {
+                    le = le^ri;
+                    ri = le^ri;
+                    le = le^ri;
+                }
+                System.out.println(query(1, le, ri));
+            } else {
+                update(1, le, ri);
+            }
+        }
     }
 
     void build(int root, int le, int ri) {
@@ -29,24 +54,23 @@ class Segment_tree {
     }
 
     // 查询操作，start到end之间的和
-    int query(int root, int start, int end) {
+    long query(int root, int start, int end) {
+        if (start > segs[root].ri || end < segs[root].le) return 0;
         if (start <= segs[root].le && segs[root].ri <= end) return segs[root].sum;
 
-        push_down(root);    // 顺路向下传递
-        int res = 0;
-        int mid = (segs[root].le + segs[root].ri) >> 1;
-        if (start <= mid) res += query(root<<1, start, end);
-        if (end > mid) res += query((root<<1)|1, start, end);
+        push_down(root);    // 之前懒得更新的值向下传递
+        long res = 0;
+        res += query(root<<1, start, end);
+        res += query((root<<1)|1, start, end);
         return res;
     }
-
-    // 单点修改，tar位置加上val
-    void update(int root, int tar, int val) {
+    
+    void update(int root, int idx, int val) {
         if (segs[root].le == segs[root].ri) segs[root].sum += val;  // 目标节点
         else {
             int mid = (segs[root].le + segs[root].ri) >> 1;
-            if (tar <= mid) update(root<<1, tar, val);  // 如果 需要update的节点在左子节点
-            else update(root<<1|1, tar, val);   // 否则 需要update的节点在右子节点
+            if (idx <= mid) update(root<<1, idx, val);  // 如果 需要update的节点在左子节点
+            else update(root<<1|1, idx, val);   // 否则 需要update的节点在右子节点
 
             push_up(root);
         }
@@ -54,14 +78,14 @@ class Segment_tree {
 
     // 区间修改，start到end位置加上val
     void update_lazy(int root, int start, int end, int val) {
+        if (segs[root].ri < start || segs[root].le > end) return;
         if (start <= segs[root].le && segs[root].ri <= end) {   // 如果 该节点包含范围全部需要update
-            segs[root].sum += (segs[root].le-segs[root].ri+1) * val;  // 如果是修改为val，则'+=' -> '=';
+            segs[root].sum += (long) (segs[root].ri - segs[root].le + 1) * val;
             segs[root].tag += val;
         } else {
             push_down(root);    // 向下传递
-            int mid = (segs[root].le + segs[root].ri) >> 1;
-            if (start <= mid) update_lazy(root<<1, start, end, val);    // 如果左子节点在需要update的范围内
-            if (mid < end) update_lazy(root<<1|1, start, end, val); // 如果右子节点在需要update的范围内
+            update_lazy(root<<1, start, end, val);  // 如果左子节点在需要update的范围内
+            update_lazy(root<<1|1, start, end, val);   // 如果右子节点在需要update的范围内
 
             push_up(root);
         }
@@ -72,20 +96,22 @@ class Segment_tree {
     }
 
     void push_down(int idx) {
-        if (segs[idx].tag != 0) {	// 如果update()是修改为，则修改为0时这里有bug
-            int mid = (segs[idx].le + segs[idx].ri) >> 1;
-            segs[idx<<1].sum += segs[idx].tag * (mid-segs[idx].le+1);    // 修改为val，则'+=' -> '=';
-            segs[idx<<1|1].sum += segs[idx].tag * (segs[idx].ri-mid);    // 修改为val，则'+=' -> '=';
+        if (segs[idx].tag!=0) {	// 如果update()是修改为，则修改为0时这里有bug
+            int mid = (segs[idx].le+segs[idx].ri) >> 1;
+            segs[idx<<1].sum += (long) segs[idx].tag * (mid - segs[idx].le + 1);
+            segs[idx<<1|1].sum += (long) segs[idx].tag * (segs[idx].ri - mid);
 
-            segs[idx<<1].tag += segs[idx].tag;   // 修改为val，则'+=' -> '=';
-            segs[idx<<1|1].tag += segs[idx].tag; // 修改为val，则'+=' -> '=';
+            segs[idx<<1].tag += segs[idx].tag;
+            segs[idx<<1|1].tag += segs[idx].tag;
+
             segs[idx].tag = 0;
         }
     }
 
-    private static class Node {
-        int le, ri, sum, tag;
-        public Node(int l, int r, int s) {
+    static class Node {
+        int le, ri, tag;
+        long sum;
+        public Node(int l, int r, long s) {
             le = l; ri = r; sum = s; tag = 0;
         }
     }
@@ -115,61 +141,70 @@ class Segment_tree {
             build(root<<1, le, mid);
             build(root<<1|1, mid+1, ri);
 
-            segs[root].max = Math.max(segs[root<<1].max, segs[root<<1|1].max);
+            push_up(root);
         }
     }
 
+    
+    
     // 查询操作，start到end之间的和
-    int query(int root, int start, int end) {
+    long query(int root, int start, int end) {
+        if (start > segs[root].ri || end < segs[root].le) return 0;
         if (start <= segs[root].le && segs[root].ri <= end) return segs[root].max;
-        push_down(root);
-        int res = Integer.MIN_VALUE;
-        int mid = (segs[root].le + segs[root].ri) >> 1;
-        if (start <= mid) res = Math.max(res, query(root<<1, start, end));
-        if (end > mid) res = Math.max(res, query((root<<1)|1, start, end));
+
+        push_down(root);    // 之前懒得更新的值向下传递
+        long res = 0;
+        res = Math.max(res, query(root<<1, start, end));
+        res = Math.max(res, query((root<<1)|1, start, end));
         return res;
     }
 
-    // 单点修改，tar位置加val
-    void update(int root, int tar, int val) {
-        if (segs[root].le == segs[root].ri) segs[root].max += val;
+    void update(int root, int idx, int val) {
+        if (segs[root].le == segs[root].ri) segs[root].max = Math.max(segs[root].max, val);  // 目标节点
         else {
             int mid = (segs[root].le + segs[root].ri) >> 1;
-            if (tar <= mid) update(root<<1, tar, val);
-            else update(root<<1|1, tar, val);
+            if (idx <= mid) update(root<<1, idx, val);  // 如果 需要update的节点在左子节点
+            else update(root<<1|1, idx, val);   // 否则 需要update的节点在右子节点
 
-            segs[root].max = Math.max(segs[root<<1].max, segs[root<<1|1].max);
+            push_up(root);
+        }
+    }
+    
+    // 区间修改，start到end位置加上val
+    void update_lazy(int root, int start, int end, int val) {
+        if (segs[root].ri < start || segs[root].le > end) return;
+        if (start <= segs[root].le && segs[root].ri <= end) {   // 如果 该节点包含范围全部需要update
+            segs[root].max = Math.max(segs[root].max, val);
+            segs[root].tag += val;
+        } else {
+            push_down(root);    // 向下传递
+            update_lazy(root<<1, start, end, val);  // 如果左子节点在需要update的范围内
+            update_lazy(root<<1|1, start, end, val);   // 如果右子节点在需要update的范围内
+
+            push_up(root);
         }
     }
 
-    // 区间修改，start到end位置加上val
-    void update_lazy(int root, int start, int end, int val) {
-        if (start <= segs[root].le && segs[root].ri <= end) {
-            segs[root].max += val;
-            segs[root].tag += val;
-        } else {
-            push_down(root);
-            int mid = (segs[root].le + segs[root].ri) >> 1;
-            if (start <= mid) update_lazy(root<<1, start, end, val);
-            if (mid < end) update_lazy(root<<1|1, start, end, val);
-
-            segs[root].max = Math.max(segs[root<<1].max, segs[root<<1|1].max);
-        }
+    void push_up(int root) {
+        long sMax = Math.max(segs[root<<1].max, segs[root<<1|1].max);
+        segs[root].max = Math.max(segs[root].max, sMax);
     }
 
     void push_down(int idx) {
-        if (segs[idx].tag != 0) {	// 如果update()是修改为，则修改为0时这里有bug
-            segs[idx<<1].max += segs[idx].tag;
-            segs[idx<<1|1].max += segs[idx].tag;
+        if (segs[idx].tag!=0) {	 // 如果update()是修改为，则修改为0时这里有bug
+            segs[idx<<1].max = Math.max(segs[idx<<1].max, segs[idx].tag);
+            segs[idx<<1|1].max = Math.max(segs[idx<<1|1].max, segs[idx].tag);
 
-            segs[idx<<1].tag += segs[idx].tag;
-            segs[idx<<1|1].tag += segs[idx].tag;
+            segs[idx<<1].tag = Math.max(segs[idx<<1].tag, segs[idx].tag);
+            segs[idx<<1|1].tag = Math.max(segs[idx<<1|1].tag, segs[idx].tag);
+
             segs[idx].tag = 0;
         }
     }
 
     static class Node {
-        int le, ri, max, tag;
+        int le, ri, tag;
+        long max;
         public Node(int l, int r, int s) {
             le = l; ri = r; max = s; tag = 0;
         }
