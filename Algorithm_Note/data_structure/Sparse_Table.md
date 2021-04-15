@@ -78,17 +78,16 @@ public class Main {
         int[][] dp = new int[200010][18];
         for (int j = 0; j < 18; j++) {
             for (int i = 1; i+(1<<j)-1 <= N; i++) {
-                if(j == 0) dp[i][j] = data[i];
+                if (j == 0) dp[i][j] = data[i];
                 else dp[i][j] = Math.max(dp[i][j-1], dp[i+(1<<(j-1))][j-1]);
             }
         }
 
         int M = sc.nextInt();
         while (M-- > 0) {
-            int le = sc.nextInt();
-            int ri = sc.nextInt();
+            int le = sc.nextInt(), ri = sc.nextInt();
             int len = ri - le + 1;
-            int k = (int) (Math.log(len) / Math.log(2));	// Math.log(len)/Math.log(2) == Math.log2(len);
+            int k = (int) (Math.log(len) / Math.log(2));	// Math.log(len)/Math.log(2) == log2(len);
             int res = Math.max(dp[le][k], dp[ri-(1<<k)+1][k]);
             System.out.println(res);
         }
