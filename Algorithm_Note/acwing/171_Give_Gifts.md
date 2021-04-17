@@ -92,8 +92,8 @@ class Main{
             return;
         }
 
-        if ((long) sum+arr[idx] <= W) dfs_le(idx-1, sum+arr[idx]);
-        dfs_le(idx-1, sum);
+        if ((long) sum+arr[idx] <= W) dfs_le(idx-1, sum+arr[idx]);  // add
+        dfs_le(idx-1, sum);  // not add 
     }
 }
 ```
