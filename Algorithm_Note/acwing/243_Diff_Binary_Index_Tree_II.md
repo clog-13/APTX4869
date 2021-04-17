@@ -151,7 +151,7 @@ public class Main {
 
 
 
-	## 树状数组(NlogN)
+## 树状数组(NlogN)
 
 ```java
 import java.io.*;
@@ -209,3 +209,4 @@ public class Main {
 }
 ```
 
+.
