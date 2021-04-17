@@ -27,11 +27,7 @@ public class Main {
             int le = Integer.parseInt(str[1]), ri = Integer.parseInt(str[2]);
 
             if (str[0].equals("1")) {
-                if (le > ri) {
-                    le = le^ri;
-                    ri = le^ri;
-                    le = le^ri;
-                }
+                if (le > ri) { le = le^ri; ri = le^ri; le = le^ri; }
                 System.out.println(query(1, le, ri));
             } else {
                 update(1, le, ri);

@@ -41,10 +41,11 @@ import java.util.*;
 class Main {
     int N,maxN = 10;
     int[][] f = new int[maxN][maxN*maxN];
-    
+
     public static void main(String[] args) {
         new Main().run();    
     }
+    
     void run() {
         Scanner sc = new Scanner(System.in);
         while (sc.hasNext()) {
@@ -54,7 +55,7 @@ class Main {
             System.out.println(dp(ri)-dp(le-1));
         }
     }
-    
+
     int dp(int n) {
         if (n ==0) return 1;
         List<Integer> list = new ArrayList<>();
@@ -73,15 +74,15 @@ class Main {
         }
         return res;
     }
-    
+
     void init() {
         for (int i = 0; i < maxN; i++) Arrays.fill(f[i], 0);
         f[0][0]  = 1;
         for (int j = 0; j <= 9; j++) f[1][j%N] += 1;
         for (int i = 2; i < maxN; i++) {        // 总共i位, 余数 x 的数量
-            for (int j = 0; j <= 9; j++) {		// 当前最高位是j, 加上i-1位的每个情况    
+            for (int j = 0; j <= 9; j++) {		// 当前最高位是j, 加上i-1位的每个情况
                 for (int k = 0; k <= N; k++) {  // i-1的范围在[0,N],因为对 N 取模
-                    f[i][(j+k)%N] += f[i-1][k]; 
+                    f[i][(j+k)%N] += f[i-1][k];
                 }
             }
         }

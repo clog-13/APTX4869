@@ -58,11 +58,11 @@ class Main {
     static int[] vals = new int[maxN], size = new int[maxN];
     static int[][] dp = new int[maxN][maxN];
     static int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
-    
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); S = sc.nextInt();
-        
+
         int root = 0;
         Arrays.fill(info, -1);
         for (int i = 1; i <= N; i++) {
@@ -71,11 +71,11 @@ class Main {
             if (p == -1) root = i;
             else add(p, i);
         }
-        
+
         dfs(root);  // dp[i][j]: i节点，容积 j 时最大价值(且当前节点默认选择)
         System.out.println(dp[root][S]);
     }
-    
+
     static void dfs(int u) {
         for (int i = info[u]; i != -1; i = from[i]) {  // 遍历当前节点的子节点
             int son = to[i];
@@ -83,7 +83,7 @@ class Main {
             // 遍历背包的容积,当前节点我们默认选择
             // 我们每一次都默认选择当前结点，因为到最后根节点是必选的(除非一个都不选)
             for (int j = S-size[u]; j >= 0; j--) {  // 01
-                for (int k = j; k >= 0; k--) {  // 子节点
+                for (int k = j; k >= 0; k--) {
                     dp[u][j] = Math.max(dp[u][j], dp[u][j-k] + dp[son][k]);
                 }
             }
@@ -92,13 +92,12 @@ class Main {
         for (int i = S; i >= size[u]; i--) {
             dp[u][i] = dp[u][i-size[u]] + vals[u];
         }
-        // 因为当前节点我们默认选择
-        // 所以如果背包容积不如当前物品的体积大,那就不能选择当前结点及其子节点,因此为零 
+        // 如果背包容积不如当前物品的体积大,那就不能选择当前结点及其子节点,因此为零 
         for (int i = size[u]-1; i >= 0; i--) {
             dp[u][i] = 0;
         }
     }
-    
+
     static void add(int a, int b) {
         from[idx] = info[a];
         to[idx] = b;
@@ -115,11 +114,11 @@ class Main {
     static int[] vals = new int[maxN], size = new int[maxN];
     static int[][] dp = new int[maxN][maxN];
     static List<Integer>[] list = new List[maxN];
-    
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); S = sc.nextInt();
-        
+
         for (int i = 1; i <= N; i++) list[i] = new ArrayList<>();
         int root = 0;
         for (int i = 1; i <= N; i++) {
@@ -132,15 +131,15 @@ class Main {
         dfs(root);
         System.out.println(dp[root][S]);
     }
-    
+
     static void dfs(int u) {
         for (int i = size[u]; i <= S; i++) dp[u][i] = vals[u];  // 节点 u 必须选
-        
+
         for (int i = 0; i < list[u].size(); i++) {
             int t = list[u].get(i);
             dfs(t);
             for (int s = S; s >= size[u]; s--) {  // 01背包
-                for (int k = 0; k <= s-size[u]; k++) {  // 可选的子节点
+                for (int k = 0; k <= s-size[u]; k++) {
                     dp[u][s] = Math.max(dp[u][s], dp[u][s-k]+dp[t][k]);
                 }
             }

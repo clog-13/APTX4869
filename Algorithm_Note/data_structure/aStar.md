@@ -405,7 +405,7 @@ string bfs(string start) {
                 if (!dist.count(state) || dist[state] > step + 1) {
                     dist[state] = step + 1;
                     pre[state] = {backup, dir[i]};
-                    heap.push({dist[state] + getDist(state), state});
+                    heap.push({ dist[state] + getDist(state), state });
                 }
                 swap(state[x * 3 + y], state[tx * 3 + ty]);   // 因为要多次交换，所以要恢复现场
             }

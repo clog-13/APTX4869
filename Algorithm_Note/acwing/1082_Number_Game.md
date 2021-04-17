@@ -61,7 +61,7 @@ class Main {
     int dp(int n) { 
         if(n==0) return 1;
         List<Integer> list = new ArrayList<>();
-        while (n > 0) {
+        while (n > 0) {  // 分解数的每位
             list.add(n%10);
             n/=10;
         }    
@@ -74,8 +74,8 @@ class Main {
             for (int j = last; j < cur; j++) {  // j < cur, 因为在 [0,cur-1] 这个范围才可以为所欲为
                 res += f[i+1][j];
             }
-            if (i == 0) res++;  // 全部枚举完了也同样构成一种方案
             last = cur;
+            if (i == 0) res++;  // 全部枚举完了也同样构成一种方案
         }
 
         return res;
@@ -85,7 +85,7 @@ class Main {
         for (int i = 0; i <= 9; i++) f[1][i]=1;
         for (int i = 2; i < maxN; i++) {
             for (int j = 0; j <= 9; j++) {
-                for (int k = j; k <= 9; k++) {  // j=5, k=6_xxx,7_xxx,8_xxx
+                for (int k = j; k <= 9; k++) {  // j=5, k=5_xxx,6_xxx,7_xxx,8_xxx
                     f[i][j] += f[i-1][k];
                 }
             }

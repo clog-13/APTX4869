@@ -22,7 +22,7 @@ class KMP {
 
     void getNext(char[] p) {
         int i = 0, j = -1;
-        next[0] = -1;
+        next[i] = j;
         while (i < p.length) {
             if (j == -1 || p[i] == p[j]) {
                 i++; j++;
@@ -31,7 +31,7 @@ class KMP {
                 j = next[j];
             }
         }
-    }    
+    }
 }
 ```
 

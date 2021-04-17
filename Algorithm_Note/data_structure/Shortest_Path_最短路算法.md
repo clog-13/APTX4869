@@ -52,19 +52,17 @@ public class Dijkstra_Pro {
     private static void dijkstra(int s) {
         Arrays.fill(dist, INF);
         dist[s] = 0;
-        //维护当前未在 vis 中标记过且离源点最近的点
-        PriorityQueue<PII> queue = new PriorityQueue<>((a, b) -> (a.dis - b.dis));
+        PriorityQueue<PII> queue = new PriorityQueue<>((a, b) -> (a.dis-b.dis));  // 维护当前离源点最近的点
         queue.add(new PII(s, 0));
         while(!queue.isEmpty()) {
-            PII p = queue.poll(); int cur = p.id, dis = p.dis;
-            
-            if(vis[cur]) continue; vis[cur] = true;
+            PII p = queue.poll(); 
+            int cur = p.id, dis = p.dis;
+            if(vis[cur]) continue; 
+            vis[cur] = true;
 
-			// 用邻接表遍历当前点的邻点
-            for(int i = info[cur]; i != -1; i = from[i]) {
+            for(int i = info[cur]; i != -1; i = from[i]) {  // 用邻接表遍历当前点的邻点
                 int t = to[i];
-                // 判断当前点到邻点的距离是否需要更新
-                if (dist[t] > v[i] + dis) {
+                if (dist[t] > v[i] + dis) {  // 判断当前点到邻点的距离是否需要更新
                     dist[t] = v[i] + dis;
                     queue.add(new PII(t, dist[t]));
                 }

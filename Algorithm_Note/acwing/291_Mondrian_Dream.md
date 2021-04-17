@@ -74,7 +74,7 @@ class Main {
             if (N==0 && M==0) return;
             
             Arrays.fill(st, true);
-            for (int state = 0; state < 1<<N; state++) {  // 枚举每一列的占位状态里哪些是合法的
+            for (int state = 0; state < 1<<N; state++) {  // 初始化，枚举每一列的占位状态里哪些是合法的
                 int cnt = 0;
                 for (int i = 0; i < N; i++) {  // 判断当前 列state 的状况
                     if ((state>>i & 1) == 1) { // 把连续空格数为奇数的状态设定为false
