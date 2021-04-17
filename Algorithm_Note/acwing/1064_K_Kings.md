@@ -48,7 +48,7 @@ class Main {
         int n = Integer.parseInt(str[0]), k = Integer.parseInt(str[1]);
         dp[0][0][0] = 1;  // dp[i][cur][c]:前i行放好,第i行状态cur,当前放置的国王数为c的情况的方案数
         long res = 0;
-        for (int i = 0; i < 1<<n; i++) {  // 初始化,枚举每种状态
+        for (int i = 0; i < 1<<n; i++) {
             if ((i & i<<1) > 0) continue;  // 相邻,不合法
             tem[idx] = i;
             num[idx++] = get(i);

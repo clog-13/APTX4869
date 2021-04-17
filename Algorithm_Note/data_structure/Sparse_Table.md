@@ -72,7 +72,8 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt();
         int[] data = new int[N];
-        for (int i = 1 ;i <= N; i++) data[i] = sc.nextInt();
+        for (int i = 1 ;i <= N; i++)
+            data[i] = sc.nextInt();
 
         int[][] dp = new int[200010][18];
         for (int j = 0; j < 18; j++) {
