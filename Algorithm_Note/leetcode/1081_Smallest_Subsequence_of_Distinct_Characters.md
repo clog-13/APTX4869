@@ -67,33 +67,33 @@ char * smallestSubsequence(char * s) {
 ```java
 class Solution {
     public String smallestSubsequence(String s) {
-		int N = s.length();
-		char[] stack = new char[N]; // 用来模拟栈(每个字母只能唯一出现在栈中)
-		int right = 0;
-		int[] mLastIndex = new int[26]; // 用来标记每一个字母出现的最后下标
-		boolean[] mExist = new boolean[26]; // 用来标记其是否出现在stack中
+        int N = s.length();
+        char[] stack = new char[N]; // 用来模拟栈(每个字母只能唯一出现在栈中)
+        int idx = 0;
+        int[] mLastIndex = new int[26]; // 用来标记每一个字母出现的最后下标
+        boolean[] mExist = new boolean[26]; // 用来标记其是否出现在stack中
         char[] arr = s.toCharArray();
 
-		for (int i = 0; i < N; i++) mLastIndex[arr[i]-'a'] = i;
+        for (int i = 0; i < N; i++) mLastIndex[arr[i]-'a'] = i;
 
-		for (int i = 0; i < N; i++) {
-			int cur = arr[i]-'a';
-			char c = arr[i];
-			if (!mExist[cur]) { // 如果该字母没有出现在栈中
+        for (int i = 0; i < N; i++) {
+            int cur = arr[i]-'a';
+            char c = arr[i];
+            if (!mExist[cur]) { // 如果该字母没有出现在栈中
                 // 栈不为空 && 栈顶元素大于当前元素(字典序) && 栈顶字母之后还会出现
-				while (right > 0 && stack[right-1] > c && mLastIndex[stack[right-1]-'a'] > i) { 
-					mExist[stack[right-1]-'a'] = false;
-					right--;
-				}
+                while (idx > 0 && stack[idx-1] > c && mLastIndex[stack[idx-1]-'a'] > i) {
+                    mExist[stack[idx-1]-'a'] = false;
+                    idx--;
+                }
 
-				stack[right++] = c; // 加入栈中
-				mExist[cur] = true;
-			}
-		}
+                stack[idx++] = c; // 加入栈中
+                mExist[cur] = true;
+            }
+        }
 
-		StringBuffer res = new StringBuffer();
-		for (int i = 0; i < right; i++) res.append(stack[i]);
-		return res.toString();
+        StringBuffer res = new StringBuffer();
+        for (int i = 0; i < idx; i++) res.append(stack[i]);
+        return res.toString();
     }
 }
 ```
@@ -118,3 +118,4 @@ class Solution {
 }
 ```
 
+.

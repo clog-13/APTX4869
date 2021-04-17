@@ -6,7 +6,10 @@
 **示例：**
 
 ```
-输入：[[0,0,0],[0,0,1],[1,1,0]]
+输入：
+[[0,0,0]
+,[0,0,1]
+,[1,1,0]]
 输出：2
 解释：翻转前两列的值之后，后两行由相等的值组成。
 ```
@@ -29,25 +32,23 @@ class Solution {
         for (int i = 0; i < N; i++) rows[i] = i;
         return radixSort(matrix, rows, 0, N - 1, 1);
     }
-    
+
     public int radixSort(int[][] arr, int[] rows, int low, int high, int col) {
         if (low > high) return 0;
         if (col == arr[0].length) return high-low+1;
-        
-        int lo = low, hi = high;
-        while (lo <= hi) {
-            while(lo <= hi && arr[rows[lo]][col] == arr[rows[lo]][0]) lo++;
-            while(lo <= hi && arr[rows[hi]][col] != arr[rows[hi]][0]) hi--;
-            if (lo > hi) break;
-            // Swap.
-            int temp = rows[lo];
-            rows[lo] = rows[hi];
-            rows[hi] = temp;
+
+        int tl = low, th = high;
+        while (tl <= th) {
+            while (tl<=th && arr[rows[tl]][col] == arr[rows[tl]][0]) tl++;
+            while (tl<=th && arr[rows[th]][col] != arr[rows[th]][0]) th--;
+            if (tl > th) break;
+
+            int temp = rows[tl]; rows[tl] = rows[th]; rows[th] = temp;  // 当前col列前状态相同的交换到一起
         }
-        
+
         return Math.max(
-            radixSort(arr, rows, low, hi, col+1),
-            radixSort(arr, rows, lo, high, col+1)
+                radixSort(arr, rows, low, th, col+1),
+                radixSort(arr, rows, tl, high, col+1)
         );
     }
 }
@@ -73,9 +74,9 @@ class Solution {
                 else tmp.append((matrix[i][j] ^ 1));
             }
             String str = tmp.toString();
-            res  = Math.max(map.getOrDefault(str, 0) + 1, res);
             map.put(str, map.getOrDefault(str, 0) + 1);
-        }   
+            res = Math.max(res, map.get(str));
+        }
         return res;
     }
 }
