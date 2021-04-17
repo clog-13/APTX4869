@@ -48,7 +48,7 @@ public:
 class Solution {
     public String gcdOfStrings(String str1, String str2) {
         int len1 = str1.length(), len2 = str2.length();
-        for (int i = Math.min(len1, len2); i >= 1; i--) { // 从长度大的开始枚举
+        for (int i = Math.min(len1, len2); i >= 1; i--) { // 从长度大的开始枚举(可优化成二分)
             if (len1 % i == 0 && len2 % i == 0) {
                 String X = str1.substring(0, i);
                 if (check(X, str1) && check(X, str2)) {
