@@ -23,17 +23,18 @@
 
 ## 数学
 
+sum代表能构成 [0, sum] 的数，如果 c < sum，则加入 c 就可以构成 [0, sum + c] 的数，否则返回 sum+1
+
 ```java
 class Solution {
     public int getMaximumConsecutive(int[] coins) {
         Arrays.sort(coins);
-        if (coins[0] != 1) return 1;
-        int lst = coins[0];
-        for (int i = 1; i < coins.length; i++) {
-            if (coins[i] <= lst+1) lst += coins[i];
+        int sum = 0;
+        for (int c: coins) {
+            if (c <= sum+1) sum += c;
             else break;
         }
-        return lst+1;
+        return sum+1;
     }
 }
 ```
