@@ -97,10 +97,10 @@ class MKAverage {
 
     long query(int root, int le, int ri, int size) {
         if (tree[root].cnt <= size) return tree[root].sum;
-        if (le == ri) return tree[root].sum * size / tree[root].cnt;  // 多个数相同
+        if (le == ri) return tree[root].sum * size / tree[root].cnt;  // 多个数相同 ex:sum*2/7 = 7个中的2个
         int mid = (le+ri)>>1;
         if (tree[root<<1].cnt >= size) return query(root<<1, le, mid, size);
-        return tree[root<<1].sum + query(root<<1|1, mid+1, ri, size-tree[root<<1].cnt);
+        else return tree[root<<1].sum + query(root<<1|1, mid+1, ri, size-tree[root<<1].cnt);
     }
 
     static class Node {
