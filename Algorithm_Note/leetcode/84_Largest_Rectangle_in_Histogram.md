@@ -10,35 +10,84 @@
 
 ```java
 class Solution {
-    public int largestRectangleArea(int[] heights) {
-        int N = heights.length;
-        if (N == 0) return 0;
+    public int largestRectangleArea(int[] arr) {
+        int N = arr.length; if (N == 0) return 0;
         int[] left = new int[N], right = new int[N];
-        
+
         left[0] = - 1;
         for (int i = 1; i < N; i++) {
-            int temp = i - 1;
-            while (temp >= 0 && heights[temp] >= heights[i]) {
-                temp = left[temp];
+            int le = i - 1;
+            while (le >= 0 && arr[le] >= arr[i]) {
+                le = left[le];
             }
-            left[i] = temp;  // 左边第一根小于 i柱子高度 的柱子 的下标
+            left[i] = le; // 左边第一根小于 i柱子高度 的柱子 的下标
         }
 
         right[N-1] = N;
         for (int i = N-2; i >= 0; i--) {
-            int temp = i + 1;
-            while (temp < N && heights[temp] >= heights[i]) {
-                temp = right[temp];
+            int ri = i + 1;
+            while (ri < N && arr[ri] >= arr[i]) {
+                ri = right[ri];
             }
-            right[i] = temp;  // 右边第一根小于 i柱子高度 的柱子 的下标
+            right[i] = ri;    // 右边第一根小于 i 位置的柱子
         }
 
         int maxArea = 0;
         for (int i = 0; i < N; i++) {
-            int width = right[i] - left[i] - 1;
-            maxArea = Math.max(maxArea, heights[i] * width);
+            maxArea = Math.max(maxArea, arr[i] * (right[i]-left[i]-1));
         }
         return maxArea;
+    }
+}
+```
+
+
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+    public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
+        while (true) {
+            String[] str = br.readLine().split(" ");
+            if (Integer.parseInt(str[0])==0) break;
+            long[] arr = new long[str.length-1];
+            for (int i = 1; i < str.length; i++) {
+                arr[i-1] = Long.parseLong(str[i]);
+            }
+            bw.write(largestRectangleArea(arr)+"\n");
+        }
+        bw.flush(); bw.close();
+    }
+
+    public long largestRectangleArea(long[] arr) {
+        int N = arr.length;
+        long[] left = new long[N], right = new long[N];  // 下标可以取的最左或最右 的下标
+        Arrays.fill(right, N);
+
+        Stack<Integer> stack = new Stack<>();  // stack储存的是下标
+        for (int i = 0; i < N; ++i) {
+            while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {  // 当栈顶大等于cur
+                right[stack.peek()] = i;  // peek()的最右取到 cur
+                stack.pop();
+            }
+            left[i] = (stack.isEmpty() ? -1 : stack.peek());  // i的最左取到peek()，le和ri是相通的
+            stack.push(i);
+        }
+
+        long res = 0;
+        for (int i = 0; i < N; ++i) {
+            res = Math.max(res, (right[i] - left[i] - 1) * arr[i]);
+        }
+        return res;
     }
 }
 ```

@@ -72,19 +72,19 @@ public class Main {
     void dfs(int u) throws IOException {
         if (u > N) {
             if (++cnt > 20) return;
-            for (Integer i : list) bw.write(i+"");
-            for (int i = idx-1; i >= 0; i--) bw.write(stk[i]+"");  //输出栈中剩下的(后进先出
+            for (Integer i: list) bw.write(i+"");
+            for (int i = idx-1; i >= 0; i--) bw.write(stk[i]+"");  //输出栈中剩下的(后进先出)
             bw.write("\n");
             return;
         }
-        if (idx > 0) {  // 字典序
+        if (idx > 0) {  // 能出栈就先出栈，可以保证字典序
             list.add(stk[--idx]);
             dfs(u);  // 出站
-            stk[idx++] = list.remove(list.size()-1);
+            stk[idx++] = list.remove(list.size()-1);  // 还原
         }
         stk[idx++] = u;
         dfs(u+1);   // 进站
-        idx--;
+        idx--;  // 还原
     }
 }
  ```
@@ -111,24 +111,26 @@ public class Main {
         bw.flush(); bw.close();
     }
 
-    void dfs(int top, int x) throws IOException {
+    void dfs(int tot, int x) throws IOException {
         if (cnt >= 20) return;
-        if (x > N && top == 0) {
+        if (x > N && tot == 0) {
             cnt++;
             for (Integer i : list) bw.write(i+"");
             bw.write("\n");
             return;
         }
-        if (top > 0) {
-            int backup = stk[top];
-            list.add(stk[top]);
-            dfs(top-1, x);  // out
-            list.remove(list.size()-1);
-            stk[top] = backup;
+        if (tot > 0) {  // 优先出站，保证字典序
+            int tmp = stk[tot];
+
+            list.add(stk[tot]);
+            dfs(tot-1, x);  // out
+
+            list.remove(list.size()-1);  // restore
+            stk[tot] = tmp;
         }
         if (x <= N) {
-            stk[top+1] = x;
-            dfs(top+1, x+1);  // in
+            stk[tot+1] = x;
+            dfs(tot+1, x+1);  // in
         }
     }
 }
