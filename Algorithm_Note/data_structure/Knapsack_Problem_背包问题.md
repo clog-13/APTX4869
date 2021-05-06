@@ -215,7 +215,7 @@ class Main {
 
 ## 532. 货币系统
 
-在货币系统 n=3, a=[2,5,9] 中，金额 1,31,3 就无法被表示出来。 
+在货币系统 n=3, a=[2,5,9] 中，金额 1,3 就无法被表示出来。 
 
 两个货币系统 (n,a) 和 (m,b) 是等价的，
 当且仅当对于任意非负整数 x，它要么均可以被两个货币系统表出，要么不能被其中任何一个表出。 
@@ -268,24 +268,20 @@ class Main {
 // 当且仅当一张货币面额可以被其他货币表示时，此货币对该系统能表示的面额没有影响
 // 换言之这个货币没有存在的必要，所以将这类的货币去除就可以得到等价的最小数量货币系统。
 public class Main {
-    static int INF = 0x3f3f3f3f;
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int T = sc.nextInt();
         while (T-- > 0) {
-            int N =sc.nextInt();
-            int[] arr = new int[N+1];
-            int[] dp = new int[25010];
-            dp[0] = 1;
-            int m = 0;
+            int N =sc.nextInt(), mx = 0;
+            int[] arr = new int[N+1], dp = new int[25010];
             for (int i = 1; i <= N; i++) {
                 arr[i] = sc.nextInt();
-                m = Math.max(m, arr[i]);
+                mx = Math.max(mx, arr[i]);
             }
-
-            for (int i = 1; i <= N; i++) {
-                for (int j = arr[i]; j <= m; j++) {
+            
+            dp[0] = 1;
+            for (int i = 1; i <= N; i++) {  // 遍历物品
+                for (int j = arr[i]; j <= mx; j++) {  // 遍历体积
                     dp[j] += dp[j-arr[i]];
                 }
             }
