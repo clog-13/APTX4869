@@ -133,8 +133,6 @@ class Segment_tree {
         }
     }
 
-    
-    
     // 查询操作，start到end之间的和
     long query(int root, int start, int end) {
         if (start > segs[root].ri || end < segs[root].le) return 0;
