@@ -5,7 +5,7 @@
 ## 求和
 ```java
 import java.io.*;
-public class Main {
+class Main {
     int N, M, maxN = 100010;
     long[] arr = new long[maxN];
     Node[] segs = new Node[4*maxN];
@@ -25,68 +25,57 @@ public class Main {
         while (M-- > 0) {
             str = br.readLine().split(" ");
             int le = Integer.parseInt(str[1]), ri = Integer.parseInt(str[2]);
-
-            if (str[0].equals("1")) {
-                if (le > ri) {
-                    le = le^ri;
-                    ri = le^ri;
-                    le = le^ri;
-                }
+            if (str[0].equals("Q")) {
                 System.out.println(query(1, le, ri));
             } else {
-                update(1, le, ri);
+                int n = Integer.parseInt(str[3]);
+                lazy_update(1, le, ri, n);
             }
         }
     }
 
     void build(int root, int le, int ri) {
-        if (le == ri) {
-            segs[root] = new Node(le, ri, arr[le]);
-        } else {
+        if (le==ri) segs[root] = new Node(le, ri, arr[le]);
+        else {
             segs[root] = new Node(le, ri, 0);
-
-            int mid = le+ri >> 1;
+            int mid = le+ri>>1;
             build(root<<1, le, mid);
             build(root<<1|1, mid+1, ri);
-
             push_up(root);
         }
     }
 
-    // 查询操作，start到end之间的和
     long query(int root, int start, int end) {
         if (start > segs[root].ri || end < segs[root].le) return 0;
-        if (start <= segs[root].le && segs[root].ri <= end) return segs[root].sum;
-
-        push_down(root);    // 之前懒得更新的值向下传递
+        if (start <= segs[root].le && segs[root].ri <= end)
+            return segs[root].sum;
+        push_down(root);
         long res = 0;
         res += query(root<<1, start, end);
-        res += query((root<<1)|1, start, end);
+        res += query(root<<1|1, start, end);
         return res;
     }
-    
+
     void update(int root, int idx, int val) {
+        if (idx > segs[root].ri || idx < segs[root].le) return;
         if (segs[root].le == segs[root].ri) segs[root].sum += val;  // 目标节点
         else {
-            int mid = (segs[root].le + segs[root].ri) >> 1;
-            if (idx <= mid) update(root<<1, idx, val);  // 如果 需要update的节点在左子节点
-            else update(root<<1|1, idx, val);   // 否则 需要update的节点在右子节点
+            update(root<<1, idx, val);    // 如果 需要update的节点在左子节点
+            update(root<<1|1, idx, val);  // 否则 需要update的节点在右子节点
 
             push_up(root);
         }
     }
 
-    // 区间修改，start到end位置加上val
-    void update_lazy(int root, int start, int end, int val) {
-        if (segs[root].ri < start || segs[root].le > end) return;
-        if (start <= segs[root].le && segs[root].ri <= end) {   // 如果 该节点包含范围全部需要update
-            segs[root].sum += (long) (segs[root].ri - segs[root].le + 1) * val;
+    void lazy_update(int root, int start, int end, int val) {
+        if (start > segs[root].ri || end < segs[root].le) return;
+        if (start <= segs[root].le && segs[root].ri <= end) {
+            segs[root].sum += (long) (segs[root].ri-segs[root].le+1) * val;
             segs[root].tag += val;
         } else {
-            push_down(root);    // 向下传递
-            update_lazy(root<<1, start, end, val);  // 如果左子节点在需要update的范围内
-            update_lazy(root<<1|1, start, end, val);   // 如果右子节点在需要update的范围内
-
+            push_down(root);
+            lazy_update(root<<1, start, end, val);
+            lazy_update(root<<1|1, start, end, val);
             push_up(root);
         }
     }
@@ -95,22 +84,21 @@ public class Main {
         segs[root].sum = segs[root<<1].sum + segs[root<<1|1].sum;
     }
 
-    void push_down(int idx) {
-        if (segs[idx].tag!=0) {	// 如果update()是修改为，则修改为0时这里有bug
-            int mid = (segs[idx].le+segs[idx].ri) >> 1;
-            segs[idx<<1].sum += (long) segs[idx].tag * (mid - segs[idx].le + 1);
-            segs[idx<<1|1].sum += (long) segs[idx].tag * (segs[idx].ri - mid);
+    void push_down(int root) {
+        if (segs[root].tag != 0) {
+            int mid = segs[root].le+segs[root].ri >> 1;
+            segs[root<<1].sum += segs[root].tag * (mid - segs[root].le+1);
+            segs[root<<1|1].sum += segs[root].tag * (segs[root].ri - mid);
 
-            segs[idx<<1].tag += segs[idx].tag;
-            segs[idx<<1|1].tag += segs[idx].tag;
-
-            segs[idx].tag = 0;
+            segs[root<<1].tag += segs[root].tag;
+            segs[root<<1|1].tag += segs[root].tag;
+            segs[root].tag = 0;
         }
     }
 
     static class Node {
-        int le, ri, tag;
-        long sum;
+        int le, ri;
+        long sum, tag;
         public Node(int l, int r, long s) {
             le = l; ri = r; sum = s; tag = 0;
         }
