@@ -49,16 +49,16 @@ class Main {
     int arr[] = new int[maxN], dp[][] = new int[maxN][1<<maxN];
     List<Integer> state = new ArrayList<>();
     List<Integer>[] head = new List[1<<maxN];
-    
+
     public static void main(String[] args) {
         new Main().run();
     }
-    
+
     void run() {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); M = sc.nextInt();
-        
-        for (int i = 1; i <= N; i++) {  
+
+        for (int i = 1; i <= N; i++) {
             int st = 0;
             for (int j = 0; j < M; j++) {
                 int x = sc.nextInt();
@@ -66,11 +66,11 @@ class Main {
             }
             arr[i] = st;
         }
-        
+
         for (int i = 0; i < 1<<M; i++) {  // 筛选掉 有相邻土地 的状态
             if ((i & i<<1) == 0) state.add(i);
         }
-        
+
         for (int i = 0; i < state.size(); i++) {  // 把可以上下相邻的状态归类
             head[i] = new ArrayList<>();
             int cur = state.get(i);
@@ -78,11 +78,11 @@ class Main {
                 if ((cur&state.get(j)) == 0) head[i].add(j);
             }
         }
-        
+
         dp[0][0] = 1;
         for (int i = 1; i <= N; i++) {  // 每一行
             for (int j = 0; j < state.size(); j++) { // 遍历所有 合法行状态
-                if ((state.get(j) & arr[i]) == 0) {  // 如果状态可以在当前行
+                if ((state.get(j) & arr[i]) == 0) {  // 如果状态可以在当前行(判断土地贫瘠)
                     for (int pre : head[j]) {
                         dp[i][j] = (dp[i][j]+dp[i-1][pre])%mod;
                     }
@@ -91,7 +91,7 @@ class Main {
         }
 
         int res = 0;
-        for (int i = 0; i < 1<<M; i++) res = (res + dp[N][i]) % mod;
+        for (int i = 0; i < state.size(); i++) res = (res + dp[N][i]) % mod;
         System.out.println(res);
     }
 }

@@ -49,10 +49,13 @@ class Main{
     static int N, INF = 0x3f3f3f3f, maxN = 15, maxM = 9;
     static double X_;
     static double[][] preSum = new double[maxM][maxM];  // 矩阵前缀和
-    // dp[x1][y1][x2][y2][k]: (x1, y1)到(x2, y2)的矩阵切 k 下的最小方差
     static double[][][][][] dp = new double[maxM][maxM][maxM][maxM][maxN];
 
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
 
@@ -76,15 +79,14 @@ class Main{
             return dp[x1][y1][x2][y2][k] = getVariance(x1, y1, x2, y2);
         }
 
+        // dp[x1][y1][x2][y2][k]: (x1, y1)到(x2, y2)的矩阵切 k 下的最小方差
         double res = INF;
-        // 横切（上下）
-        for (int i = x1; i < x2; i++) {
+        for (int i = x1; i < x2; i++) {  // 横切（上下）
             res = Math.min(res, dfs(x1 , y1, i , y2, k-1) + getVariance(i+1, y1, x2, y2));
             res = Math.min(res, dfs(i+1, y1, x2, y2, k-1) + getVariance(x1 , y1, i , y2));
         }
 
-        // 纵切（左右）
-        for (int i = y1; i < y2; i++) {
+        for (int i = y1; i < y2; i++) {  // 纵切（左右）
             res = Math.min(res, dfs(x1, y1 , x2, i , k-1) + getVariance(x1, i+1, x2, y2));
             res = Math.min(res, dfs(x1, i+1, x2, y2, k-1) + getVariance(x1, y1 , x2, i ));
         }
