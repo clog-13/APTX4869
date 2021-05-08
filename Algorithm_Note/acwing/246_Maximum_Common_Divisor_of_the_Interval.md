@@ -1,19 +1,19 @@
 # 246. 区间最大公约数
 
-给定一个长度为 N 的数列 A，以及 MM 条指令，每条指令可能是以下两种之一：
+给定一个长度为 N 的数列 A，以及 M 条指令，每条指令可能是以下两种之一：
 
-1. `C l r d`，表示把 A[l],A[l+1],…,A[r]A[l],A[l+1],…,A[r] 都加上 dd。
-2. `Q l r`，表示询问 A[l],A[l+1],…,A[r]A[l],A[l+1],…,A[r] 的最大公约数(GCDGCD)。
+1. `C l r d`，表示把 A[l],A[l+1],…,A[r] 都加上 d。
+2. `Q l r`，表示询问 A[l],A[l+1],…,A[r] 的最大公约数(GCD)。
 
 对于每个询问，输出一个整数表示答案。
 
 #### 输入格式
 
-第一行两个整数 N,MN,M。
+第一行两个整数 N,M。
 
-第二行 NN 个整数 A[i]A[i]。
+第二行 N 个整数 A[i]。
 
-接下来 MM 行表示 MM 条指令，每条指令的格式如题目描述所示。
+接下来 M 行表示 M 条指令，每条指令的格式如题目描述所示。
 
 #### 输出格式
 
@@ -23,9 +23,7 @@
 
 #### 数据范围
 
-N≤500000,M≤100000N≤500000,M≤100000,
-1≤A[i]≤10181≤A[i]≤1018,
-|d|≤1018|d|≤1018
+N≤500000,M≤100000, 1≤A[i]≤10^18, |d|≤10^18
 
 #### 输入样例：
 
@@ -82,8 +80,8 @@ public class Main {
                 update(1, le, n);
                 if (ri < N) update(1, ri+1, -n);
             } else {
-                long t = query_sum(1, 1, le);
-                System.out.println(Math.abs(gcd(t, query_dif(1, le+1, ri))));
+                long preSum = query_dif(1, 1, le);  // 这里 le 是固定的 1
+                System.out.println(Math.abs(gcd(preSum, query_gcd(1, le+1, ri))));
             }
         }
     }
@@ -104,8 +102,8 @@ public class Main {
     void update(int u, int idx, long val) {
         if (idx > tr[u].ri || idx < tr[u].le) return;
 
-        if (tr[u].le == tr[u].ri && tr[u].le == idx) {
-            tr[u].sum += val; tr[u].dif += val;
+        if (tr[u].le == tr[u].ri) {
+            tr[u].dif += val; tr[u].gcd += val;
         } else {
             update(u<<1, idx, val);
             update(u<<1|1, idx, val);
@@ -114,23 +112,23 @@ public class Main {
         }
     }
 
-    long query_sum(int u, int start, int end) {
-        if (start > tr[u].ri || end < tr[u].le) return 0;
-        if (tr[u].le >= start && tr[u].ri <= end) return tr[u].sum;
-        
-        return query_sum(u<<1, start, end) + query_sum(u<<1|1, start, end);
-    }
-
     long query_dif(int u, int start, int end) {
         if (start > tr[u].ri || end < tr[u].le) return 0;
         if (tr[u].le >= start && tr[u].ri <= end) return tr[u].dif;
-        
-        return gcd(query_dif(u<<1, start, end), query_dif(u<<1|1, start, end));
+
+        return query_dif(u<<1, start, end) + query_dif(u<<1|1, start, end);
+    }
+
+    long query_gcd(int u, int start, int end) {
+        if (start > tr[u].ri || end < tr[u].le) return 0;
+        if (tr[u].le >= start && tr[u].ri <= end) return tr[u].gcd;
+
+        return gcd(query_gcd(u<<1, start, end), query_gcd(u<<1|1, start, end));
     }
 
     void push_up(int u) {
-        tr[u].sum = tr[u<<1].sum + tr[u<<1|1].sum;
-        tr[u].dif = gcd(tr[u<<1].dif, tr[u<<1|1].dif);
+        tr[u].dif = tr[u<<1].dif + tr[u<<1|1].dif;
+        tr[u].gcd = gcd(tr[u<<1].gcd, tr[u<<1|1].gcd);
     }
 
     long gcd(long a, long b) {
@@ -139,10 +137,10 @@ public class Main {
 
     static class Node {
         int le, ri;
-        long sum, dif;
+        long dif, gcd;
         public Node(int l, int r, long v, long d) {
             le = l; ri = r;
-            sum = v; dif = d;
+            dif = v; gcd = d;
         }
     }
 }
