@@ -115,7 +115,7 @@ class Main {
         else {
             int mid = segs[root].le + segs[root].ri >> 1;
             if (start <= mid) update(root<<1, start, end, k);
-            if (end > mid) update(root<<1| 1, start, end, k);
+            if (end > mid) update(root<<1|1, start, end, k);
         }
 
         pushup(root);
@@ -123,8 +123,10 @@ class Main {
 
     void pushup(int x) {
         if (segs[x].cnt > 0) segs[x].len = segs[x].ri - segs[x].le + 1;
-        else if (segs[x].le == segs[x].ri) segs[x].len = 0;
-        else segs[x].len = segs[x<<1].len + segs[x<<1|1].len;
+        else {
+            if (segs[x].le == segs[x].ri) segs[x].len = 0;
+            else segs[x].len = segs[x<<1].len + segs[x<<1|1].len;
+        }
     }
 
     private class Seg {
@@ -141,10 +143,7 @@ class Main {
         int x, y1, y2, k;
 
         public Node(int x, int y1, int y2, int k) {
-            this.x = x;
-            this.y1 = y1;
-            this.y2 = y2;
-            this.k = k;
+            this.x = x; this.y1 = y1; this.y2 = y2; this.k = k;
         }
 
         @Override
@@ -153,6 +152,5 @@ class Main {
         }
     }
 }
-
 ```
 
