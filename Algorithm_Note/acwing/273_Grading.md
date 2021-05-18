@@ -44,6 +44,21 @@
 
 ## DP
 
+假设某个最优解如下图所示，其中 {Ai} 是原序列，{Ai′} 是将原序列排序后的序列，图中红色圆圈表示每个 Bi。
+
+![](https://cdn.acwing.com/media/article/image/2019/10/01/1_861faab8e3-acwing_273.png)
+
+考虑每个位于 Ai′,Ai+1′之间的一段 Bi，比如上图中粉色框中的部分。
+则我们在 {Ai} 中粉色框对应的这段里统计出大于等于 A′i+1 的数的个数 x，小于等于 Ai′ 的数的个数 y，那么：
+
+- 如果 x>y，将粉色框中的 Bi 整体上移，使最高的一个圆圈达到上边界，结果会变好；
+
+- 如果 x<y，将粉色框中的 Bi 整体下移，使最低的一个圆圈达到下边界，结果会变好；
+
+- 如果 x=y，则上面两种方式均可，结果不会变差；
+
+综上所述，只要存在某个 Bi 的值不在原序列中，我们一定可以将它调整成原序列中的值，且结果不会变差。
+
 ```java
 import java.util.*;
 class Main {
@@ -78,13 +93,63 @@ class Main {
         for (int i = 1; i <= N; i++) {
             int minS = Integer.MAX_VALUE;
             for (int j = 1; j <= N; j++) {
-                minS = Math.min(minS, dp[i-1][j]);  // 这里minV实现了 非严格 递增
+                minS = Math.min(minS, dp[i-1][j]);  // 这里minS实现了 非严格 递增
                 dp[i][j] = minS + Math.abs(A.get(i-1) - C.get(j));
             }
         }
 
         int res = Integer.MAX_VALUE;
         for (int i = 1; i <= N; i++) res = Math.min(res, dp[N][i]);
+        return res;
+    }
+}
+```
+
+
+
+## Greedy
+
+```java
+import java.util.*;
+
+class Main {
+    int N, arr[];
+
+    public static void main(String[] args) {
+        new Main().init();
+    }
+
+    void init() {
+        Scanner sc = new Scanner(System.in);
+        N = sc.nextInt();
+        arr = new int[N];
+        for (int i = 0; i < N; i++) arr[i] = sc.nextInt();
+
+        long res = helper();
+        arr = reverse();
+        res = Math.min(res, helper());
+
+        System.out.println(res);
+    }
+
+    long helper() {
+        long res = 0;
+        PriorityQueue<Integer> heap = new PriorityQueue<>((a,b) -> (b-a));
+        for (int i = 0; i < N; i++) {
+            heap.add(arr[i]);
+            if (arr[i] < heap.peek()) {
+                res += heap.poll() - arr[i];
+                heap.add(arr[i]);
+            }
+        }
+        return res;
+    }
+
+    int[] reverse() {
+        int[] res = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            res[arr.length-i-1] = arr[i];
+        }
         return res;
     }
 }
