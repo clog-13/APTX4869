@@ -56,13 +56,13 @@ public class Main {
     void init() {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
-        dfs_a(0);
+        dfs_a(0);  // 1.
         System.out.println(res);
     }
 
     void dfs_a(int a) {
         if (a > N) return;
-        if (a > 0) dfs_c(a, 0);
+        if (a > 0) dfs_c(a, 0);  // 2. 这里改为dfs_b也可以，保证等式恒等就行
         for (int i = 1; i <= 9; i++) {
             if (st[i] == 0) {
                 st[i] = 1;
@@ -73,7 +73,7 @@ public class Main {
     }
 
     void dfs_c(int a, int c) {
-        if (check(a, c)) res++;
+        if (check(a, c)) res++;  // 3.
         for (int i = 1; i <= 9; i++) {
             if (st[i] == 0) {
                 st[i] = 1;
@@ -88,7 +88,7 @@ public class Main {
         if(a <= 0 || b <= 0 || c <= 0) return false;
         System.arraycopy(st, 1, backup, 1, 9);
         int tmp;
-        while (b > 0) {
+        while (b > 0) {  // 求出目标b，记录每位情况
             tmp = b%10;
             b /= 10;
             if (backup[tmp] == 1) return false;
