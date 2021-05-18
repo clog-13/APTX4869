@@ -51,34 +51,27 @@ public class Main {
         int N = sc.nextInt();
         long D = sc.nextInt();
 
-        double[][] data = new double[N][2];
+        double[][] arr = new double[N][2];
         for (int i = 0; i < N; i++) {
-            int x = sc.nextInt();
-            int y = sc.nextInt();
+            int x = sc.nextInt(), y = sc.nextInt();
             if (y > D) {
                 System.out.println(-1);
                 return;
             }
-            double len = Math.sqrt(D*D - y*y);
-            data[i][0] = x - len;
-            data[i][1] = x + len;
+            double len = Math.sqrt(D*D - (long) y *y);
+            arr[i][0] = x - len;  // 每个岛可被探测到的两边边界反求
+            arr[i][1] = x + len;
         }
 
-        // 这里不能这么写，要以右边界排序
-        // Arrays.sort(data, (r1, r2) -> {
-        //   if (r1[0] != r2[0]) return Double.compare(r1[0], r2[0]);
-        //   else return Double.compare(r1[1], r2[1]);
-        // });
-        Arrays.sort(data, (r1, r2) -> {
-            return Double.compare(r1[1], r2[1]);
-        });
+        // 要以 !右边界! 排序
+        Arrays.sort(arr, (r1, r2) -> Double.compare(r1[1], r2[1]));
 
         int res = 1;
-        double ri = data[0][1];
+        double ri = arr[0][1];
         for (int i = 1; i < N; i++) {
-            if (data[i][0] > ri) {
+            if (arr[i][0] > ri) {
                 res++;
-                ri = data[i][1];
+                ri = arr[i][1];
             }
         }
         System.out.println(res);
