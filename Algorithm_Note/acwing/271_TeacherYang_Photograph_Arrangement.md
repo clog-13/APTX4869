@@ -24,7 +24,7 @@
 
 每组数据两行，第一行包含一个整数 k 表示总排数。
 
-第二行包含 k 个整数，表示从后向前每排的具体人数。
+**第二行包含 k 个整数，表示从后向前每排的具体人数。**
 
 当输入 k=0 的数据时，表示输入终止，且该数据无需处理。
 
@@ -76,10 +76,6 @@ import java.util.*;
 
 class Main {
     public static void main(String[] args) {
-        new Main().init();
-    }
-
-    void init() {
         Scanner sc = new Scanner(System.in);
         while (true) {
             int N = sc.nextInt(); if (N == 0) return;
@@ -90,16 +86,16 @@ class Main {
 
             // dp[a][b][c][d][e]代表从后往前每排人数分别为a, b, c, d, e的所有方案的集合
             long[][][][][] dp = new long[arr[0]+1][arr[1]+1][arr[2]+1][arr[3]+1][arr[4]+1];
-            dp[0][0][0][0][0] = 1;  
+            dp[0][0][0][0][0] = 1;
             for (int a = 0; a <= arr[0]; a++) {
-                for (int b = 0; b <= Math.min(a, arr[1]); b++) {
+                for (int b = 0; b <= Math.min(a, arr[1]); b++) {  // 注意这里min的取值范围和下面>=的条件取值
                     for (int c = 0; c <= Math.min(b, arr[2]); c++) {
                         for (int d = 0; d <= Math.min(c, arr[3]); d++) {
                             for (int e = 0; e <= Math.min(d, arr[4]); e++) {
-                                long tmp = 0;
+                                long tmp = 0;  // 当前人站第一排最右,且前一个状态合法
                                 if (a>0 && a-1>=b) tmp += dp[a-1][b][c][d][e];
-                                if (b>0 && b-1>=c) tmp += dp[a][b-1][c][d][e];
-                                if (c>0 && c-1>=d) tmp += dp[a][b][c-1][d][e];
+                                if (b>0 && b-1>=c) tmp += dp[a][b-1][c][d][e];  // 当前人站第二排最右, 且...
+                                if (c>0 && c-1>=d) tmp += dp[a][b][c-1][d][e];  // ...
                                 if (d>0 && d-1>=e) tmp += dp[a][b][c][d-1][e];
                                 if (e>0)           tmp += dp[a][b][c][d][e-1];
                                 dp[a][b][c][d][e] += tmp;
