@@ -4,9 +4,9 @@
 
 公司决定以每个人本年在公司的贡献为标准来计算他们得到奖金的多少。
 
-于是Mr.Z下令召开 mm 方会谈。
+于是Mr.Z下令召开 m 方会谈。
 
-每位参加会谈的代表提出了自己的意见：“我认为员工 aa 的奖金应该比 bb 高！”
+每位参加会谈的代表提出了自己的意见：“我认为员工 a 的奖金应该比 b 高！”
 
 Mr.Z决定要找出一种奖金方案，满足各位代表的意见，且同时使得总奖金数最少。
 
@@ -14,20 +14,17 @@ Mr.Z决定要找出一种奖金方案，满足各位代表的意见，且同时�
 
 #### 输入格式
 
-第一行包含整数 n,mn,m，分别表示公司内员工数以及参会代表数。
+第一行包含整数 n,m，分别表示公司内员工数以及参会代表数。
 
-接下来 mm 行，每行 22 个整数 a,ba,b，表示某个代表认为第 aa 号员工奖金应该比第 bb 号员工高。
+接下来 m 行，每行 2 个整数 a,b，表示某个代表认为第 a 号员工奖金应该比第 b 号员工高。
 
 #### 输出格式
 
-若无法找到合理方案，则输出“Poor Xed”；
-
-否则输出一个数表示最少总奖金。
+若无法找到合理方案，则输出“Poor Xed”； 否则输出一个数表示最少**总**奖金。
 
 #### 数据范围
 
-1≤n≤100001≤n≤10000,
-1≤m≤200001≤m≤20000
+1≤n≤10000, 1≤m≤20000
 
 #### 输入样例：
 
@@ -49,24 +46,24 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int N, M, maxN = 20010;
-    static int idx, qidx;
-    static int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
-    static int[] cout = new int[maxN], dist = new int[maxN];
-    static int[] qv = new int[maxN];
-    
+    int N, M, maxN = 20010, idx, qidx;
+    int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
+    int[] cout = new int[maxN], dist = new int[maxN], qv = new int[maxN];
+
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]);
-        M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
         Arrays.fill(info, -1);
         while (M-- > 0) {
             str = br.readLine().split(" ");
-            int a = Integer.parseInt(str[0]);
-            int b = Integer.parseInt(str[1]);
-            add(b, a);
+            int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
+            add(b, a);  // a比b高
             cout[a]++;
         }
 
@@ -80,14 +77,14 @@ public class Main {
                     dist[t] = Math.max(dist[t], dist[cur]+1);
                 }
             }
-            
+
             int res = 0;
             for (int i = 1; i <= N; i++) res += dist[i];
             System.out.println(res);
         }
     }
 
-    static boolean topsort() {
+    boolean topsort() {
         Queue<Integer> queue = new LinkedList<>();
         for (int i = 1; i <= N; i++) {
             if (cout[i] == 0) {
@@ -106,10 +103,10 @@ public class Main {
                 }
             }
         }
-        return qidx == N;
+        return qidx == N;  // 非 所有人能构成拓扑排序
     }
 
-    static void add(int a, int b) {
+    void add(int a, int b) {
         from[idx]  = info[a];
         to[idx] = b;
         info[a] = idx++;

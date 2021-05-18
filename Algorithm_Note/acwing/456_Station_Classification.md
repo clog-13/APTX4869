@@ -1,12 +1,4 @@
-# \456. 车站分级
-
-- [  题目](https://www.acwing.com/problem/content/description/458/)
-- [  提交记录](https://www.acwing.com/problem/content/submission/458/)
-- [  讨论](https://www.acwing.com/problem/content/discussion/index/458/1/)
-- [  题解](https://www.acwing.com/problem/content/solution/458/1/)
-- [  视频讲解](https://www.acwing.com/problem/content/video/458/)
-
-
+# 456. 车站分级
 
 一条单向的铁路线上，依次有编号为1, 2, …, n 的n个火车站。
 
@@ -18,7 +10,7 @@
 
 其中，前4趟车次均满足要求，而第5趟车次由于停靠了3号火车站（2级）却未停靠途经的6号火车站（亦为2级）而不满足要求。
 
-![](C:\APTX4869\Algorithm_Note\acwing\pic\456.jpg)
+![](pic\456.jpg)
 
 现有m趟车次的运行情况（全部满足要求），试推算这n个火车站至少分为几个不同的级别。
 
@@ -26,7 +18,7 @@
 
 第一行包含 2 个正整数 n, m，用一个空格隔开。
 
-第 i + 1 行（1 ≤ i ≤ m）中，首先是一个正整数 sisi（2 ≤ si ≤ n），表示第 i 趟车次有 sisi 个停靠站；接下来有sisi个正整数，表示所有停靠站的编号，从小到大排列。
+第 i + 1 行（1 ≤ i ≤ m）中，首先是一个正整数 si（2 ≤ si ≤ n），表示第 i 趟车次有 si 个停靠站；接下来有si个正整数，表示所有停靠站的编号，从小到大排列。
 
 每两个数之间用一个空格隔开。输入保证所有的车次都满足要求。
 
@@ -36,7 +28,7 @@
 
 #### 数据范围
 
-1≤n,m≤10001≤n,m≤1000
+1≤n,m≤1000
 
 #### 输入样例：
 
@@ -59,62 +51,59 @@
 
 非停靠站＜停靠站
 
-**在之前车次停靠的站 < 在后面车次不停靠的起始站（拓扑的关键）**
+**之前车次停靠的站 < 之后车次不停靠的站（拓扑的关键）**
 
 ```java
 import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int maxN = 2010, maxM = 1000010;
-    static int N, M;
-    static int[] info = new int[maxN];
-    static int[] from = new int[maxM];
-    static int[] to = new int[maxM];
-    static int[] graph = new int[maxM];
-    static int idx = 0, qidx = 0;
-    static int[] d = new int[maxN];
-    static int[] qv = new int[maxN];
-    static int[] dist = new int[maxN];
-    static boolean[] vis = new boolean[maxN];
+    int N, M, maxN = 2010, maxM = 1000010, idx, qidx;
+    int[] info = new int[maxN];
+    int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
+    int[] d = new int[maxN], qv = new int[maxN], dist = new int[maxN];
+    boolean[] vis = new boolean[maxN];
 
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]);
-        M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
         Arrays.fill(info, -1);
         for (int i = 1; i <= M; i++) {
             Arrays.fill(vis, false);
             str = br.readLine().split(" ");
-            int start = N,end = 1;
+            int start = N, end = 1;
             for (int j = 1; j < str.length; j++) {
                 int x = Integer.parseInt(str[j]);
-                start = Math.min(start, x);
-                end = Math.max(end, x);
+                start = Math.min(start, x); end = Math.max(end, x);
                 vis[x] = true;
             }
 
             int ver = N + i;
             for (int j = start; j <= end; j++) {
-                if (vis[j]) {
-                    add(ver, j,1);   // 虚拟结点向该点连一条权值为1的边
-                    d   [j]++;
-                } else {
-                    add(j, ver,0);   // 该点向虚拟结点连一条权值为0的边
+                if (vis[j]) {  // 停靠点
+                    add(ver, j, 1);   // 虚拟结点 向 停靠点 连一条权值为1的边
+                    d[j]++;
+                } else {  // 非停靠点
+                    add(j, ver, 0);   // 非停点 向 虚拟结点 连一条权值为0的边
                     d[ver]++;
                 }
             }
         }
 
         topsort();
-        for (int i = 1; i <= N; i++) dist[i] = 1;
-        for (int i = 0; i < N+M; i++) {
+
+        for (int i = 1; i <= N; i++) dist[i] = 1;  // 防止所有站都停靠
+        for (int i = 0; i <= N+M; i++) {
             int cur = qv[i];
             for (int j = info[cur]; j != -1; j = from[j]) {
                 int t = to[j];
-                dist[t] = Math.max(dist[t], dist[cur] + graph[j]);
+                dist[t] = Math.max(dist[t], dist[cur] + val[j]);
             }
         }
         int res = 0;
@@ -122,18 +111,18 @@ public class Main {
         System.out.println(res);
     }
 
-    private static void topsort() {
+    void topsort() {
         Queue<Integer> queue = new LinkedList<>();
         for (int i = 1; i <= N+M; i++) {
-            if (d[i] == 0) {
+            if (d[i] == 0) {  // 全部班次都没有停靠过的点 || 全停靠的班次的虚拟节点
                 queue.add(i);
                 qv[qidx++] = i;
             }
         }
 
         while (!queue.isEmpty()) {
-            int cur = queue.poll();
-            for (int i = info[cur]; i != -1; i = from[i]) { // 遍历该节点为起始的所有边
+            int cur = queue.poll();  // 遍历该节点为起始的所有边
+            for (int i = info[cur]; i != -1; i = from[i]) {
                 int t = to[i];
                 if (--d[t] == 0) {
                     queue.add(t);
@@ -143,10 +132,10 @@ public class Main {
         }
     }
 
-    private static void add(int a,int b,int c) {
+    void add(int a, int b, int c) {
         from[idx] = info[a];
         to[idx] = b;
-        graph[idx] = c;
+        val[idx] = c;
         info[a] = idx++;
     }
 }

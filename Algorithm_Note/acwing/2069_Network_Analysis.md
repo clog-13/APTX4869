@@ -35,9 +35,7 @@
 
 #### 数据范围
 
-1≤n≤10000,
-1≤m≤105,
-1≤t≤100
+1≤n≤10000, 1≤m≤105, 1≤t≤100
 
 #### 输入样例：
 
@@ -67,35 +65,32 @@
 import java.io.*;
 
 public class Main {
-    static int N, M, maxN = 10010;
+    static int N, M, maxN = 20010;
     static int[] p = new int[maxN], res = new int[maxN];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]);
-        M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
-        for (int i = 1; i <= N; i++) p[i] = i;
+        for (int i = 0; i < maxN; i++) p[i] = i;
+        int root = N;
         while (M-- > 0) {
             str = br.readLine().split(" ");
             int op= Integer.parseInt(str[0]);
-            int a = Integer.parseInt(str[1]);
-            int b = Integer.parseInt(str[2]);
+            int a = Integer.parseInt(str[1]), b = Integer.parseInt(str[2]);
 
             if (op == 1) {
                 a = find(a); b = find(b);
                 if (a != b) {
-                    res[a] -= res[b];
-                    p[a] = b;
+                    root++;
+                    p[a] = root; p[b] = root;
                 }
             } else {
-                a = find(a);
-                res[a] += b;
+                res[find(a)] += b;  // 新增公共父节点
             }
         }
-
 
         for(int i = 1; i <= N; i++) {
             if (i == find(i)) bw.write(res[i]+" ");
@@ -108,64 +103,56 @@ public class Main {
         if (p[n] == n || p[n] == p[p[n]]) return p[n];
         int t = find(p[n]);
         res[n] += res[p[n]];
-        p[n] = t;
-        return t;
+        return p[n] = t;
     }
 }
 ```
-
-
 
 ```java
 import java.io.*;
 
 public class Main {
-    static int N, M, maxN = 20010;
+    static int N, M, maxN = 10010;
     static int[] p = new int[maxN], res = new int[maxN];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]);
-        M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
-        for (int i = 0; i < maxN; i++) p[i] = i;
-        int root = N;
+        for (int i = 1; i <= N; i++) p[i] = i;
         while (M-- > 0) {
             str = br.readLine().split(" ");
             int op= Integer.parseInt(str[0]);
-            int a = Integer.parseInt(str[1]);
-            int b = Integer.parseInt(str[2]);
+            int a = Integer.parseInt(str[1]), b = Integer.parseInt(str[2]);
 
-            if (op == 1) {
+
+            if (op == 1) {  // 连接
                 a = find(a); b = find(b);
-                if (a != b) {
-                    root++;
-                    p[a] = root; p[b] = root;
+                if (a != b) {  // 后面向下更新时会连同连接前的值向下更新，所以要先减去防止重复
+                    res[a] -= res[b];  // 亲子节点储存父节点的额外值（连接前的值）
+                    p[a] = b;
                 }
-            } else {
-                a = find(a);
-                res[a] += b;
+            } else {  // 发送
+                res[find(a)] += b;
             }
         }
 
-
-        for(int i = 1; i <= N; i++) {
-            if (i == find(i)) bw.write(res[i]+" ");
-            else bw.write(res[i]+res[find(i)]+" ");
+        for(int i = 1; i <= N; i++) {  // find最后统一再更新一次值
+            if (i == find(i)) bw.write(res[i] + " ");
+            else bw.write(res[i] + res[find(i)] + " ");
         }
         bw.flush(); bw.close();
     }
 
     private static int find(int n) {
-        if (p[n] != n) {
-            if (p[n] == p[p[n]]) return p[n];
-            int t = find(p[n]);
-            res[n] += res[p[n]];
-            p[n] = t;
-        }
-        return p[n];
+        // 父节点（可删去） 或 亲子节点 （配合 连接 操作）
+        if (p[n] == n || p[n] == p[p[n]]) return p[n];
+        int t = find(p[n]);
+        res[n] += res[p[n]];  // 父值往下传
+        p[n] = t;  // 压缩路径
+        return t;
     }
 }
 ```
@@ -179,15 +166,13 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextInt(); M = sc.nextInt();
-        sc.nextLine();
+        N = sc.nextInt(); M = sc.nextInt(); sc.nextLine();
 
         UnionFind uf = new UnionFind(N);
         while (M-- > 0) {
             String[] str = sc.nextLine().split(" ");
             int op = Integer.parseInt(str[0]);
-            int a = Integer.parseInt(str[1]);
-            int b = Integer.parseInt(str[2]);
+            int a = Integer.parseInt(str[1]), b = Integer.parseInt(str[2]);
             if (op == 1) uf.union(a, b);
             else uf.add(a, b);
         }
@@ -232,3 +217,4 @@ public class Main {
 }
  ```
 
+​	
