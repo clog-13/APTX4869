@@ -49,20 +49,28 @@ class Main {
         for (int i = 1; i <= N; i++) brr[i] = sc.nextInt();
 
         for (int i = 1; i <= N; i++) {
-            int max = 1;  // a里以b[i]结尾的最长(公共上升子序列)长度 + 1(当前a[i])
+            int max = 1;  // a里以b[i](==a[i])结尾的最长(公共上升子序列)长度 + 1
             for (int j = 1; j <= N; j++) {
-                dp[i][j] = dp[i-1][j];  
+                dp[i][j] = dp[i-1][j];  // dp[i][j]:arr[i]brr[j]的LCAS
                 if (brr[j] < arr[i]) max = Math.max(max, dp[i-1][j] + 1);
-                if (brr[j]== arr[i]) dp[i][j] = max; 
+                if (brr[j]== arr[i]) dp[i][j] = max;  // lCAS:相同时才能更新
             }
         }
-        // 最长上升子序列 的 二維數組DP寫法
+        // LAS 的 二位数组DP写法
         // for (int i = 1; i <= N; i++) {
         //     int max = 1;
         //     for (int j = 1; j <= N; j++) {
         //         dp[i][j] = dp[i-1][j];
         //         if (arr[j] < arr[i]) max = Math.max(max, dp[i-1][j] + 1);
-        //         if (j <= i) dp[i][i] = max;
+        //         dp[i][i] = max;  // 这里j>i时就可以退出了
+        //     }
+        // }
+
+        // LCS 的 二维数组DP写法
+        // for (int i = 1; i <= N; i++) {
+        //     for (int j = 1; j <= M; j++) {
+        //         if (c1[i] == c2[j]) dp[i][j] = dp[i-1][j-1] + 1;
+        //         else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
         //     }
         // }
 

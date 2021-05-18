@@ -26,9 +26,7 @@ X星球的某个大奖赛设了 M 级奖励。
 
 #### 数据范围
 
-0<N<100
-0<Xi<10^12
-数据保证一定有解。
+0<N<100, 0<Xi<10^12, 数据保证一定有解。
 
 #### 输入样例1：
 
@@ -73,36 +71,35 @@ X星球的某个大奖赛设了 M 级奖励。
 
 ## GCD + 更相减损术
 
+更相减损术: 指数最大公约数（也是最大公约数）
+
 ```java
 import java.util.*;
 
 class Main {
     static int maxN = 110;
-    static long[] arr;
-    static long[] fmq = new long[maxN], fzq = new long[maxN];
+    static long[] arr, fmq = new long[maxN], fzq = new long[maxN];
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
+        int N = sc.nextInt(), idx = 0;
         arr = new long[N];
-        for (int i = 0; i < N; i++) {
-            arr[i] = sc.nextLong();
-        }
+        for (int i = 0; i < N; i++) arr[i] = sc.nextLong();
+
         Arrays.sort(arr);
-        int idx = 0;
         for (int i = 1; i < N; i++) {
-            if (arr[i] != arr[i-1]) {   // arr[0] 可以换成 arr[i-1]
-                long d = gcd(arr[0], arr[i]);  // d>1, 因为d必是 q^x 的形式
-                fmq[idx] = arr[i] / d;  // 除去 a0
-                fzq[idx] = arr[0] / d;  // 除去 a0
-                idx++;
+            if (arr[i] != arr[i-1]) {  // 判重
+                long d = gcd(arr[0], arr[i]);  // arr[0] 可以换成 arr[i-1]
+                fmq[idx] = arr[i] / d;  // a0 * q^(x+y) / a0 * q^k
+                fzq[idx] = arr[0] / d;  // a0 * q^(x)   / a0 * q^k
+                idx++;  // q^(x+y-k) / q^(x-k)
             }
         }
 
         long rm = fmq[0], rz = fzq[0];
         for (int i = 1; i < idx; i++) {
-            rm = gcd_sub(rm, fmq[i]);  // 求fm^x1, fm^x2, ...的最大公约数
-            rz = gcd_sub(rz, fzq[i]);  // 求fz^x1, fz^x2, ...的最大公约数
+            rm = gcd_sub(rm, fmq[i]);  // 指数最大公约数
+            rz = gcd_sub(rz, fzq[i]);  // q^(x-k1), q^(x-k2), q^(x-k3) 指数的最大公约数
         }
         System.out.println(rm+"/"+rz);
     }
@@ -118,7 +115,7 @@ class Main {
         }
 
         if (tb == 1) return ta;
-        return gcd_sub(tb, ta/tb);
+        return gcd_sub(tb, ta/tb);  // 两个数的幂次减，就是两个数相除
     }
 }
 ```

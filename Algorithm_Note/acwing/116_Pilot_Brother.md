@@ -6,7 +6,7 @@
 
 只有当所有把手都打开时，冰箱才会打开。
 
-把手可以表示为一个 4×4 的矩阵，您可以改变任何一个位置 [i,j][i,j] 上把手的状态。
+把手可以表示为一个 4×4 的矩阵，您可以改变任何一个位置 \[i,j\] 上把手的状态。
 
 但是，这也会使得第 i 行和第 j 列上的所有把手的状态也随着改变。
 
@@ -63,7 +63,16 @@ import java.util.*;
 public class Main {
     static int[][] change = new int[4][4];
     public static void main(String[] args) {
-        for (int i = 0; i < 4; i++) {        // 初始化 翻转辅助表
+        Scanner sc = new Scanner(System.in);
+        int state = 0;
+        for (int i = 0; i < 4; i++) {
+            String tmp = sc.nextLine();
+            for (int j = 0; j < 4; j++) {  // 位 记录原始数据
+                if(tmp.charAt(j) == '+') state |= 1<<(i*4+j);
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {        // 初始化 翻转辅助表 (改变state)
             for (int j = 0; j < 4; j++) {
                 for (int k = 0; k < 4; k++) {
                     change[i][j] |= (1 << (i*4+k)) | (1 << (k*4+j));  // 横向位置 | 竖向位置
@@ -71,20 +80,11 @@ public class Main {
             }
         }
 
-        Scanner sc = new Scanner(System.in);
-        int state = 0;
-        for (int i = 0; i < 4; i++) {
-            String tmp = sc.nextLine();
-            for (int j = 0; j < 4; j++) {
-                if(tmp.charAt(j) == '+') state |= 1<<(i*4+j);
-            }
-        }
-
         List<int[]> res = new ArrayList<>();
-        for (int op = 0; op < 1<<16; op++) {  // 枚举
+        for (int op = 0; op < 1<<16; op++) {  // 枚举 哪些点改变一次（前后顺序不影响结果）
             int cur = state;
             List<int[]> tmp = new ArrayList<>();
-            for (int i = 0; i < 4; i++) {     // 翻转不要求顺序
+            for (int i = 0; i < 4; i++) {  // 遍历所有点，看哪些点需要改变
                 for (int j = 0; j < 4; j++) {
                     if ((op>>(i*4+j) & 1) == 1) {
                         cur ^= change[i][j];
@@ -92,7 +92,7 @@ public class Main {
                     }
                 }
             }
-
+            // 目标状态 && 最小切换次数
             if (cur == 0 && (res.isEmpty() || tmp.size() < res.size())) {
                 res = new ArrayList<>(tmp);
             }
