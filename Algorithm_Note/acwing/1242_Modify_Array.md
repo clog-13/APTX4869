@@ -1,6 +1,6 @@
 # 1242. 修改数组
 
-给定一个长度为 NN 的数组 A=[A1,A2,⋅⋅⋅AN]，数组中有可能有重复出现的整数。
+给定一个长度为 N 的数组 A=[A1,A2,⋅⋅⋅AN]，数组中有可能有重复出现的整数。
 
 现在小明要按以下方法将其修改为没有重复整数的数组。
 
@@ -26,8 +26,7 @@
 
 #### 数据范围
 
-1≤N≤105,
-1≤Ai≤106
+1≤N≤105, 1≤Ai≤106
 
 #### 输入样例：
 
@@ -57,16 +56,15 @@ class Main {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt();
         for (int i = 0; i < maxN; i++) f[i] = i;
-
         for (int i = 0; i < N; i++) {
-            int t = find(sc.nextInt());
-            System.out.print(t+" ");
-            f[t]++;
+            int fa = find(sc.nextInt());
+            System.out.print(fa+" ");
+            f[fa]++;
         }
     }
     
     static int find(int x) {
-        if (f[x] != x) f[x] = find(f[x]);
+        if (x != f[x]) f[x] = find(f[x]);  // 路径压缩
         return f[x];
     }
 }
