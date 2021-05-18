@@ -70,23 +70,19 @@ class Main {
         dp[1][1][0][0] = 1;  // 第一格 不拿
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
+                if (i == 1 && j == 1) continue;
                 for (int c = 0; c <= K; c++) {  // 循环 c 个数
                     for (int v = 0; v <= 13; v++) {  // 循环 v 最高价值
                         int tmp = (dp[i-1][j][c][v]+dp[i][j-1][c][v]) % MOD;  // 不拿
 
-                        if (v == arr[i][j] && c > 0) {
-                            for (int s = 0; s < v; s++) {  // 拿
+                        if (v == arr[i][j] && c > 0) {  // 拿,则最高价值为当前arr[i][j]
+                            for (int s = 0; s < v; s++) {  // 从相邻两个方向c-1,s<arr[i][j]的情况转移
                                 tmp = (tmp+dp[i-1][j][c-1][s]) % MOD;
                                 tmp = (tmp+dp[i][j-1][c-1][s]) % MOD;
                             }
                         }
 
-                        dp[i][j][c][v] = (tmp+dp[i][j][c][v]) % MOD;
-                        // if ((i==1&&j==1) && ((c==1&&v==arr[1][1]) || (c==0&&v==0))) {
-                        //     dp[i][j][c][v] = (tmp+dp[i][j][c][v]) % MOD;
-                        // } else {
-                        //     dp[i][j][c][v] = tmp % MOD;
-                        // }
+                        dp[i][j][c][v] = tmp % MOD;
                     }
                 }
             }
