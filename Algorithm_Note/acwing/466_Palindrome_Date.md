@@ -45,6 +45,8 @@
 
 
 
+## 模拟
+
 ```c++
 #include <cstdio>
 #include <cstring>
@@ -61,7 +63,6 @@ bool check(int date) {
     int day = date % 100;
 
     if (!month || month > 13 || !day) return false;
-
     if (month != 2 && day > months[month]) return false;
     if (month == 2) {
         bool leap = year % 4 == 0 && year % 100 || year % 400 == 0;
@@ -76,11 +77,10 @@ int main() {
     cin >> date1 >> date2;
 
     int res = 0;
-    for (int i = 0; i < 10000; i ++ ) {
-        int x = i, r = i;
-        for (int j = 0; j < 4; j ++ ) r = r * 10 + x % 10, x /= 10;
-
-        if (r >= date1 && r <= date2 && check(r)) res ++ ;
+    for (int i = 0; i < 10000; i++) {
+        int le = i, ri = i;
+        for (int j = 0; j < 4; j++) ri = ri * 10 + le % 10, le /= 10;
+        if (ri >= date1 && ri <= date2 && check(ri)) res++;
     }
 
     printf("%d\n", res);

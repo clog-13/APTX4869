@@ -49,26 +49,23 @@
 
 
 
+## 联通环 
+
 ```java
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int[] data = new int[N+1];
+        int N = sc.nextInt(), cout = 0;
+        int[] arr = new int[N+1], st = new int[N+1];
+        for (int i = 1; i <= N; i++) arr[i] = sc.nextInt();
         for (int i = 1; i <= N; i++) {
-            data[i] = sc.nextInt();
-        }
-
-        int cout = 0;
-        boolean[] st = new boolean[N+1];
-        for (int i = 1; i <= N; i++) {
-            if (!st[i]) {
-                cout++;  // 联通环数量
-                while (!st[i]) {
-                    st[i] = true;
-                    i = data[i];
+            if (st[i] == 0) {
+                cout++;  // 联通环数量，可以减少一次交换次数（环中有一个数会“被动”的交换到自己的位置）
+                while (st[i] == 0) {
+                    st[i] = 1;
+                    i = arr[i];
                 }
             }
         }
@@ -77,28 +74,24 @@ public class Main {
 }
 ```
 
-
-
 ```java
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int[] data = new int[N+1];
-        for (int i = 1; i <= N; i++) {
-            data[i] = sc.nextInt();
-        }
+        int N = sc.nextInt(), res = 0;
+        int[] arr = new int[N+1], st = new int[N+1];
+        for (int i = 1; i <= N; i++) arr[i] = sc.nextInt();
 
-        int res = 0;
-        boolean[] st = new boolean[N+1];
         for (int i = 1; i <= N; i++) {
-            if (!st[i]) res--;
-            while (!st[i]) {
-                res++;  // 交换次数
-                st[i] = true;
-                i = data[i];
+            if (st[i] == 0) {
+                res--;
+                while (st[i] == 0) {
+                    res++;  // 交换次数
+                    st[i] = 1;
+                    i = arr[i];
+                }
             }
         }
         System.out.println(res);
