@@ -72,11 +72,4 @@ public class SegmentTree_Sum {
         //下传点k的标记
         tr[k].lazy = 0;//记得清空点k的标记
     }
-
-
-
-
-
-
-
 }
