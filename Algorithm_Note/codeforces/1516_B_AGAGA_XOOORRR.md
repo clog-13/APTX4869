@@ -1,6 +1,6 @@
 # B. AGAGA XOOORRR
 
-Baby Ehab is known for his love for a certain operation. He has an array aa of length nn, and he decided to keep doing the following operation on it:
+Baby Ehab is known for his love for a certain operation. He has an array a of length n, and he decided to keep doing the following operation on it:
 
 - he picks 2 adjacent elements; he then removes them and places a single integer in their place: their [bitwise XOR](https://en.wikipedia.org/wiki/Bitwise_operation#XOR). Note that the length of the array decreases by one.
 
@@ -74,8 +74,7 @@ public class Main {
             if (res) bw.write("YES\n");
             else bw.write("NO\n");
         }
-        bw.flush();
-        bw.close();
+        bw.flush(); bw.close();
     }
 }
 ```
@@ -96,13 +95,10 @@ public class Main {
             int N = Integer.parseInt(br.readLine());
             String[] str = br.readLine().split(" ");
             int xr = 0;
-            for (int i = 0; i < N; i++) {
-                xr ^= Integer.parseInt(str[i]);
-            }
+            for (int i = 0; i < N; i++) xr ^= Integer.parseInt(str[i]);
 
-            if (xr == 0) {
-                bw.write("YES\n");
-            } else {
+            if (xr == 0) bw.write("YES\n");
+            else {
                 int t = 0, cnt = 0;
                 for (int i = 0; i < N; i++) {
                     t ^= Integer.parseInt(str[i]);
@@ -115,8 +111,7 @@ public class Main {
                 else bw.write("NO\n");
             }
         }
-        bw.flush();
-        bw.close();
+        bw.flush(); bw.close();
     }
 }
 ```

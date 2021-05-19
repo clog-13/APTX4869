@@ -43,7 +43,7 @@
 
 ##  前缀和
 
-矩形不只是正方形, 注意本题 “用小的 n 做 n2 复杂度”的优化思想
+矩形不只是正方形, 注意本题 “用小的 n 做 n^2^ 复杂度”的优化思想
 
 ```java
 import java.io.*;
@@ -58,8 +58,7 @@ public class Main {
             for (int i = 1; i <= N; i++) {
                 String[] arr = br.readLine().split(" ");
                 for (int j = 1; j <= M; j++) {
-                    int n = Integer.parseInt(arr[j-1]);
-                    preSum[i][j] = preSum[i-1][j] + n;
+                    preSum[i][j] = preSum[i-1][j] + Integer.parseInt(arr[j-1]);
                 }
             }
 
