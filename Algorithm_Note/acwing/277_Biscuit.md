@@ -78,7 +78,7 @@ class Main {
         dp[0][0] = 0;  // dp[i][j]:前i个人分j个饼干的最小怒气值
         for (int i = 1; i <= N; i++) {  // 前i个人
             for (int j = 1; j <= M; j++) {  // 饼干数量
-                if (j >= i) dp[i][j] = dp[i][j-i];  // 所有人都增加或減少相同數量 怒氣值不會變化
+                if (j >= i) dp[i][j] = dp[i][j-i];  // 所有人都增加或減少相同數量 怒气值不会变化
                 for (int k = 1; k <= i && k <= j; k++) {  // K:只有一个糖果 的孩子 的数量
                     dp[i][j] = Math.min(dp[i][j], dp[i-k][j-k] + (preSum[i]-preSum[i-k])*(i-k));
                 }
@@ -88,7 +88,7 @@ class Main {
 
         int i = N, j = M, h = 0;
         while (i>0 && j>0) {
-            if (j>=i && dp[i][j] == dp[i][j-i]) {  // i
+            if (j>=i && dp[i][j] == dp[i][j-i]) {  // j-i
                 j -= i;
                 h++;  // base高度
             } else {

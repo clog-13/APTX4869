@@ -58,7 +58,7 @@
 import java.util.*;
 class Main {
     int L, N, maxL = 210, maxN = 1010, INF = 0x3f3f3f3f;
-    int[][] w = new int[maxL][maxL];
+    int[][] graph = new int[maxL][maxL];
     int[] q = new int[maxN];
     int[][][] dp = new int[maxN][maxL][maxL];
 
@@ -73,7 +73,7 @@ class Main {
 
         for (int i = 1; i <= L; i++) {
             for (int j = 1; j <= L; j++) {
-                w[i][j] = sc.nextInt();
+                graph[i][j] = sc.nextInt();
             }
         }
         for (int i = 1; i <= N; i++) q[i] = sc.nextInt();
@@ -84,16 +84,16 @@ class Main {
         }
 
         q[0] = 1;
-        dp[0][2][3] = 0;  // dp[i][x][y]:服务员分别在q[i], x, y 的所有方案的最小值
-        for (int i = 0; i < N; i++) {
+        dp[0][2][3] = 0;  // dp[i][x][y]:服务员到 q[i], x, y 的最小值，注意 dp[i][][]会对映dp[q[i]][][]
+        for (int i = 0; i < N; i++) {  // [][][]不是对应的三个员工的位置，只代表三个员工有人在q[],x,y三个位置
             int u = q[i], to = q[i+1];  // 注意这里的u, 是代码的一个难点
             for (int x = 1; x <= L; x++) {
                 for (int y = 1; y <= L; y++) {
-                    if (u==x || u==y || x==y) continue;
-                    int cur = dp[i][x][y];
-                    dp[i+1][x][y] = Math.min(dp[i+1][x][y], cur + w[u][to]);
-                    dp[i+1][u][y] = Math.min(dp[i+1][u][y], cur + w[x][to]);
-                    dp[i+1][x][u] = Math.min(dp[i+1][x][u], cur + w[y][to]);
+                    if (u==x || u==y || x==y) continue;  // 不允许在同样的位置出现两个员工
+                    int preVal = dp[i][x][y];
+                    dp[i+1][x][y] = Math.min(dp[i+1][x][y], preVal + graph[u][to]);  // 派u位置的去(u=q[i])
+                    dp[i+1][u][y] = Math.min(dp[i+1][u][y], preVal + graph[x][to]);  // 派x位置的去
+                    dp[i+1][x][u] = Math.min(dp[i+1][x][u], preVal + graph[y][to]);  // 派y位置的去
                 }
             }
         }
@@ -101,8 +101,8 @@ class Main {
         int res = INF;
         for (int x = 1; x <= L; x++) {
             for (int y = 1; y <= L; y++) {
-                if (q[N]==x || q[N]==y || x==y) continue;
-                res = Math.min(res, dp[N][x][y]);
+                if (q[N]==x || q[N]==y || x==y) continue;    // 不允许在同样的位置出现两个员工
+                res = Math.min(res, dp[N][x][y]);  // 必须有人在q[N],其他两个员工位置不影响
             }
         }
         System.out.println(res);

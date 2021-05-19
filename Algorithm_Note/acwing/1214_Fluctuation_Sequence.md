@@ -38,33 +38,37 @@
 
 两个满足条件的数列分别是2 4 1 3和7 4 1 -2。
 
+
+
+## DP
+
 ```java
 import java.util.Scanner;
 
 public class Main {
-    static int MOD = 100000007;
+    static int N, MOD = 100000007;
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt(), S = sc.nextInt();
-        int A = sc.nextInt(), B = sc.nextInt();
-        // S%=N; A%=N; B%=N;  // 这里可以取余，也可以不取
+        N = sc.nextInt();
+        int S = sc.nextInt(), A = sc.nextInt(), B = sc.nextInt();
 
-        int[][] dp = new int[N][1010];
-        dp[0][0] = 1;   // dp[i][j]: 前 i 项总和 除以n的余数是 j 的方案数
+        int[][] f = new int[N][1010];
+        f[0][0] = 1;   // dp[i][j]: 前 i 项总和除以N的余数是 j 的方案数
         for (int i = 1; i < N; i++) {
             for (int j = 0; j < N; j++) {  // 这里 j 的遍历顺序可以随意
                 // 总和: S = nx + (n-1)d1 + (n-2)d2 + (n-3)d3 + ... + dn
                 // 可得: x = (S - (n-1)d1 + (n-2)d2 + (n-3)d3 + ... + dn) / n
                 // 最后一项 加A 或者 减B
-                dp[i][j] = (dp[i-1][getMOD(j - (N-i)*A, N)] + dp[i-1][getMOD(j + (N-i)*B, N)]) % MOD;
+                f[i][j] = (f[i-1][getMOD(j - (N-i)*A)] + f[i-1][getMOD(j + (N-i)*B)]) % MOD;
             }
         }
-        System.out.println(dp[N-1][getMOD(S, N)]);
+        System.out.println(f[N-1][getMOD(S)]);
     }
 
     // 求余 是为了能够压缩，同时不漏，不重
-    private static int getMOD(int a, int b) {
-        return (a % b + b) % b;
+    static int getMOD(int a) {
+        return (a % N + N) % N;
     }
 }
 ```

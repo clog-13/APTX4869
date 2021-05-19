@@ -40,7 +40,7 @@
 
 1、f[i1, j1, i2, j2]表示所有从 (1,1) 分别走到(i1,j1),(i2,j2)的路径的最大值
 
-2、由于走两次可以看成是两条路径同时走，因此k表示两条路线当前走到的各自的横纵坐标之和k \== i1 + j1 \== i2 + j2
+2、由于走两次可以看成是两条路径同时走，因此k表示两条路线当前走到的各自的横纵坐标之和k == i1 + j1 == i2 + j2
 
 注意：在i1 + j1 \== i2 + j2时，两条路径走到的当前格子可能（只是可能）重合
 
@@ -64,18 +64,18 @@ f\[k]\[i1]\[i2] 表示从(1, 1)和(1, 1)分别走到(i1, k-i1)和(i2, k-i2)的�
 import java.util.*;
 
 public class Main {
-    int maxN = 55;
-    int R, C;
+    int R, C, maxN = 55;
     int[][] cost = new int[maxN][maxN];
     Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        R = sc.nextInt();
-        C = sc.nextInt();
+        R = sc.nextInt(); C = sc.nextInt();
 
-        for (int i = 1 ; i <= R ; i++)
-            for (int j = 1 ; j <= C ; j++)
+        for (int i = 1 ; i <= R ; i++) {
+            for (int j = 1 ; j <= C ; j++) {
                 cost[i][j] = sc.nextInt();
+            }
+        }
 
         int res = dp1();
         // int res = dp2();
@@ -86,15 +86,14 @@ public class Main {
     int dp1() {
         int[][][] f = new int[maxN << 1][maxN][maxN];
 
-        for (int k = 2 ; k <= R+C ; k++) {
-            // le:至少已經走了 C 步，則至少需要從 k-C 行開始
-            // ri:1 <= x <= R,
-            int le = Math.max(1, k-C);
-            int ri = Math.min(k-1, R);
+        for (int k = 2 ; k <= R+C ; k++) {  //  
+            // le:因为k-y = x。所以k大于C时，y最大为C
+            // ri:1 <= x <= R
+            int le = Math.max(1, k-C)， ri = Math.min(k-1, R);
             for (int x1 = le; x1 <= ri; x1++) {
                 for (int x2 = le; x2 <= ri; x2++) {
-                    int v = cost[x1][k-x1];
-                    if (x1 != x2) v += cost[x2][k-x2];
+                    int preVal = cost[x1][k-x1];
+                    if (x1 != x2) preVal += cost[x2][k-x2];
 
                     // k = x1+y1 = x2+y2
                     int t = 0;
@@ -102,7 +101,7 @@ public class Main {
                     t = Math.max(t, f[k-1][x1][x2-1]);    // dp[x1][y1-1][x2-1][y2]
                     t = Math.max(t, f[k-1][x1-1][x2]);    // dp[x1-1][y1][x2][y2-1]
                     t = Math.max(t, f[k-1][x1-1][x2-1]);  // dp[x1-1][y1][x2-1][y2]
-                    f[k][x1][x2] = t + v;
+                    f[k][x1][x2] = t + preVal;
                 }
             }
         }
@@ -110,22 +109,22 @@ public class Main {
         return f[C+R][R][R];
     }
 
-    int dp2(){
+    int dp2() {
         int[][][][] f = new int[maxN][maxN][maxN][maxN];
 
         for (int x1 = 1; x1 <= R; x1++) {
             for (int x2 = 1; x2 <= R; x2++) {
                 for (int y1 = 1; y1 <= C; y1++) {
                     for (int y2 = 1; y2 <= C; y2 ++) {
-                        int v = cost[x1][y1];
-                        if (x1 != x2 && y1 != y2) v += cost[x2][y2];
-                        
+                        int preVal = cost[x1][y1];
+                        if (x1 != x2 && y1 != y2) preVal += cost[x2][y2];
+
                         int t = 0;
                         t = Math.max(t, f[x1-1][y1][x2-1][y2]);
                         t = Math.max(t, f[x1][y1-1][x2-1][y2]);
                         t = Math.max(t, f[x1-1][y1][x2][y2-1]);
                         t = Math.max(t, f[x1][y1-1][x2][y2-1]);
-                        f[x1][y1][x2][y2] = t + v;
+                        f[x1][y1][x2][y2] = t + preVal;
                     }
                 }
             }
