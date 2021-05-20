@@ -16,7 +16,7 @@
 
 #### 数据范围
 
-1≤n≤20001≤n≤2000, 1≤m≤10000, 图中涉及边长绝对值均不超过 10000。
+1≤n≤2000, 1≤m≤10000, 图中涉及边长绝对值均不超过 10000。
 
 #### 输入样例：
 
@@ -41,45 +41,46 @@ Yes
 import java.util.*;
 class Main {
     int N, M, idx, maxN = 2010, maxM = 10010, INF = 0x3f3f3f3f;
-    int[] dist = new int[maxN], cout = new int[maxN], vis = new int[maxN];
+    int[] info = new int[maxN], dist = new int[maxN], cout = new int[maxN];
     int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
-    int[] info = new int[maxN];
+    boolean[] vis = new boolean[maxN];
 
     public static void main(String[] args) {
         new Main().init();
     }
-    
+
     void init() {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); M = sc.nextInt();
+
         Arrays.fill(info, -1);
         while (M-- > 0) {
             int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();
             add(a, b, c);
         }
-        
+
         if (spfa()) System.out.println("No");
         else System.out.println("Yes");
     }
 
     boolean spfa() {
-        Arrays.fill(vis, 1);
         Queue<Integer> queue = new LinkedList<>();
-        for (int i = 1; i <= N; i++) queue.add(i);
+        // 为了遍历到所有的点, 设有一个超级虚拟源点, dist[ALL] = 0 (虚拟源点权值为0)
+        for (int i = 1; i <= N; i++) queue.add(i);  
 
         while (!queue.isEmpty()) {
             int cur = queue.poll();
-            vis[cur] = 0;
+            vis[cur] = false;
 
             for (int i = info[cur]; i != -1; i = from[i]) {
                 int t = to[i];
                 if (dist[t] > dist[cur]+val[i]) {
                     dist[t] = dist[cur]+val[i];
                     cout[t] = cout[cur]+1;
-					// 从虚拟源点到t至少经过n条边时，表示一定有点是重复使用(不是t有n条边)
+                    // 从虚拟源点到t至少经过n条边时，表示一定有点是重复使用(总共N个点)
                     if (cout[t] >= N) return false;
-                    if (vis[t] == 0) {
-                        vis[t] = 1;
+                    if (!vis[t]) {
+                        vis[t] = true;
                         queue.add(t);
                     }
                 }
