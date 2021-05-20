@@ -69,51 +69,49 @@ n≤1000,m≤20000,  1≤s≤n,  0<w<n,  0<t≤1000
 
 ## 最短路 （超级源点）
 
-也可以反转边，从尾找到头
+也可以反转边，从尾(E)找到头(虚拟源点)
 
 ```java
 import java.util.*;
 class Main {
-    int N, M, S, idx, maxN = 1010, maxM = 40010, INF = 0x3f3f3f3f;
-    int[] dist = new int[maxN], vis = new int[maxN], info = new int[maxN];
+    int N, M, E, idx, maxN = 1010, maxM = 40010, INF = 0x3f3f3f3f;
+    int[] dist = new int[maxN], info = new int[maxN], vis = new int[maxN];
     int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
-    
+
     public static void main(String[] args) {
         new Main().init();
     }
-    
+
     void init() {
         Scanner sc = new Scanner(System.in);
         while (sc.hasNext()) {
-            N = sc.nextInt(); M = sc.nextInt(); S = sc.nextInt();
+            N = sc.nextInt(); M = sc.nextInt(); E = sc.nextInt();
             Arrays.fill(info, -1); idx = 0;
             while (M-- > 0) {
                 int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();
-                add(a, b, c);
+                add(a, b, c);  // 有向边
             }
-            int T = sc.nextInt();
-            while (T-- > 0) {  // 超级源点
-                add(0, sc.nextInt(), 0);
-            }
-            
-            dij();
-            
-            if (dist[S] == INF) System.out.println(-1);
-            else System.out.println(dist[S]);
+            int T = sc.nextInt();  // 超级虚拟源点 (琪琪可以选择一个车站作为始发站)
+            while (T-- > 0) add(0, sc.nextInt(), 0);
+
+            dijk();
+
+            if (dist[E] == INF) System.out.println(-1);
+            else System.out.println(dist[E]);
         }
     }
-    
-    void dij() {
+
+    void dijk() {
         Arrays.fill(dist, INF); Arrays.fill(vis, 0);
         dist[0] = 0;
         PriorityQueue<Node> queue = new PriorityQueue<>();
-        queue.offer(new Node(0, 0));
+        queue.offer(new Node(0, 0));  // 虚拟源点
         while (!queue.isEmpty()) {
             Node cur = queue.poll();
             int id = cur.id;
             if (vis[id] == 1) continue;
             vis[id] = 1;
-            
+
             for (int i = info[id]; i != -1; i = from[i]) {
                 int t = to[i];
                 if (dist[t] > dist[id]+val[i]) {
@@ -123,20 +121,20 @@ class Main {
             }
         }
     }
-    
+
     void add(int a, int b, int c) {
         from[idx] = info[a];
         to[idx] = b;
         val[idx] = c;
         info[a] = idx++;
     }
-    
+
     static class Node implements Comparable<Node> {
         int id, dis;
         public Node(int i, int d) {
             id = i; dis = d;
         }
-        
+
         @Override
         public int compareTo(Node node) {
             return dis - node.dis;

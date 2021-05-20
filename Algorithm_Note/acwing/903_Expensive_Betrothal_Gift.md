@@ -26,11 +26,11 @@
 
 因此你需要在考虑所有的情况以后给他提供一个最好的方案。
 
-为了方便起见，我们把所有的物品从 1 开始进行编号，酋长的允诺也看作一个物品，并且编号总是 1。
+为了方便起见，我们把所有的物品从 1 开始进行编号，**酋长的允诺也看作一个物品，并且编号总是 1。**
 
 每个物品都有对应的价格 P，主人的地位等级 L，以及一系列的替代品Ti和该替代品所对应的”优惠” Vi。
 
-如果两人地位等级差距超过了 M，就不能”间接交易”。
+**如果两人地位等级差距超过了 M，就不能”间接交易”。**
 
 你必须根据这些数据来计算出探险家最少需要多少金币才能娶到酋长的女儿。
 
@@ -74,73 +74,76 @@
 
 
 
-## Dijkstra
+## SPFA
+
+没有好的起点时，可以建立虚拟头节点
 
 ```java
 import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int INF = 0x3f3f3f3f, maxN = 100010;
-    static int M, N, idx = 0;
-    static int[] from = new int[maxN], to = new int[maxN], v = new int[maxN], info = new int[maxN];
-    static int[] dist = new int[maxN], levels = new int[maxN];
-    static boolean[] vis = new boolean[maxN];
+    int N, M, idx, INF = 0x3f3f3f3f, maxN = 100010;
+    int[] from = new int[maxN], to = new int[maxN], val = new int[maxN];
+    int[] dist = new int[maxN], levels = new int[maxN], info = new int[maxN];
+    boolean[] vis = new boolean[maxN];
 
     public static void main(String[] args) throws IOException{
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        M = Integer.parseInt(str[0]);
-        N = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
         Arrays.fill(info, -1);
-        for (int i = 1; i <= N; i++) {
+        for (int i = 1; i <= M; i++) {
             str = br.readLine().split(" ");
-            add(0, i, Integer.parseInt(str[0]));
+            add(0, i, Integer.parseInt(str[0]));  // 虚拟起始节点
             levels[i] = Integer.parseInt(str[1]);
-            int size = Integer.parseInt(str[2]);
-            for (int j = 0; j < size; j++) {
+            int cnt = Integer.parseInt(str[2]);
+            for (int j = 0; j < cnt; j++) {  // 替代品
                 str = br.readLine().split(" ");
                 add(Integer.parseInt(str[0]), i, Integer.parseInt(str[1]));
             }
         }
 
         int res = INF;
-        for (int i = levels[1] - M; i <= levels[1]; i++) {
-            spfa(i, i+M);
+        for (int i = levels[1]; i <= levels[1] + N; i++) {
+            spfa(i - N, i);
             res = Math.min(res, dist[1]);
         }
         System.out.println(res);
     }
 
-    private static void spfa(int lo, int hi) {
+    void spfa(int lo, int hi) {
         Arrays.fill(dist, INF);
         dist[0] = 0;
         Queue<Integer> queue = new LinkedList<>();
-        queue.add(0);
+        queue.add(0);  // 虚拟节点为头节点
 
         while (!queue.isEmpty()) {
             int cur = queue.poll();
             vis[cur] = false;
             for (int i = info[cur]; i != -1; i = from[i]) {
                 int t = to[i];
-                if (lo <= levels[t] && levels[t] <= hi) {
-                    if (dist[t] > dist[cur] + v[i]) {
-                        dist[t] = dist[cur] + v[i];
-                        if (!vis[t]) {
-                            vis[t] = true;
-                            queue.add(t);
-                        }
+                if (levels[t] < lo || levels[t] > hi) continue;
+                if (dist[t] > dist[cur] + val[i]) {
+                    dist[t] = dist[cur] + val[i];
+                    if (!vis[t]) {
+                        vis[t] = true;
+                        queue.add(t);
                     }
                 }
             }
         }
     }
 
-    private static void add(int a, int b, int c) {
+    void add(int a, int b, int c) {
         from[idx] = info[a];
         to[idx] = b;
-        v[idx] = c;
+        val[idx] = c;
         info[a] = idx++;
     }
 }

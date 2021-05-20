@@ -1,7 +1,5 @@
 # 1134. 最短路计数
 
-
-
 给出一个 N 个顶点 M 条边的无向无权图，顶点编号为 1 到 N。
 
 问从顶点 1 开始，到其他每个点的最短路有几条。
@@ -20,7 +18,7 @@
 
 #### 数据范围
 
-1≤N≤105, 1≤M≤2×105
+1≤N≤10^5, 1≤M≤2×10^5
 
 #### 输入样例：
 
@@ -52,36 +50,32 @@
 ```java
 import java.util.*;
 class Main {
-    int maxN = 100010, maxM = maxN*4, MOD = 100003, INF = 0x3f3f3f3f;
-    int[] dist = new int[maxN], cout = new int[maxN], info = new int[maxN];
+    int N, M, idx, maxN = 100010, maxM = maxN*4, MOD = 100003, INF = 0x3f3f3f3f;
+    int[] dist = new int[maxN], res = new int[maxN], info = new int[maxN];
     int[] from = new int[maxM], to = new int[maxM];
-    int N, M, idx = 0;
-    
+
     public static void main(String[] args) {
-        new Main().init();   
+        new Main().init();
     }
-    
+
     void init() {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); M = sc.nextInt();
-        
         Arrays.fill(info, -1);
         while (M-- > 0) {
             int a = sc.nextInt(), b = sc.nextInt();
             add(a, b); add(b, a);
         }
-        
+
         dijkstra();
-        
-        for (int i = 1; i <= N; i++) {
-            System.out.println(cout[i]);
-        }
+
+        for (int i = 1; i <= N; i++) System.out.println(res[i]);
     }
-    
+
     void dijkstra() {
         Arrays.fill(dist, INF);
-        dist[1] = 0; cout[1] = 1;
-        
+        dist[1] = 0; res[1] = 1;
+
         Queue<Integer> queue = new LinkedList<>();
         queue.add(1);
         while(!queue.isEmpty()) {
@@ -90,15 +84,15 @@ class Main {
                 int t = to[i];
                 if (dist[t] > dist[cur]+1) {
                     dist[t] = dist[cur]+1;
-                    cout[t] = cout[cur];
                     queue.add(t);
+                    res[t] = res[cur];  // t点最短距离被更新, 方案数也要被更新
                 } else if (dist[t] == dist[cur]+1) {
-                    cout[t] = (cout[t]+cout[cur])%MOD;
+                    res[t] = (res[t]+res[cur]) % MOD;  // 累加方案数
                 }
             }
         }
     }
-    
+
     void add(int a, int b) {
         from[idx] = info[a];
         to[idx] = b;

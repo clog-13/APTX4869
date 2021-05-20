@@ -56,7 +56,8 @@ public class Dijkstra_Pro {
         PriorityQueue<PII> queue = new PriorityQueue<>((a, b) -> (a.dis - b.dis));
         queue.add(new PII(s, 0));
         while(!queue.isEmpty()) {
-            PII p = queue.poll(); int cur = p.id, dis = p.dis;
+            PII p = queue.poll(); 
+            int cur = p.id, dis = p.dis;
             
             if(vis[cur]) continue; vis[cur] = true;
 

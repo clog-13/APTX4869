@@ -20,7 +20,7 @@ C 国幅员辽阔，各地的资源分布情况各不相同，这就导致了同
 
 阿龙通过这样的贸易方式赚取旅费：他会选择一个经过的城市买入他最喜欢的商品——水晶球，并在之后经过的另一个城市卖出这个水晶球，用赚取的差价当做旅费。
 
-因为阿龙主要是来 C 国旅游，他决定这个贸易只进行最多一次，当然，在赚不到差价的情况下他就无需进行贸易。
+因为阿龙主要是来 C 国旅游，**他决定这个贸易只进行最多一次，当然，在赚不到差价的情况下他就无需进行贸易。**
 
 现在给出 n 个城市的水晶球价格，m 条道路的信息（每条道路所连接的两个城市的编号以及该条道路的通行情况）。
 
@@ -74,18 +74,20 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static int maxN = 100010, maxM = 2000010, INF = 0x3f3f3f3f;
-    static int N, M, idx = 0;
-    static boolean[] vis = new boolean[maxN];
-    static int[] info = new int[maxN], rnfo = new int[maxN], arr = new int[maxN];
-    static int[] from = new int[maxM], to = new int[maxM];
-    static int[] dmin = new int[maxN], dmax = new int[maxN];
+    int N, M, idx, maxN = 100010, maxM = 2000010, INF = 0x3f3f3f3f;
+    boolean[] vis = new boolean[maxN];
+    int[] info = new int[maxN], rnfo = new int[maxN], arr = new int[maxN];
+    int[] from = new int[maxM], to = new int[maxM];
+    int[] dmin = new int[maxN], dmax = new int[maxN];
 
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]);
-        M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
         str = br.readLine().split(" ");
         for (int i = 1; i <= N; i++) arr[i] = Integer.parseInt(str[i-1]);
@@ -93,22 +95,21 @@ public class Main {
         Arrays.fill(info, -1); Arrays.fill(rnfo, -1);
         while (M-- > 0) {
             str = br.readLine().split(" ");
-            int a = Integer.parseInt(str[0]);
-            int b = Integer.parseInt(str[1]);
+            int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
             int z = Integer.parseInt(str[2]);
-            add(a, b, true); add(b, a, false);
-            if (z == 2) { add(b, a, true); add(a, b, false); }
+            add(a, b, true); add(b, a, false);  // 单向边
+            if (z == 2) { add(b, a, true); add(a, b, false); }  // 双向边
         }
 
-        spfa(dmin, 1, info, true);  // 从 1 走到 i 的过程中，买入水晶球的最低价格 dmin[i]
-        spfa(dmax, N, rnfo, false); // 从 i 走到 n 的过程中，卖出水晶球的最高价格 dmax[i]
+        spfa(dmin, 1, info, true);  // 从 1 开始走，买入水晶球的最低价格 dmin[i]
+        spfa(dmax, N, rnfo, false); // 从 N 开始走，卖出水晶球的最高价格 dmax[i]
 
-        int res = 0;
+        int res = 0;  // [i]时最大价格和最低价格
         for (int i = 1; i <= N; i++) res = Math.max(res, dmax[i] - dmin[i]);
         System.out.println(res);
     }
 
-    private static void spfa(int[] dist, int start, int[] info, boolean flag) {
+    void spfa(int[] dist, int start, int[] info, boolean flag) {
         Arrays.fill(vis, false);
         if (flag) Arrays.fill(dist, INF);
         else Arrays.fill(dist, -INF);
@@ -124,8 +125,8 @@ public class Main {
             for (int i = info[cur]; i != -1; i = from[i]) {
                 int t = to[i];
 
-                if ((flag && dist[t] > Math.min(dist[cur], arr[t])) 
-                || (!flag && dist[t] < Math.max(dist[cur], arr[t]))) {
+                if ((flag && dist[t] > Math.min(dist[cur], arr[t]))
+                        || (!flag && dist[t] < Math.max(dist[cur], arr[t]))) {
                     if (flag) dist[t] = Math.min(dist[cur], arr[t]);
                     else dist[t] = Math.max(dist[cur], arr[t]);
 
@@ -138,7 +139,7 @@ public class Main {
         }
     }
 
-    private static void add(int a, int b, boolean d) {
+    void add(int a, int b, boolean d) {
         to[idx] = b;
         if (d) {
             from[idx] = info[a];
