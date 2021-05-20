@@ -66,37 +66,41 @@ n<30
 import java.io.*;
 
 public class Main {
-    static int N, maxN = 35;
-    static int[] arr = new int[maxN];
-    static int[][] dp = new int[maxN][maxN], root = new int[maxN][maxN];
+    int N, maxN = 35;
+    int[] arr = new int[maxN];
+    int[][] f = new int[maxN][maxN], root = new int[maxN][maxN];
 
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         String[] str = br.readLine().split(" ");
         for (int i = 1; i <= N; i++) arr[i] = Integer.parseInt(str[i-1]);
 
-        for (int len = 1; len <= N; len++) {
+        for (int len = 1; len <= N; len++) {  // 区间DP
             for (int le = 1; le+len-1 <= N; le++) {
                 int ri = le+len-1;
                 for (int mid = le; mid <= ri; mid++) {
-                    int ls = mid==le ? 1 : dp[le][mid-1];
-                    int rs = mid==ri ? 1 : dp[mid+1][ri];
-                    int sum = ls * rs + arr[mid];
-                    if (le == ri) sum = arr[mid];
-                    if (dp[le][ri] < sum) {
-                        dp[le][ri] = sum;
+                    int ls = mid==le ? 1 : f[le][mid-1];  // 取值来自f
+                    int rs = mid==ri ? 1 : f[mid+1][ri];  // 取值来自f
+                    int sum = ls * rs + arr[mid];  // 取值来自arr
+                    if (le == ri) sum = arr[mid];  // 取值来自arr
+                    if (f[le][ri] < sum) {
+                        f[le][ri] = sum;
                         root[le][ri] = mid;
                     }
                 }
             }
         }
 
-        System.out.println(dp[1][N]);
+        System.out.println(f[1][N]);
         dfs(1, N);
     }
 
-    private static void dfs(int le, int ri) {
+    void dfs(int le, int ri) {
         if (le > ri) return;
         int mid = root[le][ri];
         System.out.printf("%d ", mid);

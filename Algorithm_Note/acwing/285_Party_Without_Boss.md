@@ -59,11 +59,10 @@ Ural 大学有 N 名职员，编号为 1∼N。
 import java.util.*;
 
 class Main {
-    static int N, idx = 0, maxN = 6010;
-    static int[] arr = new int[maxN], leader = new int[maxN], ind = new int[maxN];
+    static int idx = 0, maxN = 6010;
+    static int[] arr = new int[maxN], has_fa = new int[maxN];
     static int[] from = new int[maxN], to = new int[maxN], info = new int[maxN];
-    static int[][] dp = new int[maxN][2];
-    static boolean[] has_fa = new boolean[maxN];
+    static int[][] f = new int[maxN][2];
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -72,29 +71,27 @@ class Main {
 
         Arrays.fill(info, -1);
         for (int i = 0; i < N-1; i++) {
-            int a = sc.nextInt();
-            int b = sc.nextInt();
+            int a = sc.nextInt(), b = sc.nextInt();
             add(b, a);
-            has_fa[a] = true;
+            has_fa[a] = 1;
         }
 
         int root = 1;
-        while(has_fa[root]) root++;
+        while(has_fa[root] == 1) root++;
         dfs(root);
 
-        System.out.println(Math.max(dp[root][0], dp[root][1]));
+        System.out.println(Math.max(f[root][0], f[root][1]));
     }
 
     private static void dfs(int u) {
-        dp[u][1] = arr[u];
+        f[u][1] = arr[u];
         for(int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
-            
             dfs(t);
-            
-            dp[u][1] += dp[t][0];
-            dp[u][0] += Math.max(dp[t][1], dp[t][0]);
-        }
+            // 当前人 参加
+            f[u][1] += f[t][0];  // 要累加所有子集节点情况，所以初始赋值放在外面
+            f[u][0] += Math.max(f[t][1], f[t][0]);  // 当前人 不参加
+        }  // f[u][1] += arr[u];  初始赋值可以放到最后
     }
 
     private static void add(int a,int b) {
@@ -115,7 +112,7 @@ import java.util.*;
 class Main {
     static int N, maxN = 6010;
     static int[] arr = new int[maxN], leader = new int[maxN], ind = new int[maxN];
-    static int[][] dp = new int[maxN][2];
+    static int[][] f = new int[maxN][2];
     static boolean[] vis = new boolean[maxN];
 
     public static void main(String[] args) {
@@ -124,27 +121,25 @@ class Main {
         for (int i = 1; i <= N; i ++) arr[i] = sc.nextInt();
 
         for (int i = 1; i < N; i++) {
-            int a = sc.nextInt();
-            int b = sc.nextInt();
+            int a = sc.nextInt(), b = sc.nextInt();
             leader[a] = b;
-            ind[b]++;  
+            ind[b]++;
         }
 
-        for (int i = 1; i <= N; i++) {
-            if (!vis[i] && ind[i] == 0) dfs(i);  // 叶子节点的ind为 0
-        }
+        // 叶子节点的ind为 0
+        for (int i = 1; i <= N; i++) if (!vis[i] && ind[i]==0) up_dfs(i);
         // dp[0][]：不选当前 dp[1][]：选当前
-        System.out.println(Math.max(dp[0][0], dp[0][1] + arr[0]));
+        System.out.println(Math.max(f[0][0], f[0][1] + arr[0]));
     }
 
-    private static void dfs(int u) {
+    private static void up_dfs(int u) {
         if (u == 0) return;
         vis[u] = true;
 
-        dp[leader[u]][0] += Math.max(dp[u][1]+arr[u], dp[u][0]);
-        dp[leader[u]][1] += dp[u][0];
-        ind[leader[u]]--;
-        if (ind[leader[u]] == 0) dfs(leader[u]);
+        int fa = leader[u];  // boss的领导是 0，所以u==0直接返回，最后答案从f[0][...]里返回
+        f[fa][0] += Math.max(f[u][1]+arr[u], f[u][0]);
+        f[fa][1] += f[u][0];
+        if (--ind[fa] <= 0) up_dfs(fa);
     }
 }
 ```
