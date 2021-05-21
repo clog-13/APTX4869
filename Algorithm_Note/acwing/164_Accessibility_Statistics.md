@@ -52,12 +52,16 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int idx, qidx, N, M, maxN = 30010;
-    static int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
-    static int[] qv = new int[maxN], cout = new int[maxN];
-    static BitSet[] dist = new BitSet[maxN];
+    int idx, qidx, N, M, maxN = 30010;
+    int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
+    int[] qv = new int[maxN], cout = new int[maxN];
+    BitSet[] dist = new BitSet[maxN];
 
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
         N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
@@ -66,17 +70,17 @@ public class Main {
         while (M-- > 0) {
             str = br.readLine().split(" ");
             int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
-            add(a, b);
-            cout[a]++;
+            add(b, a);  // 有向边（连一条反向边）
+            cout[a]++;  // topsort,从尾部反向搜索
         }
 
         topsort();
-        
+
         for (int i = 1; i <= N; i++) {
-            dist[i] = new BitSet();  // !!! BitSet
+            dist[i] = new BitSet();
             dist[i].set(i);
         }
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++) {  // 遍历qv，（从叶子节点向上）
             int cur = qv[i];
             for (int j = info[cur]; j != -1; j = from[j]) {	// 去遍历当前节点所有可达的下层节点
                 int t = to[j];
@@ -89,10 +93,10 @@ public class Main {
         }
     }
 
-    private static boolean topsort() {
+    void topsort() {
         Queue<Integer> queue = new LinkedList<>();
         for (int i = 1; i <= N; i++) {
-            if (cout[i] == 0) {
+            if (cout[i] == 0) {  // 无环，必有0
                 queue.add(i);
                 qv[qidx++] = i;
             }
@@ -109,13 +113,12 @@ public class Main {
                 }
             }
         }
-        return qidx == N;
     }
 
-    private static void add(int a, int b) {
-        from[idx] = info[b];
-        to[idx] = a;
-        info[b] = idx++;
+    void add(int a, int b) {
+        from[idx] = info[a];
+        to[idx] = b;
+        info[a] = idx++;
     }
 }
 ```
