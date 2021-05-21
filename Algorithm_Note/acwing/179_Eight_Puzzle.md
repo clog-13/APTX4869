@@ -89,8 +89,8 @@ char op[] = "urdl";
 
 int f(string state) {   // 求估值函数,这里是曼哈顿距离
     int res = 0;
-    for(int i = 0; i < 9; i++) {
-        if(state[i] != 'x') {
+    for (int i = 0; i < 9; i++) {
+        if (state[i] != 'x') {
             int t = state[i] - '1';
             res += abs(t/3-i/3) + abs(t%3-i%3);
         }
@@ -139,7 +139,7 @@ string bfs(string start) {
 
 int main() {
     string start , seq;
-    for(int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; i++) {
         char c;
         cin >> c;
         start += c;
@@ -149,7 +149,7 @@ int main() {
     int cnt = 0;
     for (int i = 0 ; i < 8 ; i ++) {
         for (int j = i + 1 ; j < 8 ; j++) {
-            if(seq[i] > seq[j]) cnt++;             
+            if (seq[i] > seq[j]) cnt++;             
         }
     }
 
