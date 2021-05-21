@@ -59,7 +59,7 @@ import java.io.*;
 import java.util.*;
 
 class Main {
-    static int N, maxN = 1510, idx = 0;
+    static int N, maxN = 1510, idx;
     static int[] from = new int[maxN], to = new int[maxN], info = new int[maxN], val = new int[maxN];
     static boolean[] has_fa = new boolean[maxN];
     static int[][] dp = new int[maxN][3];
@@ -82,8 +82,9 @@ class Main {
             String[] str = br.readLine().split(" ");
             int a = Integer.parseInt(str[0]);
             val[a] = Integer.parseInt(str[1]);
-            for (int j = 0; j < Integer.parseInt(str[2]); j++) {
-                int b = Integer.parseInt(str[j+3]);
+            int cnt = Integer.parseInt(str[2]);
+            for (int j = 0; j < cnt; j++) {
+                int b = Integer.parseInt(str[3+j]);
                 add(a, b);
                 has_fa[b] = true;
             }
@@ -101,12 +102,12 @@ class Main {
         int sum = 0;
         for(int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
-            
+
             dfs(t);
 
-            dp[u][0] += Math.min(dp[t][1], dp[t][2]);
-            dp[u][1] += Math.min(dp[t][0], Math.min(dp[t][1], dp[t][2]));
-            sum += Math.min(dp[t][1], dp[t][2]);
+            dp[u][0] += Math.min(dp[t][1], dp[t][2]);  // dp[t]没爹看
+            dp[u][1] += Math.min(dp[t][0], Math.min(dp[t][1], dp[t][2]));  // dp[t]有爹看
+            sum += Math.min(dp[t][1], dp[t][2]);  // ##
         }
 
         // 如果第i个节点由子节点守卫，那么至少有一个子节点处放置了守卫，
@@ -115,8 +116,8 @@ class Main {
         for(int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
             // dp[u][2] = 当前子节点由自己守卫 + (其余子节点得到守卫的总代价 - 去掉当前节点的重复值)
-            dp[u][2] = Math.min(dp[u][2], dp[t][1] + (sum-Math.min(dp[t][1], dp[t][2])));
-        }
+            dp[u][2] = Math.min(dp[u][2], dp[t][1] + (sum-Math.min(dp[t][1], dp[t][2])));  // ##
+        }  // dp[u][1] += val[u];
     }
 
     private static void add(int a, int b) {

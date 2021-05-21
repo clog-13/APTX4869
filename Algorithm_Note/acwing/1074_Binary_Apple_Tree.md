@@ -46,41 +46,35 @@
 import java.util.*;
 
 class Main {
-    static int maxN = 110, maxM = maxN * 2, N, M;
-    static int[][] dp = new int[maxN][maxN];    // dp[i][j]记录i号节点为根的子树中选择j条边的最大价值
+    static int maxN = 110, maxM = maxN * 2, N, M, idx;
+    static int[][] dp = new int[maxN][maxN];    // dp[i][j]: i号节点为根 的子树中选择j条边的最大价值
     static int[] info = new int[maxN];
     static int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
-    static int idx = 0;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextInt(); M = sc.nextInt();
+        N = sc.nextInt(); M = sc.nextInt();  // 要保留的树枝数量
 
         Arrays.fill(info, -1);
         for (int i = 1; i <= N - 1; i ++) {
-            int a = sc.nextInt();
-            int b = sc.nextInt();
-            int c = sc.nextInt();
+            int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();
             add(a, b, c); add(b, a, c);
         }
 
-        dfs(1,-1);
-
+        dfs(1, -1);
         System.out.println(dp[1][M]);
     }
 
-    private static void dfs(int u, int father) {
+    private static void dfs(int u, int f) {
         for (int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
-            if (t == father) continue;
-            
+            if (t == f) continue;
+
             dfs(t, u);
-            
+            // 列态循环(动态规划)
             for (int m = M; m > 0; m--) {  // 循环决策
-                for (int c = 0; c < m; c++) {  // 循环该决策不同情况
-                    // c + (m-c-1) = m-1 因为要假设加上现在这条边
+                for (int c = m-1; c >= 0; c--) {  // 循环该决策不同情况(循环顺序不重要)
                     dp[u][m] = Math.max(dp[u][m], dp[u][c] + dp[t][m-c-1] + val[i]);
-                    // dp[u][m] = Math.max(dp[u][m], dp[u][m-c-1] + dp[t][c] + val[i]);
                 }
             }
         }
