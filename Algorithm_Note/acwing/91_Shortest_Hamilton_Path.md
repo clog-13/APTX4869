@@ -10,7 +10,7 @@ Hamilton 路径的定义是从 0 到 n−1 不重不漏地经过每个点恰好�
 
 接下来 n 行每行 n 个整数，其中第 i 行第 j 个整数表示点 i 到 j 的距离（记为 a[i,j]）。
 
-对于任意的 x,y,z，数据保证 a[x,x]=0，a[x,y]=a[y,x] 并且 a[x,y]+a[y,z]≥a[x,z]。
+对于任意的 x,y,z，数据保证 a[x,x]=0，a[x,y]=a[y,x] 并且 a[x,y]+a[y,z]≥a[x,z]。（权非负）
 
 #### 输出格式
 
@@ -49,22 +49,22 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt();
         int[][] dp = new int[1<<N][N], arr = new int[N][N];
-		int[] logs = new int[1<<N];
-        
+        int[] logs = new int[1<<N];
+
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) arr[i][j] = sc.nextInt();
         }
-        for (int i = 0; i < (1<<N); i++) Arrays.fill(dp[i], 0x3f3f3f3f);
+        for (int i = 0; i < 1<<N; i++) Arrays.fill(dp[i], 0x3f3f3f3f);
         for (int i = 0; i < N; i++) logs[1<<i] = i;
 
-        // dp[i][j]表示当前所有走过点的集合i，最后移动到j (i是{0,1,4}，j是1，那么i = 10011)
-        dp[1][0] = 0;  // 状态 1 表示的是 0 节点
-        for (int state = 0; state < (1<<N); state++) {  // 枚举所有状态
-            for (int j = state; j > 0; j -= (j & -j)) { // 从当前状态减去 e
-                int e = logs[j & -j];
-                for (int k = state-(1<<e); k > 0; k -= (k & -k)) {  // 从剩余节点中找 到e的最小值
-                    int m = logs[k & -k];
-                    dp[state][e] = Math.min(dp[state][e], dp[state-(1<<e)][m] + arr[m][e]);
+        // dp[i][j]表示当前所有走过点的集合i(状态)，最后移动到j (i是{0,1,4}，j是1，那么i = 10011)
+        dp[1][0] = 0;  // 1:只走了0的集合  0:起点
+        for (int st = 0; st < 1<<N; st++) {  // 枚举所有状态
+            for (int j = st; j > 0; j -= j&-j) { // 从当前状态减去 e
+                int e = logs[j&-j];
+                for (int k = st-(1<<e); k > 0; k -= k&-k) {  // 从剩余节点中找 到e的最小值
+                    int m = logs[k&-k];  // st中最后到达的是e，遍历所有 st-e 的所有状态的转移代价
+                    dp[st][e] = Math.min(dp[st][e], dp[st-(1<<e)][m] + arr[m][e]);
                 }
             }
         }

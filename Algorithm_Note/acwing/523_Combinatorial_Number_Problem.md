@@ -39,40 +39,39 @@
 
 ```java
 import java.util.*;
-class Main {
-    int T, K, N, M, maxN = 2010;
+
+public class Main {
+    int T, K, maxN = 2010;
     int[][] c = new int[maxN][maxN];
-    int[][] s = new int[maxN][maxN];
-    
+    int[][] preSum = new int[maxN][maxN];
+
     public static void main(String[] args) {
         new Main().run();
     }
-    
+
     void run() {
         Scanner sc = new Scanner(System.in);
         T = sc.nextInt(); K = sc.nextInt();
-        
+
         for (int i = 0; i < maxN; i++) {
             for (int j = 0; j <= i; j++) {
-                if (j == 0) c[i][j] = 1%K;
-                else {  // 就是闫式DP分析法的思想,当前j 选 + 不选 的总和
-                    c[i][j] = (c[i-1][j-1] + c[i-1][j]) % K;  // 排列组合公式
-                }
-                if (c[i][j] == 0) s[i][j] = 1;
+                if (j == 0) c[i][j] = 1;  // c[i][j]: 前i个选j个的组合数
+                else c[i][j] = (c[i-1][j-1] + c[i-1][j]) % K;  // 排列组合公式
+
+                if (c[i][j] == 0) preSum[i][j] = 1;
             }
         }
-        
-        for (int i = 0; i < maxN; i++) {
+
+        for (int i = 0; i < maxN; i++) {  // 生成二维前缀和
             for (int j = 0; j < maxN; j++) {
-                if (i>0) s[i][j] += s[i-1][j];
-                if (j>0) s[i][j] += s[i][j-1];
-                if (i>0 && j>0) s[i][j] -= s[i-1][j-1];
+                if (i > 0) preSum[i][j] += preSum[i-1][j];
+                if (j > 0) preSum[i][j] += preSum[i][j-1];
+                if (i > 0 && j > 0) preSum[i][j] -= preSum[i-1][j-1];
             }
         }
-        
+
         while (T-- > 0) {
-            N = sc.nextInt(); M = sc.nextInt();
-            System.out.println(s[N][M]);
+            System.out.println(preSum[sc.nextInt()][sc.nextInt()]);
         }
     }
 }
