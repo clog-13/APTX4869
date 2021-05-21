@@ -57,7 +57,7 @@ N 行，每行一个整数，分别是 0 级，1 级，2 级，……，N−1 �
 import java.util.*;
 
 public class Main {
-    static int[] bit = new int[32010], level = new int[32010];
+    static int[] tr = new int[32010], res = new int[32010];
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt();
@@ -65,12 +65,12 @@ public class Main {
         for(int i = 0; i < N; i++) {
             int x = sc.nextInt(), y = sc.nextInt();
             x++;
-            level[query(x)]++;  // 输入数据是先按y递增,再按x的递增给出，所以当作一维数组处理，先查询再更新
+            res[query(x)]++;  // 输入数据是先按y递增,再按x的递增给出，所以当作一维数组处理，先查询再更新
             update(x);
         }
-        
+
         for(int i = 0; i < N; i++) {
-            System.out.println(level[i]);
+            System.out.println(res[i]);
         }
     }
 
@@ -80,7 +80,7 @@ public class Main {
 
     private static void update(int idx) {
         while(idx <= 32010) {
-            bit[idx]++;
+            tr[idx]++;
             idx += lowbit(idx);
         }
     }
@@ -88,7 +88,7 @@ public class Main {
     private static int query(int idx) {
         int res = 0;
         while (idx > 0) {
-            res += bit[idx];
+            res += tr[idx];
             idx -= lowbit(idx);
         }
         return res;
