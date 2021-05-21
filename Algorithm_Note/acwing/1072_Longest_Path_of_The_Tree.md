@@ -48,10 +48,9 @@ import java.io.*;
 import java.util.*;
 
 class Main {
-    static int N, maxN = 100010, maxM = 2*maxN;
+    static int N, maxN = 100010, maxM = 2*maxN, idx;
     static int[] info = new int[maxN], dist = new int[maxN];
     static int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
-    static int idx = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -60,38 +59,92 @@ class Main {
         Arrays.fill(info, -1);
         for (int i = 1; i < N; i++) {
             String[] str = br.readLine().split(" ");
-            int a = Integer.parseInt(str[0]);
-            int b = Integer.parseInt(str[1]);
+            int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
             int c = Integer.parseInt(str[2]);
             add(a, b, c); add(b, a, c);
         }
-        dfs(1, -1, 0);  // 先随便从一个节点出发找到最长路径节点
 
-        int res = 0, x = 1;
+        int x = 1, res = 0;
+        dfs(1, -1, 0);  // 先随便从一个节点出发找到最长路径节点
         for (int i = 1; i <= N; i++) {
             if (res < dist[i]) {    // 找出端点x
                 res = dist[i];
                 x = i;
             }
         }
-        
+
         Arrays.fill(dist, 0);
-        dfs(x,x,0);  // 再从之前的最长路径节点出发找另一头
-        
+        dfs(x, -1, 0);  // 再从之前的最长路径节点出发找另一头
         for (int i = 1; i <= N; i++) res = Math.max(res, dist[i]);
+        
         System.out.println(res);
     }
 
-    private static void dfs(int u, int p, int cnt) {
+    private static void dfs(int u, int f, int cnt) {
         dist[u] = Math.max(dist[u], cnt);
         for (int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
-            if (t == p) continue;
+            if (t == f) continue;
             dfs(t, u, cnt+val[i]);
         }
     }
 
     private static void add(int a, int b, int c) {
+        from[idx] = info[a];
+        to[idx] = b;
+        val[idx] = c;
+        info[a] = idx++;
+    }
+}
+```
+
+## 回溯
+
+```java
+import java.util.*;
+class Main {
+    int N, idx, res, maxN = 10010, maxM = 2*maxN, INF = 0x3f3f3f3f;
+    int[] info = new int[maxN];
+    int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
+
+    public static void main(String[] args) {
+        new Main().init();
+    }
+
+    void init() {
+        Scanner sc = new Scanner(System.in);
+        N = sc.nextInt();
+
+        Arrays.fill(info, -1);
+        for (int i = 1; i < N; i++) {
+            int a = sc.nextInt(), b= sc.nextInt(), c = sc.nextInt();
+            add(a, b, c); add(b, a, c);
+        }
+
+        dfs(1, -1);
+
+        System.out.println(res);
+    }
+
+    int dfs(int u, int f) {
+        int d1 = 0, d2 = 0;
+        for (int i = info[u]; i != -1; i = from[i]) {
+            int t = to[i];
+            if (t == f) continue;
+            int d = dfs(t, u) + val[i];
+
+            if (d >= d1) {  // >=
+                d2 = d1; d1 = d;
+            } else if (d > d2) {  // >
+                d2 = d;
+            }
+        }
+
+        res = Math.max(res, d1+d2);  // 记录当前点包含的最长路径（左右两边）
+        return d1;  // 返回当前点的最长单边路径
+    }
+
+    void add(int a, int b, int c) {
         from[idx] = info[a];
         to[idx] = b;
         val[idx] = c;
@@ -111,32 +164,32 @@ class Main{
     int N, res, idx, maxN = 20010;
     int[] info = new int[maxN], dist = new int[maxN], fa = new int[maxN];
     int[] from = new int[maxN], to = new int[maxN], val = new int[maxN];
-    
+
     public static void main(String[] args) {
         new Main().run();
     }
-    
+
     void run() {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
-        
+
         Arrays.fill(info, -1);
         for (int i = 1; i < N; i++) {
             int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();
             add(a, b, c); add(b, a, c);
         }
-        
-        dfs(1,-1);
+
+        dfs(1, -1);
         System.out.println(res);
     }
-    
+
     void dfs(int u, int f) {
         int preMax = 0;
         for (int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
             if (t == f) continue;
             dfs(t, u);
-            
+
             if (res < preMax+dist[t]+val[i]) {
                 res = preMax+dist[t]+val[i];
             }
@@ -146,67 +199,7 @@ class Main{
         }
         dist[u] = preMax;
     }
-    
-    void add(int a, int b, int c) {
-        from[idx] = info[a];
-        to[idx] = b;
-        val[idx] = c;
-        info[a] = idx++;
-    }
-}
-```
 
-
-
-## 回溯
-
-```java
-import java.util.*;
-class Main {
-    int N, idx, res, maxN = 10010, maxM = 2*maxN, INF = 0x3f3f3f3f;
-    int[] info = new int[maxN];
-    int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
-    
-    public static void main(String[] args) {
-        new Main().init();
-    }
-    
-    void init() {
-        Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
-        
-        Arrays.fill(info, -1);
-        for (int i = 1; i < N; i++) {
-            int a = sc.nextInt(), b= sc.nextInt(), c = sc.nextInt();
-            add(a, b, c); add(b, a, c);
-        }
-        
-        dfs(1, -1);
-        
-        System.out.println(res);
-    }
-    
-    int dfs(int u, int f) {
-        int dist = 0;
-        int d1 = 0, d2 = 0;
-        for (int i = info[u]; i != -1; i = from[i]) {
-            int t = to[i];
-            if (t == f) continue;
-            
-            int d = dfs(t, u) + val[i];
-            dist = Math.max(dist, d);
-            
-            if (d >= d1) {
-                d2 = d1; d1 = d;
-            } else if (d > d2) {
-                d2 = d;
-            }
-        }
-        
-        res = Math.max(res, d1+d2);  // 记录当前点包含的最长路径（左右两边）
-        return dist;  // 返回当前点的最长单边路径
-    }
-    
     void add(int a, int b, int c) {
         from[idx] = info[a];
         to[idx] = b;

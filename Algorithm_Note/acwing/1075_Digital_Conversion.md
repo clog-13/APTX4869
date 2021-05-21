@@ -32,11 +32,11 @@
 
 #### 样例解释
 
-一种方案为：4→3→1→74→3→1→7。
+一种方案为：4→3→1→7。
 
 
 
-## DFS
+## Math + DFS
 
 ```java
 import java.util.*;
@@ -44,47 +44,44 @@ import java.util.*;
 public class Main {
     static int idx, res, N, maxN = 100010;
     static int[] info = new int[maxN], from = new int[maxN], to = new int[maxN];
-    static int[] sum = new int[maxN];  
+    static int[] sum = new int[maxN];
     static boolean[] st = new boolean[maxN];
-    
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
-        
+
         // O(n^2) 朴素写法, TLE
         // for (int i = 2; i <= N; i++) {
         //     for (int j = 1; j < i; j++) {
-        //         if (i%j==0) sum[i] += j;
+        //         if (i%j==0) sum[i] += j;  // 这步判断比较浪费时间
         //     }
         // }
-        
+
         // O(n*logn) 调和级数O(logn) = n + n / 2 + n / 3 + ... + n/n = lnn + c
         for (int i = 1; i <= N; i++) {  // 通过筛法求出1到N的所有约数之和
-            for (int j = 2; j <= N / i; j++) {  // 为了防止重复, 这里从2开始
+            for (int j = 2; j*i <= N; j++) {  // 保证正确性, 这里从2开始
                 sum[i * j] += i;  // sum[i+j]: i*j的约数之和, 为了防止重复, 这里只加 i
             }
         }
-        
+
         Arrays.fill(info, -1);
-        for (int i = 1; i <= N; i++) {
-            // 和 -> 数
-            // 1 -> 7 和 1 -> 3 最后一边作为来边,一边作为去边
-            if (sum[i] < i) add(sum[i], i);
+        for (int i = 1; i <= N; i++) {  // 1 -> 7 和 1 -> 3 最后一边作为来边,一边作为去边
+            if (sum[i] < i) add(sum[i], i);  // 和 -> 数
         }
-        
-        for (int i = 1; i <= N; i++) if (!st[i]) dfs(i);
-        // dfs(1);  // 可以dfs 1 就行了,可以理解为最长的必包含1 (假设最长不包含1, 也可以连一条向1的边)
+
+        for (int i = 1; i <= N; i++) if (!st[i]) dfs(i);  // dfs(i) 找以i为根的树中的最长路径
+        // dfs(1);  // dfs 1 就行了,可以理解为最长的必包含1 (假设最长不包含1, 也可以连一条向1的边)
         System.out.println(res);
     }
-    
-    static int dfs(int u) {  
+
+    static int dfs(int u) {
         st[u] = true;
         int d1 = 0, d2 = 0;
         for (int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
-            
             int d = dfs(t) + 1;  // 找到u点往下走的一个最大长度
-            
+
             if (d > d1) {
                 d2 = d1; d1 = d;
             } else if (d > d2) {
@@ -93,7 +90,7 @@ public class Main {
         }
         res = Math.max(res, d1 + d2);
         return d1;
-    } 
+    }
 
     static void add(int a, int b) {
         from[idx] = info[a];

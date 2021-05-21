@@ -8,7 +8,7 @@ H 城是一个旅游胜地，每年都有成千上万的人前来观光。
 
 一名旅客最近到 H 城旅游，他很想去 S 公园游玩，但如果从他所在的饭店没有一路巴士可以直接到达 S 公园，则他可能要先乘某一路巴士坐几站，再下来换乘同一站台的另一路巴士，这样换乘几次后到达 S 公园。
 
-现在用整数 1,2,…N 给 H 城的所有的巴士站编号，约定这名旅客所在饭店的巴士站编号为 1，S 公园巴士站的编号为 N。
+现在用整数 1,2,…N 给 H 城的所有的巴士站编号，约定 **这名旅客所在饭店的巴士站编号为 1，S 公园巴士站的编号为 N。**
 
 写一个程序，帮助这名旅客寻找一个最优乘车方案，使他在从饭店乘车到 S 公园的过程中换乘的次数最少。
 
@@ -50,46 +50,48 @@ import java.io.*;
 import java.util.*;
 
 class Main {
-    static int maxN = 510;
-    static int N, M;
-    
-    static boolean[][] graph = new boolean[maxN][maxN];
-    static int[] dist=  new int[maxN];
-    
+    int N, M, maxN = 510;
+    boolean[][] graph = new boolean[maxN][maxN];
+    int[] dist = new int[maxN];
+
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        M = Integer.parseInt(str[0]);
-        N = Integer.parseInt(str[1]);
-        
+        M = Integer.parseInt(str[0]); N = Integer.parseInt(str[1]);
+
         while (M-- > 0) {
             str = br.readLine().split(" ");
             for (int i = 0; i < str.length; i++) {
                 for (int j = i+1; j < str.length; j++) {  // 公交线路里的边是有向边
                     graph[Integer.parseInt(str[i])][Integer.parseInt(str[j])] = true;
-                    // graph[Integer.parseInt(str[j])][Integer.parseInt(str[i])] = true;
                 }
             }
         }
-        
+
         bfs();
-        
+
         if (dist[N] == -1) System.out.println("NO");
         else System.out.println(dist[N] - 1);
     }
-    
-    private static void bfs() {
+
+
+    void bfs() {
         Arrays.fill(dist, -1);
         dist[1] = 0;
         Queue<Integer> queue = new LinkedList<>();
         queue.add(1);
+        
         while (!queue.isEmpty()) {
             int cur = queue.poll();
-            for (int i = 1; i <= N; i++) {
-                if (!graph[cur][i]) continue;  // a到b需要换乘 （M - cur可达i的线路数）  次
-                if (dist[i] != -1) continue;
-                dist[i] = dist[cur] + 1; 
-                queue.add(i);
+            for (int to = 1; to <= N; to++) {
+                if (!graph[cur][to]) continue;  // a到b需要换乘
+                if (dist[to] != -1) continue;   // 去重并保持路径最短
+                dist[to] = dist[cur] + 1;
+                queue.add(to);
             }
         }
     }
@@ -105,14 +107,14 @@ class Main {
 #include <algorithm>
 #include <queue>
 #include <cstring>
-#include <utility>
-using namespace std ;
-typedef pair<int,int> PII ;
-const int N=510 ;
-int m,n ;
-bool st[N][N] ;
-int stops[N][N] ;
-vector<PII> transfer[N] ;
+using namespace std;
+
+typedef pair<int,int> PII;
+const int N=510;
+int m, n;
+bool st[N][N];
+int stops[N][N];
+vector<PII> transfer[N];
 /*
 1.dfs传入参数pos和bus,表示公交车的编号与这辆公交车的站数
 2.如果到了终点则返回
@@ -120,43 +122,107 @@ vector<PII> transfer[N] ;
 
 4.取决策1, 决策2的最小值，返回函数
 */
-int dfs(int pos,int bus) {                       //1
-    st[pos][bus]=true ;
-    if(stops[pos][bus]==n) return 0 ;            //2
+int dfs(int pos, int bus) {                       //1
+    st[pos][bus] = true;
+    if (stops[pos][bus] == n) return 0;           //2
     int res=2e9 ;
-    if(stops[pos+1][bus]) res=dfs(pos+1,bus) ;   //3-1
-    for(auto t:transfer[stops[pos][bus]]) {      //3-2
-        int fir=t.first ;
-        int sec=t.second ;
-        if(st[fir][sec]) continue ;
-        res=min(res,dfs(fir,sec)+1) ;
+    if (stops[pos+1][bus]) res = dfs(pos+1, bus); //3-1
+    for (auto t: transfer[stops[pos][bus]]) {     //3-2
+        int fir=t.first, sec=t.second ;
+        if (st[fir][sec]) continue ;
+        res = min(res, dfs(fir,sec)+1) ;
     }
-    return res ;                                 //4
+    return res;                                   //4
 }
 int main() {
-    scanf("%d%d",&m,&n) ;
-    string str ;
-    getline(cin,str) ;
-    PII res ;
-    for(int i=1;i<=m;i++){
-        int cnt=1 ;
-        string str ;
-        getline(cin,str) ;
-        for(auto ch:str) {
-            if(ch==' ') {
-                transfer[stops[cnt][i]].push_back({cnt,i}) ;  // transfer[n]:n站的bus信息
-                if(stops[cnt][i]==1) res={cnt,i} ;
-                cnt++ ;
-            }
-            else stops[cnt][i]=stops[cnt][i]*10+ch-'0';  // i路公交 第cnt站
+    scanf("%d%d",&m,&n);
+    string str;
+    getline(cin,str);
+    PII res;
+    for (int i = 1; i <= m; i++) {
+        int cnt = 1;
+        string str;
+        getline(cin, str);
+        for (auto ch: str) {
+            if (ch == ' ') {
+                transfer[stops[cnt][i]].push_back({cnt,i});  // transfer[n]:n站的bus信息
+                if (stops[cnt][i]==1) res={cnt,i} ;
+                cnt++;
+            } else stops[cnt][i]=stops[cnt][i]*10+ch-'0';  // i路公交 第cnt站
         }
     }
     
-    int ans=dfs(res.first, res.second) ;
+    int ans = dfs(res.first, res.second);
     
-    if(ans==2e9) puts("NO") ;
-    else printf("%d",ans) ;
+    if (ans == 2e9) puts("NO");
+    else printf("%d", ans);
     return 0 ;
+}
+```
+
+
+
+## Dijk
+
+```c++
+#include <iostream>
+#include <sstream>
+#include <memory.h>
+#include <queue>
+
+using namespace std;
+
+const int N = 510;
+
+int n, m;
+int stop[N], g[N][N], dist[N];
+bool st[N];
+
+int dijk() {
+    memset(dist, 0x3f, sizeof dist);
+    dist[1] = 0;
+
+    for (int i = 0; i < n - 1; i++) {
+        int t = -1;
+        for (int j = 1; j <= n; j++) {
+            if (!st[j] && (t == -1 || dist[t] > dist[j])) {
+                t = j;
+            }
+        }
+        st[t] = true;
+        for (int j = 1; j <= n; j++) {
+            dist[j] = min(dist[j], dist[t] + g[t][j]);
+        }
+
+        
+    }
+
+    return dist[n];
+}
+
+
+int main() {
+    cin >> m >> n;
+    memset(g, 0x3f, sizeof g);
+    string line;
+    getline(cin, line);
+    while (m--) {
+        getline(cin, line);
+        stringstream ssin(line);
+        int cnt = 0, p;
+        while (ssin >> p) stop[cnt++] = p;
+
+        for (int i = 0; i < cnt; i++) {
+            for (int j = i + 1; j < cnt; j++) {
+                g[stop[i]][stop[j]] = 1;  // s[i] 到 s[j] 换乘一次
+            }
+        }
+    }
+
+    int ret = dijk();
+    if (ret > 0x3f3f3f3f/2) cout << "NO" << endl;
+    else cout << ret-1 << endl;
+    return 0;
 }
 ```
 
