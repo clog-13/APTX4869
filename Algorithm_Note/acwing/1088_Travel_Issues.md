@@ -47,16 +47,16 @@ TAK
 
 
 
-## 单调队列
+## 单调队列 + 前缀和
 
 ```java
 import java.io.*;
 
 public class Main {
-    static int N = 100000 * 2 + 10;
-    static int[] oil = new int[N], dist = new int[N], q = new int[N];
-    static long[] preSum = new long[N];
-    static boolean[] st = new boolean[N];  // 表示从i点出发是否有解
+    static int maxN = 200010;
+    static int[] oil = new int[maxN], dist = new int[maxN], q = new int[maxN];
+    static long[] preSum = new long[maxN];
+    static boolean[] st = new boolean[maxN];  // 表示从i点出发是否有解
 
     public static void main(String[] args) throws IOException {
         new Main().run();
@@ -66,41 +66,41 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int n = Integer.parseInt(br.readLine());
-        for (int i = 1; i <= n; i++) {
+        int N = Integer.parseInt(br.readLine());
+        for (int i = 1; i <= N; i++) {
             String[] str = br.readLine().split(" ");
             oil[i] = Integer.parseInt(str[0]);
             dist[i] = Integer.parseInt(str[1]);
         }
-        
+
         // 顺时针
-        for (int i = 1; i <= n; i ++) preSum[i] = preSum[i + n] = oil[i] - dist[i];
-        for (int i = 1; i <= n*2; i ++) preSum[i] += preSum[i - 1];  // 剩余油量
+        for (int i = 1; i <= N; i++) preSum[i] = preSum[N+i] = oil[i] - dist[i];
+        for (int i = 1; i <= N*2; i++) preSum[i] += preSum[i - 1];  // 剩余油量
         int hh = 0, tt = -1;
-        for (int i = n*2; i >= 1; i--) {
-            if (hh<=tt && i <= q[hh]-n) hh++;  // 等价于在[i,i+n-1]中, 对任意的j, i<=j<=i+n-1
-            while (hh<=tt && preSum[i] <= preSum[q[tt]]) tt--;  // 均有s[j]-s[i-1]>=0
+        for (int i = N*2; i >= 1; i--) {  // 倒序遍历前缀数组
+            if (hh<=tt && i <= q[hh]-N) hh++;
+            while (hh<=tt && preSum[i] <= preSum[q[tt]]) tt--;  // 最小栈
             q[++tt] = i;
-            if (i<=n && preSum[q[hh]] - preSum[i-1] >= 0) st[i] = true;
+            if (i<=N && preSum[q[hh]] - preSum[i-1] >= 0) st[i] = true;  // i<=N
         }
 
         // 逆时针
-        dist[0] = dist[n];
-        for (int i = n; i >= 1; i--) preSum[i] = preSum[i + n] = oil[i] - dist[i - 1];
-        for (int i = n*2; i >= 1; i--) preSum[i] += preSum[i+1];  // 这里求前缀用的是 i+1
+        dist[0] = dist[N];
+        for (int i = N; i >= 1; i--) preSum[i] = preSum[N+i] = oil[i] - dist[i - 1];
+        for (int i = N*2; i >= 1; i--) preSum[i] += preSum[i+1];  // 反向前缀和 (q[hh] < i+1)
         hh = 0; tt = -1;
-        for (int i = 1; i <= n*2; i++) {
-            if (hh<=tt && i >= q[hh]+n) hh++;
-            while (hh<=tt && preSum[i] <= preSum[q[tt]]) tt--;
+        for (int i = 1; i <= N*2; i++) {  // 正序遍历前缀数组
+            if (hh<=tt && i >= q[hh]+N) hh++;
+            while (hh<=tt && preSum[i] <= preSum[q[tt]]) tt--;  // 最小栈
             q[++tt] = i;
-            if (i>=n+1 && preSum[q[hh]] - preSum[i+1] >= 0) st[i-n] = true;
+            if (i>=N+1 && preSum[q[hh]] - preSum[i+1] >= 0) st[i-N] = true;  // i>=N+1
         }
 
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i <= N; i++) {
             if (st[i]) bw.write("TAK\n");
             else bw.write("NIE\n");
         }
-        bw.flush();        
+        bw.flush();
     }
 }
 ```
