@@ -24,43 +24,35 @@
 
 #### 数据范围
 
-1≤n≤105, 1≤wi≤1000
+1≤n≤10^5^, 1≤wi≤1000
 
-#### 输入样例1：
+#### 输入样例：
 
 ```
 3
 3 4 5
 ```
 
-#### 输出样例1：
+#### 输出样例：
 
 ```
 47
 ```
 
-#### 
-
 ## Math
 
 当n=2时：ab
-当n=3时：ab+(a+b)c=ac+(a+c)b=bc+(b+c)a=ab+ac + bc
-当n=4时：ab+(a+b)c+(a+b+c)d=ac+(a+c)b+(a+c+b)d=.....=ab+ac+ad+ bc+bd +cd
+当n=3时：ab+(a+b)c=ac+(a+c)b=bc+(b+c)a=ab+ac+bc
+当n=4时：ab+(a+b)c+(a+b+c)d=ac+(a+c)b+(a+b+c)d=.....=ab+ac+ad+bc+bd+cd
 
 ```java
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    int N, maxN = 100010;
-    int[] arr = new int[maxN];
-
     public static void main(String[] args) {
-        new Main().init();
-    }
-
-    void init() {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
+        int N = sc.nextInt();
+        int[] arr = new int[N];
         for (int i = 0; i < N; i++) arr[i] = sc.nextInt();
 
         long res = 0, pre = 0;
