@@ -55,33 +55,34 @@ FJ 希望选取的奶牛效率总和最大，但是他不能选取超过 2 只�
 
 ## 单调队列
 
-转换成连续M+1头牛里，至少有一只没选，求最小的 没选总值
+转换成连续K+1头牛里，至少有一只没选，求最小的 没选总值
 
 ```java
 import java.util.*;
-class Main {
+
+public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt(), M = sc.nextInt();
+        int N = sc.nextInt(), K = sc.nextInt();
         int[] arr = new int[N+1], q = new int[N+1];
         long sum = 0, res = Long.MAX_VALUE;
         long[] f = new long[N+1];
-        
+
         for (int i = 1; i <= N; i++) {
             arr[i] = sc.nextInt();
             sum += arr[i];
         }
-        
-        int hh = 0, tt = -1;
+
+        int hh = 0, tt = -1;  // res: 每个K+1窗口内至少有一个不选的 最小总值
         for (int i = 0; i <= N; i++) {
-            if (hh<=tt && i > q[hh]+M+1) hh++;  // 窗口大小M+1
-            f[i] = arr[i] + f[q[hh]];  // 当前不选 + 前面的合理方案(前M+1内)
-            while (hh<=tt && f[i] < f[q[tt]]) tt--;
+            if (hh<=tt && i > q[hh]+K+1) hh++;  // 窗口大小K+1
+            f[i] = f[q[hh]] + arr[i];  // 当前不选 + 前面的合理方案(前K+1内)
+            while (hh<=tt && f[i] < f[q[tt]]) tt--;  // 最小队列
             q[++tt] = i;
-            
-            if (i >= N-M) res = Math.min(res, f[i]);  // 需要到最后一只可以不选的牛才更新答案
+
+            if (i >= N-K) res = Math.min(res, f[i]);  // 需要到最后一只可以不选的牛才更新答案
         }
-        
+
         System.out.println(sum-res);
     }
 }
