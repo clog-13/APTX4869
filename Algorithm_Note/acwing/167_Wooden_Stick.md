@@ -43,7 +43,7 @@
 5
 ```
 
-## DFS剪枝
+## DFS剪枝+"迭代加深"
 
 ```java
 import java.util.*;
