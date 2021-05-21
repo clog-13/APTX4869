@@ -47,11 +47,10 @@ import java.util.*;
 import java.io.*;
 
 class Main {
-    static int N, maxN = 100010, maxM = 2*maxN, INF = 0x3f3f3f3f;
-    static int[] info = new int[maxN];
+    static int N, idx, maxN = 100010, maxM = 2*maxN, INF = 0x3f3f3f3f;
+    static int[] info = new int[maxN], up = new int[maxN];
     static int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
-    static int[] d1 = new int[maxN], d2 = new int[maxN], p1 = new int[maxN], up = new int[maxN];
-    static int idx = 0;
+    static int[] d1 = new int[maxN], d2 = new int[maxN], p1 = new int[maxN];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -67,7 +66,7 @@ class Main {
 
         dfs_dn(1, -1);
         dfs_up(1, -1);
-        
+
         int res = INF;
         for (int i = 1; i <= N; i++) res = Math.min(res, Math.max(d1[i], up[i]));
         System.out.println(res);
@@ -80,9 +79,10 @@ class Main {
             if (t == p) continue;
 
             int dis = dfs_dn(t, u) + val[i];
+
             if (dis > d1[u]) {
-                d2[u] = d1[u]; 
-                d1[u] = dis; p1[u] = t;
+                d2[u] = d1[u]; d1[u] = dis;
+                p1[u] = t;
             } else if (dis > d2[u]) {
                 d2[u] = dis;
             }
@@ -94,7 +94,7 @@ class Main {
         for (int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
             if (t == p) continue;
-			// 注意这里数组的下标
+            // 注意这里数组的下标
             if (p1[u] == t) up[t] = Math.max(up[u], d2[u]) + val[i];
             else            up[t] = Math.max(up[u], d1[u]) + val[i];
 
