@@ -1,17 +1,17 @@
-# 1588. 所有奇数长度子数组的和
+# 1588. Sum of All Odd Length Subarrays
 
-给你一个正整数数组 `arr` ，请你计算所有可能的奇数长度子数组的和。
+Given an array of positive integers `arr`, calculate the sum of all possible odd-length subarrays.
 
-**子数组** 定义为原数组中的一个连续子序列。
+A subarray is a contiguous subsequence of the array.
 
-请你返回 `arr` 中 **所有奇数长度子数组的和** 。
+Return *the sum of all odd-length subarrays of* `arr`.
 
- **示例：**
+**Example:**
 
 ```
-输入：arr = [1,4,2,5,3]
-输出：58
-解释：所有奇数长度子数组和它们的和为：
+Input: arr = [1,4,2,5,3]
+Output: 58
+Explanation: The odd-length subarrays of arr and their sums are:
 [1] = 1
 [4] = 4
 [2] = 2
@@ -21,10 +21,8 @@
 [4,2,5] = 11
 [2,5,3] = 10
 [1,4,2,5,3] = 15
-我们将所有值求和得到 1 + 4 + 2 + 5 + 3 + 7 + 11 + 10 + 15 = 58
+If we add all these together we get 1 + 4 + 2 + 5 + 3 + 7 + 11 + 10 + 15 = 58
 ```
-
-
 
 ## Math
 
@@ -43,34 +41,30 @@ left_even, right_even可选择数：(left+1)/2 和 (right+1)/2 (左面选偶数�
 ```java
 class Solution {
     public int sumOddLengthSubarrays(int[] arr) {
-        int length = arr.length, sum = 0;
-        for(int i=0;i<length;i++){  //遍历数组
-            int left = i+1, right = length-i;
-            int le_1 = left/2, ri_1 = right/2;
-            int le_2 = (left+1)/2, ri_2 = (right+1)/2;
-            sum += arr[i]*(le_1*ri_1 + le_2*ri_2);
+        int sum = 0, N = arr.length;
+        for (int i = 0; i < N; i++) {
+            int left = i+1, right = N-i;
+            int le_ev = left/2, ri_ev = right/2;  // 偶+1+偶 = 奇
+            int le_od = (left+1)/2, ri_od = (right+1)/2;  // 奇+1+奇 = 偶
+            sum += arr[i] * (le_ev*ri_ev + le_od*ri_od);
         }
         return sum;
     }
 }
 ```
 
- 
-
 ## 前缀和
 
 ```java
 class Solution {
     public int sumOddLengthSubarrays(int[] arr) {
-        int N = arr.length, res = 0;
+        int res = 0, N = arr.length;
         int[] preSum = new int[N+1];
-        for (int i = 1; i < preSum.length; i++) {
-            preSum[i] = preSum[i-1]+arr[i-1];
-        }
+        for (int i = 1; i <= N; i++) preSum[i] = preSum[i-1]+arr[i-1];
 
         for (int len = 1; len <= N; len+=2) {
             for (int i = len; i <= N; i++) {
-             res += preSum[i] - preSum[i-len];
+                res += preSum[i] - preSum[i-len];
             }
         }
 
@@ -78,5 +72,3 @@ class Solution {
     }
 }
 ```
-
-#
