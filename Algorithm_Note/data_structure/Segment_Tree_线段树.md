@@ -35,13 +35,13 @@ class Main {
     }
 
     void build(int root, int le, int ri) {
-        if (le==ri) segs[root] = new Node(le, ri, arr[le]);
+        if (le == ri) segs[root] = new Node(le, ri, arr[le]);  // 做自己
         else {
-            segs[root] = new Node(le, ri, 0);
+            segs[root] = new Node(le, ri, 0);  // 人海茫茫，迷茫ing
             int mid = le+ri>>1;
             build(root<<1, le, mid);
             build(root<<1|1, mid+1, ri);
-            push_up(root);
+            push_up(root);  // 生活再糟也不要忘记push_up
         }
     }
 
@@ -49,7 +49,7 @@ class Main {
         if (start > segs[root].ri || end < segs[root].le) return 0;
         if (start <= segs[root].le && segs[root].ri <= end)
             return segs[root].sum;
-        push_down(root);
+        push_down(root);  // 自我审视，查缺补漏
         long res = 0;
         res += query(root<<1, start, end);
         res += query(root<<1|1, start, end);
@@ -57,26 +57,25 @@ class Main {
     }
 
     void update(int root, int idx, int val) {
-        if (idx > segs[root].ri || idx < segs[root].le) return;
+        if (idx > segs[root].ri || idx < segs[root].le) return;  // 我要的你给不起
         if (segs[root].le == segs[root].ri) segs[root].sum += val;  // 目标节点
         else {
             update(root<<1, idx, val);    // 如果 需要update的节点在左子节点
             update(root<<1|1, idx, val);  // 否则 需要update的节点在右子节点
-
-            push_up(root);
+            push_up(root);    // 生活再糟也不要忘记push_up
         }
     }
 
     void lazy_update(int root, int start, int end, int val) {
-        if (start > segs[root].ri || end < segs[root].le) return;
-        if (start <= segs[root].le && segs[root].ri <= end) {
-            segs[root].sum += (long) (segs[root].ri-segs[root].le+1) * val;
+        if (start > segs[root].ri || end < segs[root].le) return;  // 我要的你给不起
+        if (start <= segs[root].le && segs[root].ri <= end) {  // 大款包养我
+            segs[root].sum += (long) (segs[root].ri-segs[root].le+1) * val;  // 能力多大，责任多大
             segs[root].tag += val;
         } else {
-            push_down(root);
+            push_down(root);    // 自我审视，查缺补漏
             lazy_update(root<<1, start, end, val);
             lazy_update(root<<1|1, start, end, val);
-            push_up(root);
+            push_up(root);    // 生活再糟也不要忘记push_up
         }
     }
 
@@ -87,10 +86,10 @@ class Main {
     void push_down(int root) {
         if (segs[root].tag != 0) {
             int mid = segs[root].le+segs[root].ri >> 1;
-            segs[root<<1].sum += segs[root].tag * (mid - segs[root].le+1);
-            segs[root<<1|1].sum += segs[root].tag * (segs[root].ri - mid);
+            segs[root<<1].sum += segs[root].tag * (mid - segs[root].le+1);  // 能力多大，责任多大
+            segs[root<<1|1].sum += segs[root].tag * (segs[root].ri - mid);  // 能力多大，责任多大
 
-            segs[root<<1].tag += segs[root].tag;
+            segs[root<<1].tag += segs[root].tag;  // 生命不息，传承不止
             segs[root<<1|1].tag += segs[root].tag;
             segs[root].tag = 0;
         }
