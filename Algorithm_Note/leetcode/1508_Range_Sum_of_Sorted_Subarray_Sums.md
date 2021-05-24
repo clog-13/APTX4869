@@ -1,17 +1,39 @@
-# 1508. 子数组和排序后的区间和
+# 1508. Range Sum of Sorted Subarray Sums
 
-给你一个数组 `nums` ，它包含 `n` 个正整数。你需要计算所有非空连续子数组的和，并将它们按升序排序，得到一个新的包含 `n * (n + 1) / 2` 个数字的数组。
+Given the array `nums` consisting of `n` positive integers. You computed the sum of all non-empty continous subarrays from the array and then sort them in non-decreasing order, creating a new array of `n * (n + 1) / 2` numbers.
 
-请你返回在新数组中下标为 `left` 到 `right` **（下标从 1 开始）**的所有数字和（包括左右端点）。由于答案可能很大，请你将它对 10^9 + 7 取模后返回。
+*Return the sum of the numbers from index* `left` *to index* `right` (**indexed from 1**)*, inclusive, in the new array.* Since the answer can be a huge number return it modulo 10^9 + 7.
 
-**示例：**
+ 
+
+**Example:**
+
 ```
-输入：nums = [1,2,3,4], n = 4, left = 1, right = 5
-输出：13 
-解释：所有的子数组和为 1, 3, 6, 10, 2, 5, 9, 3, 7, 4 。将它们升序排序后，我们得到新的数组 [1, 2, 3, 3, 4, 5, 6, 7, 9, 10] 。下标从 le = 1 到 ri = 5 的和为 1 + 2 + 3 + 3 + 4 = 13 。
+Input: nums = [1,2,3,4], n = 4, left = 1, right = 5
+Output: 13 
+Explanation: All subarray sums are 1, 3, 6, 10, 2, 5, 9, 3, 7, 4. After sorting them in non-decreasing order we have the new array [1, 2, 3, 3, 4, 5, 6, 7, 9, 10]. The sum of the numbers from index le = 1 to ri = 5 is 1 + 2 + 3 + 3 + 4 = 13. 
 ```
 
 ## 二分查找 + 双指针
+
+下面是由 \[1,2,3,4,5,6,7,8,9,10\] 构造出的矩阵的色阶图。假设我们要找所有的 val < 20 的元素数量
+
+![](pic/1508.png)
+
+```
+  PPS[ri]
+= P[0] + P[1] + ... + P[ri]
+
+  PPS[ri] - PPS[le]
+= P[le+1] + ... + P[ri]
+= (a[0]+...+a[le+1]) + ... + (a[0]+...+a[ri])
+
+  PPS[ri] - PPS[le] - P[le]*(ri-le+1)
+= (a[le+1]) + (a[le+1]+a[le+2]) + ... + (a[le+1]+a[le+2]+...+a[ri])   
+```
+
+
+
 ```java
 class Solution {
     int N, MOD = 1000000007;
