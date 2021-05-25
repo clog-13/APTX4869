@@ -82,6 +82,7 @@ public class Main{
     static char[][] graph = new char[maxN][maxN];
     static int[][] dp = new int[maxN][maxN];
     static boolean[][] vis;
+    // ！！！ 这里不是“上下左右”，是斜角
     static int[] dx1 = { 1,-1,-1, 1}, dy1 = { 1,-1, 1,-1};
     static int[] dx2 = { 1, 0, 0, 1}, dy2 = { 1, 0, 1, 0};
 

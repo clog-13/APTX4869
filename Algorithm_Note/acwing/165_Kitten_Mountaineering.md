@@ -24,7 +24,7 @@
 
 #### 数据范围
 
-1≤N≤18, 1≤Ci≤W≤10^8^
+1≤N≤18, 1≤Ci≤W≤10^8
 
 #### 输入样例：
 
@@ -72,13 +72,13 @@ public class Main {
         for (int i = 1; i <= cnt; i++) {
             if (dp[i]+arr[u] <= W) {
                 dp[i] += arr[u];
-                dfs(u-1, cnt);
+                dfs(u-1, cnt);  // 不添新缆车
                 dp[i] -= arr[u];
             }
         }
 
         dp[cnt+1] = arr[u];
-        dfs(u-1, cnt+1);
+        dfs(u-1, cnt+1);  // 不添新缆车
         dp[cnt+1] = 0;
     }
 }

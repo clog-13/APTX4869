@@ -62,36 +62,37 @@ import java.util.*;
 
 public class Main {
     static int N, maxN = 110;
-    static int[] resArr = new int[maxN];
+    static int[] arr = new int[maxN];
 
     public static void main(String[] args)  {
         Scanner sc = new Scanner(System.in);
-        resArr[0] = 1;
+        arr[0] = 1;
         while (true) {
             N = sc.nextInt(); if (N == 0) break;
 
             int depth = 1;
-            while (!dfs(1, depth)) depth++;  // 从第1层开始，最大层是第depth层
-            
-            for (int i = 0; i < depth; i++) System.out.print(resArr[i] + " ");
+            while (!dfs(1, depth)) depth++;  // 迭代加深
+
+            for (int i = 0; i < depth; i++) System.out.print(arr[i] + " ");
             System.out.println();
         }
     }
 
-    static boolean dfs(int u, int depth) {
-        if (u > depth) return false;  // 超出限制深度，停止
-        if (resArr[u - 1] == N) return true;  // 找到答案
+    static boolean dfs(int u, int limit) {
+        if (u > limit) return false;  // 超出限制深度，深搜失败
+        if (arr[u - 1] == N) return true;  // 找到答案
+        if((arr[u-1]<<(limit-u+1)) < N) return false;  // 剪枝
         Set<Integer> set = new HashSet<>();
 
         for (int i = u - 1; i >= 0; i--) {
-            for (int j = i; j >= 0; j--) {    // 按组合数的方式枚举
-                int sum = resArr[i] + resArr[j];
-                if (sum <= resArr[u-1] || set.contains(sum) || sum > N) continue;
+            for (int j = i; j >= 0; j--) {  // 暴力枚举，贪心最优优化
+                int sum = arr[i] + arr[j];
+                if (sum <= arr[u-1] || set.contains(sum) || sum > N) continue;
 
                 set.add(sum);
-                resArr[u] = sum;
+                arr[u] = sum;
 
-                if (dfs(u + 1, depth)) return true;
+                if (dfs(u + 1, limit)) return true;
             }
         }
         return false;

@@ -116,11 +116,8 @@ public class Main {
 
     // 若isSet为true 则填进n数，否则恢复现场
     void draw(int x, int y, int n, boolean isSet) {
-        if (isSet) {
-            str[x*9+y] = (char) (n+'1');
-        } else {
-            str[x*9+y] = '.';
-        }
+        if (isSet) str[x*9+y] = (char) (n+'1');
+        else str[x*9+y] = '.';
 
         int dv = isSet ? 1<<n : -(1<<n);
 
@@ -128,7 +125,7 @@ public class Main {
         cell[x / 3][y / 3] -= dv;
     }
     
-    void init() {  // 初始化二进制全是1，表示均可以选择
+    void init() {  // 1，表示可以选择
         Arrays.fill(row, (1<<9)-1);
         Arrays.fill(col, (1<<9)-1);
         for (int i = 0; i < 3; i++) Arrays.fill(cell[i], (1<<9)-1);
@@ -139,4 +136,3 @@ public class Main {
     }
 }
 ```
-
