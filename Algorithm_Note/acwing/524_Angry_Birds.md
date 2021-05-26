@@ -71,7 +71,7 @@ import java.util.*;
 
 public class Main {
     int N, M, maxN = 18, maxM = 1 << 18;
-    Pair[] arr = new Pair[maxN];
+    Node[] arr = new Node[maxN];
     int[][] path = new int[maxN][maxN];
     double esp = 1e-8;
     int[] f = new int[maxM];
@@ -79,56 +79,56 @@ public class Main {
     public static void main(String[] args) {
         new Main().run();
     }
-    
+
     void run() {
         Scanner sc = new Scanner(System.in);
         int T = sc.nextInt();
         while (T -- > 0) {
             N = sc.nextInt(); M = sc.nextInt();
             for (int i = 0; i < N; i ++) {
-                double x = sc.nextDouble();
-                double y = sc.nextDouble();
-                arr[i] = new Pair(x, y);
+                double x = sc.nextDouble(), y = sc.nextDouble();
+                arr[i] = new Node(x, y);
             }
 
             for (int i = 0; i < N; i++) Arrays.fill(path[i], 0);
-            for (int i = 0; i < N; i++) {  
-                path[i][i] = 1 << i;  
+            for (int i = 0; i < N; i++) {
+                path[i][i] = 1 << i;  // path[i][j]表示i号点和j号点对应的抛物线的状态(肯定包含i,j)
                 for (int j = 0; j < N; j++) {
                     double x1 = arr[i].x, y1 = arr[i].y;
                     double x2 = arr[j].x, y2 = arr[j].y;
                     if (cmp(x1, x2) == 0) continue;
-                    
+
                     // 求方程中的 a系数 和 b系数
                     double a = (y1 / x1 - y2 / x2) / (x1 - x2);
                     double b = y1 / x1 - a * x1;
                     if (cmp(a, 0) >= 0) continue;
-                    
+
                     int state = 0;
                     for (int k = 0; k < N; k++) {  // 判断哪些点在该抛物线上
                         double x = arr[k].x, y = arr[k].y;
                         if (cmp(a*x*x + b*x, y) == 0) state |= 1<<k;
                     }
-                    path[i][j] = state;  // path[i][j]表示i号点和j号点对应的抛物线的状态(肯定包含i,j)
+                    path[i][j] = state;  
                 }
             }
-            
+
             Arrays.fill(f, 0x3f3f3f3f);
-            f[0] = 0;  // f[x] 表示达到 x 状态 的点需要多少条抛物线
-            for (int state = 0; state < 1<<N; state++) {
-                int x = 0;  // 找到任意一个未覆盖的点
-                for (int i = 0; i < N; i++) {
-                    if ((state>>i & 1) == 0) {
+            f[0] = 0;  // f[st] 表示达到 st 状态 的点需要多少条抛物线
+            for (int st = 0; st < 1<<N; st++) {
+                int x = 0;  
+                for (int i = 0; i < N; i++) {  // 找到当前状态的 任意一个未覆盖的点
+                    if ((st>>i & 1) == 0) {
                         x = i;
                         break;
                     }
                 }
-                for (int i = 0; i < N; i++) {  // 枚举所有与x号点相关的抛物线(再加一只鸟-抛弧线)
-                    f[state | path[x][i]] = Math.min(f[state | path[x][i]], f[state] + 1);
+                // 遍历所有与 x 有关的抛弧线(加一条抛弧线)， 或者已经包含x点和当前状态的最小花费
+                for (int i = 0; i < N; i++) {  // 枚举所有与x号点相关的抛弧线(再加一只鸟-抛弧线)
+                    f[st | path[x][i]] = Math.min(f[st | path[x][i]], f[st] + 1);
                 }
             }
             System.out.println(f[(1<<N) - 1]);
-        }        
+        }
     }
 
     int cmp(double a, double b) {
@@ -136,11 +136,12 @@ public class Main {
         if (a > b) return 1;
         return -1;
     }
-    static class Pair {
+
+    static class Node {
         double x, y;
-        public Pair (double x, double y) {
-            this.x = x;
-            this.y = y;
+        
+        public Node(double xx, double yy) {
+            x = xx; y = yy;
         }
     }
 }
