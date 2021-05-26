@@ -32,8 +32,6 @@
 6
 ```
 
-
-
 ## 递归
 
 ```java
@@ -48,8 +46,7 @@ class Main {
     void run() {
         Scanner sc = new Scanner(System.in);
         arr = sc.nextLine().trim().toCharArray();
-        int res = dfs();
-        System.out.println(res);
+        System.out.println(dfs());
     }
 
     int dfs() {
@@ -58,15 +55,15 @@ class Main {
             if (arr[idx] == '(') {  // 处理 (......)
                 idx++;  // 跳过 '('
                 res += dfs();
-                idx++;  // 跳过 ')'
+                idx++;  // 跳过 ')'，统一由上层维护 "(...)" 的下标
+            } else if (arr[idx] == ')') {  // '(a|b)' ) 是 b 的返回条件也是 a 和 ( 和 | 层 的返回条件
+                return res;  // 这里 不能idx++ 要留着去判断其他层的是否返回（它还可能是其他层的返回条件）    
             } else if (arr[idx] == '|') {
                 idx++;  // 跳过 '|'
                 res = Math.max(res, dfs());
-            } else if (arr[idx] == ')') {  // '(a|b)' ) 是 b 的返回条件也是 a 和 ( 和 | 层 的返回条件
-                return res;  // 这里 不能idx++ 要留着去判断其他层的是否返回（它还可能是其他层的返回条件）
             } else if (arr[idx] == 'x') {
-                idx++;  // 跳过 'x'
                 res++;
+                idx++;
             }
         }
         return res;
