@@ -86,12 +86,12 @@ class Main {
             for (int n = 1; n <= N; n++) {
                 for (int row = 0; row+n-1 < N; row++) { // 相同大小正方形 行 起始位置的偏移
                     for (int col = 1; col+n-1 <= N; col++) { // 相同大小正方形 列 起始位置的偏移
-                        for (int offset = 0; offset < n; offset++) { // 当前正方形内 每个边里 的偏移
+                        for (int ost = 0; ost < n; ost++) { // 当前正方形内 每个边里 的偏移
                             int d = 2 * N + 1;
-                            square[M].add( row   *d     + col + offset);    // 上
-                            square[M].add((row+n)*d     + col + offset);    // 下
-                            square[M].add( row   *d+N   + col + offset*d);  // 左
-                            square[M].add( row   *d+N+n + col + offset*d);  // 右
+                            square[M].add( row   *d     + col + ost);    // 上
+                            square[M].add((row+n)*d     + col + ost);    // 下
+                            square[M].add( row   *d+N   + col + ost*d);  // 左
+                            square[M].add( row   *d+N+n + col + ost*d);  // 右
                         }
                         M++;
                     }
@@ -100,20 +100,18 @@ class Main {
 
             Arrays.fill(st, false);
             arr = br.readLine().split(" ");
-            for (int i = 1; i < arr.length; i++) {
-                st[Integer.parseInt(arr[i])] = true;
-            }
-            
+            for (int i = 1; i < arr.length; i++) st[Integer.parseInt(arr[i])] = true;
+
             int depth = 0;
-            while (!dfs(depth)) depth++;
+            while (!dfs(depth)) depth++;  // 迭代加深
             System.out.println(depth);
         }
     }
 
     private boolean dfs(int depth) {
-        if (f() > depth) return false;
-        for (int i = 0; i < M; i++) {
-            if (check_complete(square[i])) {
+        if (f() > depth) return false;  // 可行性剪枝
+        for (int i = 0; i < M; i++) {  
+            if (check_complete(square[i])) {  // 遍历每个完整正方形
                 for (int s : square[i]) {
                     st[s] = true;
                     if (dfs(depth-1)) return true;
@@ -145,4 +143,3 @@ class Main {
     }
 }
 ```
-

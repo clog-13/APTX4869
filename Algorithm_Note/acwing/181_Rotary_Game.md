@@ -51,12 +51,10 @@ DDHH
 
 
 
-## IDA*
+## IDA\*（迭代加深A\*）
 
 ```java
 import java.io.*;
-import java.util.*;
-
 /**
  *        0,   1,
  *        2,   3,
@@ -87,7 +85,7 @@ public class Main {
         new Main().init();
     }
 
-    private void init() throws IOException {
+    void init() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
@@ -98,20 +96,19 @@ public class Main {
             int depth = 0;
             while (!dfs(0, depth, -1)) depth++;
 
-            if (depth == 0) System.out.print("n moves needed");
+            if (depth == 0) System.out.print("No moves needed");
             else {
                 for (int i = 0; i < depth; i++) {
                     System.out.print((char)(res[i]+'A'));
                 }
-
             }
             System.out.println("\n"+arr[center[0]]);
         }
     }
 
-    private boolean dfs(int u, int maxDepth, int pre) {
+    boolean dfs(int u, int maxDepth, int pre) {
         if (check()) return true;
-        if (u + f() > maxDepth) return false;  // 可行性剪枝
+        if (u + f() > maxDepth) return false;  // +f(): 可行性判读
 
 
         for (int i = 0; i < 8; i++) {
@@ -124,7 +121,7 @@ public class Main {
         return false;
     }
 
-    private int f() {
+    int f() {
         int[] cout = new int[4];
         for (int c : center) cout[arr[c]]++;
         int maxNum = 0;
@@ -132,7 +129,7 @@ public class Main {
         return 8-maxNum;
     }
 
-    private void drag(int n) {
+    void drag(int n) {
         int tmp = arr[op[n][0]];
         for (int i = 1; i < 7; i++) {
             arr[op[n][i-1]] = arr[op[n][i]];
@@ -140,7 +137,7 @@ public class Main {
         arr[op[n][6]] = tmp;
     }
 
-    private boolean check() {
+    boolean check() {
         for (int i = 1; i < center.length; i++) {
             if (arr[center[i]] != arr[center[i-1]]) return false;
         }

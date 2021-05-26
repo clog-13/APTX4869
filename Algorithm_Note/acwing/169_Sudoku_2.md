@@ -86,9 +86,9 @@ class Main {
     }
 
     private void run() {
-        for (int i = 0; i < N; i++) num_log[1<<i] = i;
-        for (int i = 0; i < (1<<N); i++) {
-            for (int j = i; j > 0; j -= lowbit(j)) ones[i]++;
+        for (int i = 0; i < N; i++) num_log[1<<i] = i;  // 初始化打表
+        for (int st = 0; st < (1<<N); st++) {
+            for (int j = st; j > 0; j -= lowbit(j)) ones[st]++;
         }
 
         Scanner sc = new Scanner(System.in);
@@ -99,7 +99,7 @@ class Main {
                 arr[i] = str.toCharArray();
             }
 
-            init();
+            init();  // 初始化状态数组
             int cnt = 0;
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
@@ -110,7 +110,7 @@ class Main {
 
             dfs(cnt);
 
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < N; i++) {   // 输出结果
                 for (int j = 0; j < N; j++) System.out.print(arr[i][j]);
                 System.out.println();
             }
@@ -203,10 +203,9 @@ class Main {
             for (int j = 0; j < N; j++) {
                 int sx = i/4*4, sy = i%4*4;
                 int dx = j/4,   dy = j%4;
-                int s = state[sx+dx][sy+dy];
-                sand &= ~(sor & s);
-                sor |= s;
-                if (arr[sx+dx][sy+dy] != '-') drawn |= s;
+                sand &= ~(sor & state[sx+dx][sy+dy]);
+                sor |= state[sx+dx][sy+dy];
+                if (arr[sx+dx][sy+dy] != '-') drawn |= state[sx+dx][sy+dy];
             }
 
             if (sor != (1<<N)-1) {
@@ -237,14 +236,14 @@ class Main {
         int x = -1, y = -1, minOpts = 20;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                if (arr[i][j] == '-' && ones[state[i][j]] < minOpts) {
+                if (arr[i][j]=='-' && ones[state[i][j]]<minOpts) {
                     minOpts = ones[state[i][j]];
                     x = i; y = j;
                 }
             }
         }
 
-        copy(state, backup_stateTmp[bknt]);
+        copy(state, backup_stateTmp[bknt]);  // 备份 当前初始化优化结束后 的集合状态
         for (int i = state[x][y]; i > 0; i -= lowbit(i)) {
             copy(backup_stateTmp[bknt], state);
             draw(x, y, num_log[lowbit(i)]);
@@ -256,9 +255,9 @@ class Main {
         return false;
     }
 
-    private void draw(int x, int y, int c) {
+    void draw(int x, int y, int c) {
         arr[x][y] = (char) (c+'A');
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < N; i++) {  // 一代表可选，零代表不可选
             state[x][i] &= ~(1 << c);
             state[i][y] &= ~(1 << c);
         }
@@ -273,7 +272,7 @@ class Main {
         state[x][y] = 1<<c;
     }
 
-    private void init() {
+    void init() {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 state[i][j] = (1 << N) - 1;
@@ -281,21 +280,19 @@ class Main {
         }
     }
 
-    private int lowbit(int n) {
-        return n & (-n);
+    int lowbit(int x) {
+        return x & -x;
     }
-
-    private void copy(int[][] src, int[][] backup) {
+    void copy(int[][] src, int[][] backup) {
         for (int i = 0; i < src.length; i++) {
             System.arraycopy(src[i], 0, backup[i], 0, src[0].length);
         }
     }
-    private void copy(char[][] src, char[][] backup) {
+    void copy(char[][] src, char[][] backup) {
         for (int i = 0; i < src.length; i++) {
             System.arraycopy(src[i], 0, backup[i], 0, src[0].length);
         }
     }
 }
-
 ```
 
