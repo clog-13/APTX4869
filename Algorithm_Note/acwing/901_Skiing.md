@@ -59,50 +59,48 @@
 25
 ```
 
-
-
 ## 记忆化搜索
 
 ```java
 import java.util.*;
 
 public class Main {
-    int n,m,N = 310;
-    int[][] arr = new int[N][N], f = new int[N][N];
-    int[] dx = {0,-1,0,1}, dy = {-1,0,1,0};
+    int N, M, maxN = 310;
+    int[][] arr = new int[maxN][maxN], f = new int[maxN][maxN];
+    int[] dx = { 0, -1, 0, 1}, dy = {-1, 0, 1, 0};
 
     public static void main(String[] args) {
         new Main().run();
     }
-    
+
     void run() {
         Scanner sc = new Scanner(System.in);
-        n = sc.nextInt(); m = sc.nextInt();
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
+        N = sc.nextInt(); M = sc.nextInt();
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
                 arr[i][j] = sc.nextInt();
             }
         }
 
-        for (int i = 0; i < n; i++) Arrays.fill(f[i], -1);
-        int res = 0; 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                res = Math.max(res, dfs(i, j));
+        for (int i = 0; i < N; i++) Arrays.fill(f[i], -1);
+        int res = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                res = Math.max(res, dfs(i, j));  // 遍历所有起点(memo dfs)
             }
         }
-        System.out.println(res);        
+        System.out.println(res);
     }
-    
-    int dfs(int x,int y) {
-        if (f[x][y] != -1) return f[x][y];
+
+    int dfs(int x, int y) {
+        if (f[x][y] != -1) return f[x][y];  // !!! memo dfs
 
         f[x][y] = 1;
-        for (int i = 0;i < 4;i ++) {
+        for (int i = 0; i < 4; i++) {
             int tx = x + dx[i], ty = y + dy[i];
-            if (tx < 0 || tx >= n || ty < 0 || ty >= m) continue;
-            if (arr[x][y] > arr[tx][ty]) {
-                f[x][y] = Math.max(f[x][y], dfs(tx, ty) + 1);
+            if (tx < 0 || tx >= N || ty < 0 || ty >= M) continue;
+            if (arr[tx][ty] < arr[x][y]) {
+                f[x][y] = Math.max(f[x][y], dfs(tx, ty) + 1);  // memo dfs!!!
             }
         }
         return f[x][y];
