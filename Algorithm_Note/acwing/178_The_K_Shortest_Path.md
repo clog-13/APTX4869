@@ -42,14 +42,16 @@ import java.io.*;
 import java.util.*;
 
 class Main {
-    static int N, M, S, E, K;
-    static int maxN = 1010, maxM = 200010, INF = 0x3f3f3f3f;
-    static int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
-    static int[] info = new int[maxN], rnfo = new int[maxN];
-    static int[] dist = new int[maxN], f = new int[maxN], st = new int[maxN];
-    static int idx = 0;
+    int N, M, S, E, K, maxN = 1010, maxM = 200010, INF = 0x3f3f3f3f, idx;
+    int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
+    int[] info = new int[maxN], rnfo = new int[maxN];
+    int[] dist = new int[maxN], f = new int[maxN], st = new int[maxN];
 
     public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+    
+    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
         N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
@@ -57,23 +59,20 @@ class Main {
         Arrays.fill(info, -1); Arrays.fill(rnfo, -1);
         while (M-- > 0) {
             str = br.readLine().split(" ");
-            int a = Integer.parseInt(str[0]);
-            int b = Integer.parseInt(str[1]);
+            int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
             int c = Integer.parseInt(str[2]);
             add(0, a, b, c); add(1, b, a, c);
         }
-        
+
         str = br.readLine().split(" ");
-        S = Integer.parseInt(str[0]);
-        E = Integer.parseInt(str[1]);
-        K = Integer.parseInt(str[2]);
+        S = Integer.parseInt(str[0]); E = Integer.parseInt(str[1]); K = Integer.parseInt(str[2]);
         if (S == E) K++;  // “最短路中至少要包含一条边”
 
-        dijkstra();  // 反向遍历每个点最短路
+        dijk();  // 反向遍历每个点最短路
         System.out.println(aStar());
     }
 
-    private static void dijkstra() {
+    void dijk() {
         PriorityQueue<PII> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a.dis));
         heap.add(new PII(E, 0));  // 反向
         Arrays.fill(dist, INF);
@@ -82,7 +81,7 @@ class Main {
         while (!heap.isEmpty()) {
             PII cur = heap.poll();
             int ver = cur.ver;
-            
+
             if (st[ver] == 1) continue;
             st[ver] = 1;
 
@@ -95,25 +94,26 @@ class Main {
             }
         }
 
-        System.arraycopy(dist, 0, f, 0, maxN);
+        System.arraycopy(dist, 0, f, 0, maxN);  // 反向最短路的值做 启发值
     }
 
-    private static int aStar() {
-        PriorityQueue<PIII> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a.val));
-        heap.add(new PIII(f[S], new PII(S, 0)));  // dijk的最短路做启发值(到E的最短值)
+    int aStar() {
+        PriorityQueue<Node> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a.f_val));
+        heap.add(new Node(f[S], new PII(S, 0)));  // dijk的最短路做启发值(到E的最短值)
         Arrays.fill(st, 0);
 
         while (!heap.isEmpty()) {
-            PIII cur = heap.poll();
+            Node cur = heap.poll();
             int ver = cur.pii.ver, dis = cur.pii.dis;
+            
             if (st[ver] >= K) continue;
-            st[ver]++;
-
+            st[ver]++;  // 又一次遍历到了该点
             if (ver == E && st[ver] == K) return dis;  // 第K短路
+            
             for (int i = info[ver]; i != -1; i = from[i]) {
                 int t = to[i];
-                if (st[t] < K) {
-                    heap.add(new PIII(dis+val[i]+f[t], new PII(t, dis+val[i])));
+                if (st[t] < K) {  // 因为这里所以上面所有遍历到的点都要加一，剪枝
+                    heap.add(new Node(dis+val[i]+f[t], new PII(t, dis+val[i])));
                 }
             }
         }
@@ -121,7 +121,7 @@ class Main {
         return -1;
     }
 
-    private static void add(int r, int a, int b, int c) {
+    void add(int r, int a, int b, int c) {
         to[idx] = b;
         val[idx] = c;
         if (r == 0) {
@@ -133,18 +133,18 @@ class Main {
         }
     }
 
-    private static class PII {
+    static class PII {
         int ver, dis;
         public PII(int i, int d) {
             ver = i; dis = d;
         }
     }
 
-    private static class PIII {
-        int val;  // 启发值
+    static class Node {
+        int f_val;  // 启发值
         PII pii;
-        public PIII(int v, PII p) {
-            val = v;
+        public Node(int v, PII p) {
+            f_val = v;
             pii = p;
         }
     }

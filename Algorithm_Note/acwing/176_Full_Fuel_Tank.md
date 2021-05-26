@@ -54,55 +54,58 @@
 impossible
 ```
 
-## 广搜变形
+## Dijk变形
 
 ```java
 import java.util.*;
 
 public class Main {
-    static int N, M, C, S, E, idx = 0, maxN = 1010, maxM = 200010, INF = 0x3f3f3f3f;
-    static int[] price = new int[maxN];
-    static int[] from = new int[maxM], to = new int[maxM];
-    static int[] val = new int[maxM], info = new int[maxN];
-    static int[][] dist = new int[maxN][maxN], vis = new int[maxN][maxN];
+    int N, M, C, S, E, idx = 0, maxN = 1010, maxM = 200010, INF = 0x3f3f3f3f;
+    int[] price = new int[maxN], info = new int[maxN];
+    int[] from = new int[maxM], to = new int[maxM], val = new int[maxM];
+    int[][] dist = new int[maxN][maxN], vis = new int[maxN][maxN];
 
     public static void main(String[] args) {
+        new Main().run();
+    }
+
+    void run() {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); M = sc.nextInt();
         for (int i = 0; i < N; i++) price[i] = sc.nextInt();
-        
+
         Arrays.fill(info, -1);
-        for (int i = 0; i < M; i++) {
+        for (int i = 0; i < M; i++) {  // 构建图
             int a = sc.nextInt(), b = sc.nextInt(), c = sc.nextInt();
             add(a, b, c); add(b, a, c);
         }
-        
+
         int T = sc.nextInt();
-        while (T-- > 0) {
+        while (T-- > 0) {  // 处理每组查询输入
             C = sc.nextInt(); S = sc.nextInt(); E = sc.nextInt();
-            int res = dijkstra(C, S, E);
+            int res = dijk();
             if (res == -1) System.out.println("impossible");
             else System.out.println(res);
         }
     }
 
-    private static int dijkstra(int c, int s, int e) {
+    int dijk() {
         for (int[] d : dist) Arrays.fill(d, INF);
         for (int[] v : vis) Arrays.fill(v, 0);
-        dist[s][0] = 0;
+        dist[S][0] = 0;
         PriorityQueue<Node> heap = new PriorityQueue<>((a, b) -> (a.dis - b.dis));
-        heap.add(new Node(0, s, 0));
-        
+        heap.add(new Node(0, S, 0));
+
         while (!heap.isEmpty()) {
             Node cur = heap.poll();
             int dis = cur.dis, idx = cur.idx, cout = cur.cout;
 
-            if (idx == e) return dis;
+            if (idx == E) return dis;
             if (vis[idx][cout] == 1) continue;
             vis[idx][cout] = 1;
 
-            // 这里用for或者if都可以,if 也会一直循环到一个能到下一站的油量(现在+1的会加入heap)
-            if (cout < c) {  // 用if 有一种贪心的想法
+            // 这里用for或者if都可以, if会一直循环直到到一个能到下一站的油量(heap循环)，for则是全家桶
+            if (cout < C) {  // // for (int i = cout; i < C; i++)
                 if (dist[idx][cout+1] > dist[idx][cout]+price[idx]) {
                     dist[idx][cout+1] = dist[idx][cout]+price[idx];	// 加上一升油的钱
                     heap.add(new Node(dist[idx][cout+1], idx, cout+1));	// 加上一升油的状态
@@ -120,14 +123,14 @@ public class Main {
         return -1;
     }
 
-    private static void add(int a, int b, int c) {
+    void add(int a, int b, int c) {
         from[idx] = info[a];
         to[idx] = b;
         val[idx] = c;
         info[a] = idx++;
     }
 
-    private static class Node {
+    static class Node {
         int dis, idx, cout;
 
         public Node(int d, int i, int c) {
