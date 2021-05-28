@@ -1,6 +1,6 @@
 # 154. 滑动窗口
 
-给定一个大小为 n≤106 的数组。
+给定一个大小为 n≤10^6 的数组。
 
 有一个大小为 k 的滑动窗口，它从数组的最左边移动到最右边。
 
@@ -76,9 +76,9 @@ class Main {
         
         String[] str = br.readLine().split(" ");
         int N = Integer.parseInt(str[0]), K = Integer.parseInt(str[1]);
+        str = br.readLine().split(" ");
         
         int hh = 0, tt = -1;
-        str = br.readLine().split(" ");
         for (int i = 0; i < N; i++) {
             arr[i] = Integer.parseInt(str[i]);
             if (i >= q[hh]+K) hh++;
