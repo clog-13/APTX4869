@@ -87,14 +87,14 @@ class Main {
             if (arr[u] > up[i]) {
                 flag = true;
                 int bk = up[i];
-                up[i] = arr[u];
+                up[i] = arr[u];  // 上升防御系统
                 if (dfs(u+1, su, sd, depth)) return true;
                 up[i] = bk;
                 break;
             }
         }
         if (!flag) {
-            up[su+1] = arr[u];  // 新增防御系统
+            up[su+1] = arr[u];  // 新增上升防御系统
             if (dfs(u+1, su+1, sd, depth)) return true;
         }
 
@@ -103,14 +103,14 @@ class Main {
             if (arr[u] < dn[i]) {
                 flag = true;
                 int bk = dn[i];
-                dn[i] = arr[u];
+                dn[i] = arr[u];  // 下降防御系统
                 if (dfs(u+1, su, sd, depth)) return true;
                 dn[i] = bk;
                 break;
             }
         }
         if (!flag) {
-            dn[sd+1] = arr[u];  // 新增防御系统
+            dn[sd+1] = arr[u];  // 新增下降防御系统
             if (dfs(u+1, su, sd+1, depth)) return true;
         }
 
@@ -130,7 +130,7 @@ const int N = 55;
 int a[N], ans, up[N], down[N], n;
 void dfs(int u, int d, int t) {  // u表示上升的系统个数，d表示下降的系统个数,t表示第t个数
     if (u + d >= ans) return;
-    if (t == n) {
+    if (t == n) {  // 全部防御完
         if (u+d < ans) ans = u+d;
         return;
     }
