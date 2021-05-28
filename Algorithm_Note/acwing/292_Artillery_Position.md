@@ -52,40 +52,41 @@ PHHP
 ```java
 import java.util.*;
 public class Main {
-    int n, m, N = 110, M = 1<<10;
-    int arr[] = new int[N], cout[] = new int[M], f[][][] = new int[2][M][M];
-    List<Integer> state = new ArrayList<Integer>();
-    
+    int N, M, maxN = 110, maxM = 1<<10;
+    int[] arr = new int[maxN], cout = new int[maxM];
+    int[][][] f = new int[2][maxM][maxM];
+    List<Integer> state = new ArrayList<>();
+
     public static void main(String[] args) {
         new Main().run();
     }
-    
+
     void run() {
         Scanner sc = new Scanner(System.in);
-        n = sc.nextInt(); m = sc.nextInt();
-        for (int i = 1; i <= n; i++) {  // 读入地形
+        N = sc.nextInt(); M = sc.nextInt();
+        for (int i = 1; i <= N; i++) {  // 读入地形
             char[] str = sc.next().toCharArray();
             int st = 0;
-            for (int j = 0 ; j < m; j++) {  //不可填表示1
+            for (int j = 0; j < M; j++) {  //不可填表示1
                 if (str[j] == 'H') st |= 1<<j;
             }
             arr[i] = st;
         }
 
-        for (int i = 0; i < 1<<m; i++) {  // 预处理出 非法相邻的状态
-            if ((i>>1&i)>0 || (i>>2&i)>0) continue;
-            state.add(i);
-            cout[i] = count(i);
+        for (int st = 0; st < 1<< M; st++) {  // 预处理出 非法相邻的状态, 离散化
+            if ((st>>1&st)>0 || (st>>2&st)>0) continue;
+            state.add(st);
+            cout[st] = count(st);
         }
 
-        for (int i = 1; i <= n; i++) {  // dp[i][j][k]: 第i行状态为j, 第i-1行状态为k
+        for (int i = 1; i <= N; i++) {  // dp[i][j][k]: 第i行状态为j, 第i-1行状态为k
             for (int j = 0; j < state.size(); j++) {      // i
                 for (int k = 0; k < state.size(); k++) {  // i-1
                     for (int u = 0; u < state.size(); u++) {  //  i-2
                         int cur = state.get(j), p1 = state.get(k), p2 = state.get(u);
 
                         if ((cur&p1)>0 || (cur&p2)>0 || (p1&p2)>0) continue;  // 判断枚举的状态
-                        if ((arr[i]&cur)>0 || (arr[i-1]&p1)>0) continue;  // 判断地形
+                        if ((arr[i]&cur)>0 || (arr[i-1]&p1)>0) continue;  // 判断地形(i-2会被前面过滤掉)
                         f[i & 1][j][k] = Math.max(f[i & 1][j][k], f[(i-1)&1][k][u] + cout[cur]);  // 滚动数组
                     }
                 }
@@ -95,18 +96,15 @@ public class Main {
         int res = 0;
         for (int j = 0; j < state.size(); j++) {
             for (int k = 0; k < state.size(); k++) {
-                res = Math.max(res,f[n & 1][j][k]);
+                res = Math.max(res,f[N & 1][j][k]);
             }
         }
         System.out.println(res);
     }
-    
+
     int count(int n) {
         int res = 0;
-        while (n > 0) {
-            n -= n&-n;
-            res++;
-        }
+        for ( ; n > 0; n -= n&-n) res++;
         return res;
     }
 }
