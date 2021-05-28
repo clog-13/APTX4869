@@ -70,13 +70,12 @@ public class Main {
             if (!set.contains(ri)) { set.add(ri); list.add(ri); }
         }
 
-        Collections.sort(list);
+        Collections.sort(list);  // 离散排序, 方便后面二分
 
         for (Pairs item: updates) {
             int idx = find(item.fi, list);
             preSum[idx] += item.se;
         }
-
         for (int i = 1; i <= list.size(); i++) preSum[i] += preSum[i-1];
 
         for (Pairs item: querys) {
