@@ -9,6 +9,7 @@ N-pmt[N]: 循环节最小分片（第一个）
 class KMP {
     int[] pmt = new int[100010];
 
+    // 下标从 0 开始的数组写法
     int kmp(char[] s, char[] p) {
         kmp_init(p);
         int pos = 0, pre = 0;
@@ -25,9 +26,9 @@ class KMP {
     }
     
 	// 部分匹配表，部分匹配值（前缀后缀的最长共有元素长度， Partial Match Table）
-    void kmp_init(char[] p) {  // 下标从 0 开始的数组写法
+    void kmp_init(char[] p) {  
         pmt[0] = -1;
-        int pos = 0, pre = -1;
+        int pos = 0, pre = -1;  // pre永远小于pos
         while (pos < p.length) {
             if (pre == -1 || p[pos] == p[pre]) {  // p[pos](主部)后缀, p[pre]（匹部）前缀
                 pmt[++pos] = ++pre;  // 如果，pos+1不匹配，比较pre+1的位置(这个暂时的pre就是pmt)
@@ -37,7 +38,23 @@ class KMP {
         }
     }
     
-    void kmp_init(char[] p) {  // 下标从 1 开始的数组写法
+    // 下标从 1 开始的数组写法
+	void kmp(char[] s, char[] p) {
+        for (int pos = 1; pos <= s.length-p.length; ) {
+            int pre = 0;
+            while (pos < s.length && pre < p.length) {
+                while (pre > 0 && s[pos] != p[pre]) pre = pmt[pre];
+                pos++; pre++;
+            }
+
+            if (pre == p.length) {
+                bw.write(pos-pre+" ");
+                pos = pos-pre+1;
+            }
+        }
+    }
+    
+    void kmp_init(char[] p) {  
         for (int pos = 2, pre = 0; pos < p.length; pos++) {
             while (pre > 0 && p[pos] != p[pre+1]) pre = pmt[pre];
             if (p[pos] == p[pre+1]) pre++;
@@ -127,7 +144,7 @@ class Main {
     }
 
     // 部分匹配表，部分匹配值（前缀后缀的最长共有元素长度， Partial Match Table）
-    void kmp_init() {  // 下标从 0 开始的数组写法
+    void kmp_init() {
         pmt[0] = -1;
         int pos = 0, pre = -1;
         while (pos < p.length) {
