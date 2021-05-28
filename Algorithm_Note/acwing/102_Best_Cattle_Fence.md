@@ -46,7 +46,7 @@
 
 
 
-## 二分+前缀
+## 迭代加深二分+前缀平均值
 
 ```java
 import java.util.*;
@@ -58,7 +58,6 @@ public class Main {
 
     public static void main(String[] args) {
         new Main().init();
-
     }
 
     void init() {
@@ -77,13 +76,15 @@ public class Main {
         System.out.println((int)(le * 1000));
     }
 
-    boolean check(double avg) {
+    boolean check(double avg) {  // !!!
         for (int i = 1; i <= N; i++) preAve[i] = preAve[i-1] + arr[i] - avg;
 
         double min = 0;
         for (int i = 0; i+F <= N; i++) {
             min = Math.min(min, preAve[i]);
-            if (preAve[i+F] >= min) return true;
+            if (preAve[i+F] >= min) {  // preAve[i+F] - min(preAve[0...i]) > 0
+                return true;
+            }
         }
         return false;
     }
