@@ -93,7 +93,7 @@ class Main {
     PII man = null, box = null;
     Node end = new Node(0, 0, 0);
 
-    int[][][][] path = new int[maxN][maxN][maxN][];
+    int[][][][] man_path = new int[maxN][maxN][maxN][];
     PII[][][] dist = new PII[maxN][maxN][4];
     boolean[][][] st_box = new boolean[maxN][maxN][4];
     Node[][][] pre_box = new Node[maxN][maxN][4];
@@ -101,7 +101,7 @@ class Main {
     int[][] pre_man = new int[maxN][maxN];
     char[] op = {'n','s','w','e'};
     int[] dx = {-1, 1, 0, 0}, dy = {0, 0,-1, 1};
-    int[] seq = new int[0];
+    int[] man_path_tmp = new int[0];
 
     public static void main(String[] args) throws IOException {
         new Main().init();
@@ -130,15 +130,14 @@ class Main {
                 StringBuilder res = new StringBuilder();
                 while (end.dir != -1) {
                     res.append((char)(op[end.dir]-32));  // 箱子路径
-                    for (int i : path[end.x][end.y][end.dir]) res.append(op[i]);  // 人路径
+                    for (int i : man_path[end.x][end.y][end.dir]) res.append(op[i]);  // 人路径
                     end = pre_box[end.x][end.y][end.dir];
                 }
-                bw.write(res.reverse().toString()+"\n");
+                bw.write(res.reverse()+"\n");
             }
             bw.write("\n");
         }
 
-        bw.flush();
         bw.close();
     }
 
@@ -146,16 +145,16 @@ class Main {
         for (int i = 0; i < N; i++) for (int j = 0; j < M; j++) Arrays.fill(st_box[i][j], false);
 
         Queue<Node> queue = new LinkedList<>();
-        for (int i = 0; i < 4; i++) {
-            int bx = box.x+dx[i], by = box.y+dy[i];
-            int mx = box.x-dx[i], my = box.y-dy[i];
+        for (int i = 0; i < 4; i++) {  // 初始化， 枚举推箱子的第一步
+            int bx = box.steps+dx[i], by = box.dis+dy[i];
+            int mx = box.steps-dx[i], my = box.dis-dy[i];
             if (check(bx, by) && check(mx, my) && bfs_man(man, new PII(mx, my), box) != -1) {
                 queue.add(new Node(bx, by, i));
                 st_box[bx][by][i] = true;
 
-                path[bx][by][i] = seq;
-                pre_box[bx][by][i] = new Node(box.x, box.y, -1);
-                dist[bx][by][i] = new PII(1, seq.length);
+                man_path[bx][by][i] = man_path_tmp;
+                pre_box[bx][by][i] = new Node(box.steps, box.dis, -1);  // 初始化的pre_box.dir 为 -1
+                dist[bx][by][i] = new PII(1, man_path_tmp.length);
             }
         }
 
@@ -180,16 +179,12 @@ class Main {
                 if (!check(bx, by) || !check(mx, my)) continue;
                 int dis = bfs_man(new PII(x-dx[dir], y-dy[dir]), new PII(mx, my), new PII(x, y));
                 if (dis != -1)  {
-                    PII tmp = new PII(dist[x][y][dir].x+1, dist[x][y][dir].y+seq.length);
+                    PII tmp = new PII(dist[x][y][dir].steps+1, dist[x][y][dir].dis+man_path_tmp.length);
                     if (!st_box[bx][by][i]) {
                         st_box[bx][by][i] = true;
                         queue.add(new Node(bx, by, i));
 
-                        path[bx][by][i] = seq;
-                        pre_box[bx][by][i] = cur;
-                        dist[bx][by][i] = tmp;
-                    } else if (tmp.compareTo(dist[bx][by][i]) < 0) {
-                        path[bx][by][i] = seq;
+                        man_path[bx][by][i] = man_path_tmp;
                         pre_box[bx][by][i] = cur;
                         dist[bx][by][i] = tmp;
                     }
@@ -203,27 +198,27 @@ class Main {
         for (int i = 0; i < N; i++) Arrays.fill(st_man[i], false);
         for (int i = 0; i < N; i++) Arrays.fill(pre_man[i], -1);
 
-        st_man[man.x][man.y] = true;
-        st_man[box.x][box.y] = true;
+        st_man[man.steps][man.dis] = true;
+        st_man[box.steps][box.dis] = true;
 
         Queue<PII> queue = new LinkedList<>();
         queue.add(man);
         while (!queue.isEmpty()) {
             PII cur = queue.poll();
-            int x = cur.x, y = cur.y;
+            int x = cur.steps, y = cur.dis;
 
             if (cur.compareTo(to) == 0) {  // 找到目标，返回
-                List<Integer> list = new ArrayList<>();
+                List<Integer> list = new ArrayList<>();  // 不确定长度，先用list来储存
                 while (pre_man[x][y] != -1) {
                     int dir = pre_man[x][y];
                     list.add(dir);
                     x -= dx[dir]; y -= dy[dir];  // bfs正向搜索时是 +, 这里是 -
                 }
 
-                if (list.size() == 0) seq = new int[]{};
+                if (list.size() == 0) man_path_tmp = new int[]{};
                 else {
-                    seq = new int[list.size()];
-                    for (int i = 0; i < list.size(); i++) seq[i] = list.get(i);
+                    man_path_tmp = new int[list.size()];
+                    for (int i = 0; i < list.size(); i++) man_path_tmp[i] = list.get(i);
                 }
                 return list.size();
             }
@@ -245,21 +240,21 @@ class Main {
         return x>=0 && x<N && y>=0 && y<M && graph[x][y] != '#';
     }
 
-    private static class PII implements Comparable<PII>{
-        int x, y;
-        PII(int xx, int yy) {
-            x = xx; y = yy;
+    static class PII implements Comparable<PII> {
+        int steps, dis;
+        public PII(int s, int d) {
+            steps = s; dis = d;
         }
 
         @Override
         public int compareTo(PII o) {
-            return this.x==o.x ? this.y-o.y : this.x-o.x;
+            return steps==o.steps ? dis-o.dis : steps-o.steps;
         }
     }
 
-    private static class Node {
+    static class Node {
         int x, y, dir;
-        Node(int xx, int yy, int d) {
+        public Node(int xx, int yy, int d) {
             x = xx; y = yy; dir = d;
         }
     }
