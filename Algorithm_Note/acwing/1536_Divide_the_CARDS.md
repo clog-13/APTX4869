@@ -52,20 +52,19 @@
 ```java
 import java.util.*;
 class Main {
-    static int N, sum, res, maxN = 110;
-    static int[] arr = new int[maxN];
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
+        int N = sc.nextInt(), sum = 0, res = 0;
+        int[] arr = new int[N+1];
         for (int i = 1; i <= N; i++) {
             arr[i] = sc.nextInt();
             sum += arr[i];
         }
         int avg = sum / N;
         for (int i = 1; i <= N; i++) {
-            if (arr[i] != avg) {
-                arr[i+1] += arr[i] - avg;
-                res++;
+            if (arr[i] != avg) {  
+                res++;  // i之前的累计状态是不平衡的，最后的方案会从i经过一次
+                arr[i+1] += arr[i] - avg;  // 累计状态
             }
         }
         System.out.println(res);
@@ -93,4 +92,3 @@ int main() {
     return 0;
 }
 ```
-
