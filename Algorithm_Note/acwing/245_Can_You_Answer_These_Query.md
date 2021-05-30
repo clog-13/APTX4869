@@ -23,7 +23,7 @@
 
 #### 数据范围
 
-N≤500000,M≤100000, −1000≤A[i]≤1000
+N≤500000, M≤100000, −1000≤A[i]≤1000
 
 #### 输入样例：
 
@@ -48,10 +48,11 @@ N≤500000,M≤100000, −1000≤A[i]≤1000
 
 ```java
 import java.io.*;
+
 public class Main {
-    int N, M, maxN = 500005, INF = 0x3f3f3f3f;
+    int N, M, maxN = 500010, INF = 0x3f3f3f3f;
     int[] arr = new int[maxN];
-    Node[] segs = new Node[4*maxN];
+    Node[] tr = new Node[4*maxN];
 
     public static void main(String[] args) throws IOException {
         new Main().run();
@@ -79,57 +80,53 @@ public class Main {
     }
 
     void build(int u, int le, int ri) {
-        if (le==ri) segs[u] = new Node(le, ri, arr[le]);
+        if (le==ri) tr[u] = new Node(le, ri, arr[le]);
         else {
-            segs[u] = new Node(le, ri);
-
+            tr[u] = new Node(le, ri, 0);
             int mid = (le+ri)>>1;
             build(u<<1, le, mid);
             build(u<<1|1, mid+1, ri);
-
             push_up(u);
         }
     }
 
     void update(int u, int idx, int val) {
-        if (idx > segs[u].ri || idx < segs[u].le) return;
-        if (segs[u].le == segs[u].ri) segs[u].sum = segs[u].lx = segs[u].rx = segs[u].mx = val;
+        if (idx > tr[u].ri || idx < tr[u].le) return;
+        if (tr[u].le == tr[u].ri) tr[u].sum = tr[u].lx = tr[u].rx = tr[u].mx = val;
         else {
             update(u<<1, idx, val);    // 如果 需要update的节点在左子节点
             update(u<<1|1, idx, val);  // 否则 需要update的节点在右子节点
-
             push_up(u);
         }
     }
 
     Node query(int u, int start, int end) {
-        if (start <= segs[u].le && segs[u].ri <= end) return segs[u];
+        if (start <= tr[u].le && tr[u].ri <= end) return tr[u];
 
-        Node res = new Node(0, 0), nl = new Node(0, 0, -INF), nr = new Node(0, 0, -INF);
+        Node res = new Node(0, 0, 0);
+        Node LE = new Node(0, 0, -INF), RI = new Node(0, 0, -INF);
 
-        int mid = (segs[u].le + segs[u].ri) >> 1;
-        if (start <= mid) nl = query(u<<1, start, end);
-        if (mid < end) nr = query(u<<1|1, start, end);
+        int mid = (tr[u].le + tr[u].ri) >> 1;
+        if (start <= mid) LE = query(u<<1, start, end);
+        if (mid < end) RI = query(u<<1|1, start, end);
 
-        res.lx = Math.max(nl.lx, nl.sum+nr.lx);
-        res.rx = Math.max(nr.rx, nr.sum+nl.rx);
-        res.mx = Math.max(Math.max(nl.mx, nr.mx), nl.rx+nr.lx);
-        res.sum = Math.max(nl.sum, 0) + Math.max(nr.sum, 0);
+        res.lx = Math.max(LE.lx, LE.sum+RI.lx);
+        res.rx = Math.max(RI.rx, RI.sum+LE.rx);
+        res.mx = Math.max(Math.max(LE.mx, RI.mx), LE.rx+RI.lx);  // 区间内的值
+        res.sum = Math.max(LE.sum, 0) + Math.max(RI.sum, 0);  // 区间内全选的情况
         return res;
     }
 
     void push_up(int u) {
-        segs[u].sum = segs[u<<1].sum + segs[u<<1|1].sum;
-        segs[u].lx = Math.max(segs[u<<1].lx, segs[u<<1].sum + segs[u<<1|1].lx);
-        segs[u].rx = Math.max(segs[u<<1|1].rx, segs[u<<1|1].sum + segs[u<<1].rx);
-        segs[u].mx = Math.max(Math.max(segs[u<<1].mx, segs[u<<1|1].mx), segs[u<<1].rx + segs[u<<1|1].lx);
+        Node LE = tr[u<<1], RI = tr[u<<1|1];
+        tr[u].sum = LE.sum + RI.sum;
+        tr[u].lx = Math.max(LE.lx, LE.sum + RI.lx);
+        tr[u].rx = Math.max(RI.rx, RI.sum + LE.rx);
+        tr[u].mx = Math.max(Math.max(LE.mx, RI.mx), LE.rx + RI.lx);
     }
 
     static class Node {
         int le, ri, sum, lx, rx, mx;
-        public Node(int l, int r) {
-            le = l; ri = r;
-        }
         public Node(int l, int r, int n) {
             le = l; ri = r;
             sum = n; lx = n; rx = n; mx = n;

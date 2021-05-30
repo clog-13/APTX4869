@@ -65,7 +65,7 @@ class Main {
             push_up(root);    // 生活再糟也不要忘记push_up
         }
     }
-
+	
     void lazy_update(int root, int start, int end, int val) {
         if (start > segs[root].ri || end < segs[root].le) return;  // 我要的你给不起
         if (start <= segs[root].le && segs[root].ri <= end) {  // 大款包养我
