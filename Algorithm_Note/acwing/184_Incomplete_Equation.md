@@ -97,21 +97,18 @@ public class Main{
         for (int i = 0; i < 3; i++) arr[i] = br.readLine().toCharArray();
 
 //        for (int i = 0; i < N; i++) queue[i] = i; // TLE
-        for (int i = N-1, k = 0; i >= 0; i--) {
-            for (int j = 2; j >= 0; j--) {
+        for (int i = N-1, idx = 0; i >= 0; i--) {  // 最后一位
+            for (int j = 2; j >= 0; j--) {   // 最后一行
                 int n = arr[j][i] - 'A';
                 if (!st[n]) {
                     st[n] = true;
-                    queue[k++] = n; // 這樣 低位在dfs時可以先賦值，提前dfs退出， 起剪枝作用
+                    queue[idx++] = n; // 低位的字母在dfs时可以先赋值，提前dfs退出，起剪枝作用
                 }
             }
         }
 
-        Arrays.fill(st, false);
-        Arrays.fill(res, -1);
-
+        Arrays.fill(st, false); Arrays.fill(res, -1);
         dfs(0);
-
         for (int i = 0; i < N; i++) bw.write(res[i] + " ");
         bw.flush(); bw.close();
     }
@@ -122,7 +119,7 @@ public class Main{
         for (int i = 0; i < N; i++) {
             if (!st[i]) {
                 st[i] = true;
-                res[queue[u]] = i;  // 设 queue第u个字母为 i
+                res[queue[u]] = i;  // 设queue中第u个字母为 i
                 if (check() && dfs(u+1)) return true;   // check在前有剪枝作用
                 res[queue[u]] = -1;
                 st[i] = false;
@@ -131,19 +128,19 @@ public class Main{
         return false;
     }
 
-    boolean check() {
-        for (int i = N-1, carry = 0; i >= 0; i--) { // 根据当前赋值 按列 从后到前 验证算式
+    boolean check() {  // 根据当前赋值，验证算式(按列从后到前,验证已赋值的是否冲突) 
+        for (int i = N-1, carry = 0; i >= 0; i--) { 
             int a = res[arr[0][i]-'A'], b = res[arr[1][i]-'A'], s = res[arr[2][i]-'A'];
-            if (a != -1 && b != -1 && s != -1) {
+            if (a != -1 && b != -1 && s != -1) {  // 
                 if (carry == -1) {  // 前面不确定，不能确定是否进位  (tips:java -a%b = -a)
-                    if ((a+b)%N != s && (a+b+1)%N != s) return false;   // 當前列不匹配
-                    if (i==0 && a+b >= N) return false; // 最高位還有进位
+                    if ((a+b)%N != s && (a+b+1)%N != s) return false;  // 当前列不匹配
+                    if (i==0 && a+b >= N) return false;  // 最高位还有有进位
                 } else {
-                    if ((a+b+carry)%N != s) return false;   // 當前列不匹配
-                    if (i==0 && a+b+carry >= N) return false;   // 最高位還有进位
-                    carry = (a+b+carry) / N;
+                    if ((a+b+carry)%N != s) return false;   // 当前列不匹配
+                    if (i==0 && a+b+carry >= N) return false;   // 最高位还有进位
+                    carry = (a+b+carry) / N;  // 记录进位情况
                 }
-            } else {  // 不能确定当前是否进位
+            } else {  // 不能确定当前列情况和进位
                 carry = -1;
             }
         }
