@@ -58,55 +58,59 @@ obj.calculateMKAverage(); // 最后 3 个元素为 [5,5,5]
 ```java
 class MKAverage {
     int M, K, tot, maxN = 100005;
-    Node[] tree = new Node[maxN*4];
+    Node[] tr = new Node[maxN*4];
     int[] arr = new int[maxN];
 
     public MKAverage(int m, int k) {
         M = m; K = k;
-        build(1, 1, 100001);
+        build(1, 1, maxN);
     }
 
     public void addElement(int num) {
         arr[tot++] = num;
-        add(1, 1, 100000, num, 1);
-        if (tot>M) add(1, 1, 100000, arr[tot-M-1], -1);
+        update(1, num, 1);
+        if (tot > M) update(1, arr[tot -M-1], -1);
     }
 
     public int calculateMKAverage() {
         if (tot < M) return -1;
-        long sa = query(1, 1, 100000, K), sb = query(1, 1, 100000, M-K);
+        long sa = query(1, K), sb = query(1, M-K);
         return (int) (sb-sa)/(M-2*K);
     }
 
-    void build(int root, int le, int ri) {
-        tree[root] = new Node(0, 0);
-        if (le == ri) return;
-        int mid = (le+ri)>>1;
-        build(root<<1, le, mid);
-        build(root<<1|1, mid+1, ri);
+    void build(int u, int le, int ri) {
+        if (le == ri) tr[u] = new Node(le, ri);
+        else {
+            tr[u] = new Node(le, ri);
+            int mid = le+ri>>1;
+            build(u<<1, le, mid);
+            build(u<<1|1, mid+1, ri);
+        }
     }
 
-    void add(int root, int le, int ri, int val, int delta) {
-        tree[root].sum += (long) val*delta;
-        tree[root].cnt += delta;
-        if (le == ri) return;
-        int mid = (le+ri)>>1;
-        if (mid >= val) add(root<<1, le, mid, val, delta);
-        else add(root<<1|1, mid+1, ri, val, delta);
+    void update(int u, int idx, int delta) {
+        if (idx > tr[u].ri || idx < tr[u].le) return;
+        tr[u].sum += (long) idx*delta;
+        tr[u].cnt += delta;
+        if (tr[u].le == tr[u].ri) return;
+        update(u<<1, idx, delta);
+        update(u<<1|1, idx, delta);
     }
 
-    long query(int root, int le, int ri, int size) {
-        if (tree[root].cnt <= size) return tree[root].sum;
-        if (le == ri) return tree[root].sum * size / tree[root].cnt;  // 多个数相同 ex:sum*2/7 = 7个中的2个
-        int mid = (le+ri)>>1;
-        if (tree[root<<1].cnt >= size) return query(root<<1, le, mid, size);
-        else return tree[root<<1].sum + query(root<<1|1, mid+1, ri, size-tree[root<<1].cnt);
+    long query(int u, int size) {
+        if (tr[u].cnt <= size) return tr[u].sum;
+        if (tr[u].le == tr[u].ri) {  // 多个数相同 ex:sum*2/7 = 7个中的2个
+            return tr[u].sum * size / tr[u].cnt;
+        }
+        if (tr[u<<1].cnt >= size) return query(u<<1, size);
+        else return tr[u<<1].sum + query(u<<1|1, size - tr[u<<1].cnt);
     }
 
     static class Node {
-        long sum; int cnt;
-        public Node(long s, int c) {
-            sum  = s; cnt = c;
+        long sum;
+        int le, ri, cnt;
+        public Node(int l, int r) {
+            le = l; ri = r;
         }
     }
 }
