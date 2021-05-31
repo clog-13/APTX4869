@@ -43,36 +43,32 @@
 import java.util.Scanner;
 
 public class Main {
-    static long res = 0, N, K;
-    static long[] data = new long[100005];
-    static long[][] cout = new long[11][100005];    // cout[a][b]: 乘以(a*10)时，余数为b的 个数
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextLong();
-        K = sc.nextLong();
-
-        // (a[i]*pow(10, a[j])%k + a[j]%k)%k = 0
-        //  a[i]*pow(10, a[j])%k
+        int N = sc.nextInt(), K = sc.nextInt();
+        long res = 0;
+        int[] arr = new int[N+1];
+        long[][] cout = new long[11][N+1];    // cout[a][b]: 乘以(a*10)时，余数为b的 个数
+        
         for (int i = 1; i <= N; i++) {
-            data[i] = sc.nextLong();
+            arr[i] = sc.nextInt();
             for (int j = 1; j <= 10; j++) {
-                int t = (int) (data[i]*Math.pow(10, j) % K);
-                cout[j][t]++;
+                int t = (int) (arr[i]*Math.pow(10, j) % K);
+                cout[j][t]++;  // arr[i]乘10^j的余K的偏移量
             }
         }
 
         for (int i = 1; i <= N; i++) {
-            int len = (data[i]+"").length();
-            int t1 = (int) (data[i] % K);   // 在后
-            int t2 = (int) (data[i]*Math.pow(10,len) % K);  // 在前
+            int len = (arr[i]+"").length();
+            int t1 = arr[i] % K;   // 当前数作后段
+            int t2 = (int) (arr[i]*Math.pow(10, len) % K);  // 当前数作 后段长len的 前段
             if (t1 == 0) {
-                res += cout[len][0];    // 当作后段时，余数为零，找 前段长度len 且余数为零的数量
-                if (t2 == 0) res--;     // 不能把同一个树同时放在前后两处(如果t2==0, 上句会把当前数多算一次)
-            } else {                    // 当作后段时，余数不为零
-                res += cout[len][(int) K-t1];
+                res += cout[len][0];    // 当作后段时，余数为零，找作前段 且后段长度len 且余数为零的数量
+                if (t2 == 0) res--;     // 不能把同一个数同时放在前后两处(如果t2==0, 上句会把当前数多算一次)
+            } else {
+                res += cout[len][K-t1];
                 if (t1+t2 == K) res--;  // 同理,不能把同一个树同时放在前后两处(t1,t2是用同一个数求出来的)
-            }                           // 同时注意理解题目 “交换Ai和Aj的顺序总是被视为2种拼法,即便是Ai=Aj时”
+            }                           // 与题目 “交换Ai和Aj的顺序总是被视为2种拼法,即便是Ai=Aj时”不冲突
         }
 
         System.out.println(res);
