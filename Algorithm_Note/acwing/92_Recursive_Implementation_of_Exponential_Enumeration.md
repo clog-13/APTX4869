@@ -67,8 +67,8 @@ class Main {
             System.out.println();
             return;
         }
-        dfs(u+1, state);
-        dfs(u+1, state+(1<<u));
+        dfs(u+1, state);  // 不选
+        dfs(u+1, state+(1<<u));  // 选
     }
 
     void dfs(int start, int cnt, int tar) {
