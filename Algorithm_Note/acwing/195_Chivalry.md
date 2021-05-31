@@ -60,11 +60,12 @@ class Main {
     int N, maxN = 5;
     char[][] arr = new char[maxN][maxN];
     int[] dx = { 1, 1, 2, 2,-2,-2,-1,-1}, dy = {-2, 2,-1, 1,-1, 1,-2, 2};
-    char[][] stand = {{'1', '1', '1', '1', '1'},
-                      {'0', '1', '1', '1', '1'},
-                      {'0', '0', '*', '1', '1'},
-                      {'0', '0', '0', '0', '1'},
-                      {'0', '0', '0', '0', '0'}};
+    char[][] stand = {
+            {'1', '1', '1', '1', '1'},
+            {'0', '1', '1', '1', '1'},
+            {'0', '0', '*', '1', '1'},
+            {'0', '0', '0', '0', '1'},
+            {'0', '0', '0', '0', '0'}};
 
     public static void main (String [] args) throws IOException {
         new Main().init();
@@ -75,28 +76,31 @@ class Main {
         N = Integer.parseInt(br.readLine());
 
         while (N-- > 0) {
-            for (int i = 0; i < 5; i++) {
-                arr[i] = br.readLine().toCharArray();
-            }
+            for (int i = 0; i < 5; i++)  arr[i] = br.readLine().toCharArray();
 
             int x = 0, y = 0;
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 5; j++) {
                     if (arr[i][j] == '*') {
                         x = i; y = j;
-                    } 
+                    }
                 }
             }
 
-            boolean flag = false;
-            for (int depth = 0; depth <= 15; depth++) {
-                if (dfs(x, y, 0, depth)) {
-                    System.out.println(depth);
-                    flag = true;
-                    break;
-                }
-            }
-            if (!flag) System.out.println(-1);
+            int depth = 0;
+            while (depth <= 15 && !dfs(x, y, 0, depth)) depth++;
+            if (depth <= 15) System.out.println(depth);
+            else System.out.println(-1);
+
+            // boolean flag = false;
+            // for (int depth = 0; depth <= 15; depth++) {
+            //     if (dfs(x, y, 0, depth)) {
+            //         System.out.println(depth);
+            //         flag = true;
+            //         break;
+            //     }
+            // }
+            // if (!flag) System.out.println(-1);
         }
     }
 
