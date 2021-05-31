@@ -1,19 +1,26 @@
-# 210. 课程表 II
-现在你总共有 n 门课需要选，记为 0 到 n-1。
+# 210. Course Schedule II
 
-在选修某些课程之前需要一些先修课程。 例如，想要学习课程 0 ，你需要先完成课程 1 ，我们用一个匹配来表示他们: [0,1]
+There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you **must** take course `bi` first if you want to take course `ai`.
 
-给定课程总量以及它们的先决条件，返回你为了学完所有课程所安排的学习顺序。
+- For example, the pair `[0, 1]`, indicates that to take course `0` you have to first take course `1`.
 
-可能会有多个正确的顺序，你只要返回一种就可以了。如果不可能完成所有课程，返回一个空数组。
+Return *the ordering of courses you should take to finish all courses*. If there are many valid answers, return **any** of them. If it is impossible to finish all courses, return **an empty array**.
 
-**示例:**
-输入: 4, [[1,0],[2,0],[3,1],[3,2]]
-输出: [0,1,2,3] or [0,2,1,3]
-解释: 总共有 4 门课程。要学习课程 3，你应该先完成课程 1 和课程 2。并且课程 1 和课程 2 都应该排在课程 0 之后。
-因此，一个正确的课程顺序是 [0,1,2,3] 。另一个正确的排序是 [0,2,1,3] 。
+ 
+
+**Example 1:**
+
+```
+Input: numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+Output: [0,2,1,3]
+Explanation: There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0.
+So one correct course order is [0,1,2,3]. Another correct ordering is [0,2,1,3].
+```
+
+
 
 ## 拓扑排序（Kahn 算法、类似广度优先遍历的思路）
+
 拓扑排序实际上应用的是贪心算法，贪心算法简而言之：每一步最优，则全局最优。
 
 **算法流程：**
@@ -67,7 +74,10 @@ class Solution {
 - 时间复杂度：O(E + V)。这里 E 表示邻边的条数，V 表示结点的个数。初始化入度为 0 的集合需要遍历整张图，具体做法是检查每个结点和每条边，因此复杂度为 O(E + V)，然后对该集合进行操作，又需要遍历整张图中的每个结点和每条边，复杂度也为 O(E + V)；
 - 空间复杂度：O(V)：入度数组、邻接表的长度都是结点的个数 V，即使使用队列，队列最长的时候也不会超过 V，因此空间复杂度是 O(V)。
 
+
+
 ## DFS
+
 假设我们当前搜索到了节点 u，如果它的所有相邻节点都已经搜索完成，那么这些节点都已经在栈中了，此时我们就可以把 u 入栈。可以发现，如果我们从栈顶往栈底的顺序看，由于 u 处于栈顶的位置，那么 u 出现在所有 u 的相邻节点的前面。因此对于 u 这个节点而言，它是满足拓扑排序的要求的。
 
 这样以来，我们对图进行一遍深度优先搜索。当每个节点进行回溯的时候，我们把该节点放入栈中。最终从栈顶到栈底的序列就是一种拓扑排序。
@@ -106,6 +116,7 @@ class Solution {
 
 ```java
 import java.util.*;
+
 public class Solution {
     public int[] findOrder(int numCourses, int[][] prerequisites) {
         if (prerequisites.length == 0) {
@@ -113,10 +124,10 @@ public class Solution {
             for (int i = 0; i < numCourses; i++) res[i] = i;
             return res;
         }
-        
+
         HashSet<Integer>[] graph = new HashSet[numCourses];
         for (int i = 0; i < numCourses; i++) graph[i] = new HashSet<>();
-        for (int[] p : prerequisites) graph[p[1]].add(p[0]);
+        for (int[] p : prerequisites) graph[p[1]].add(p[0]);  // 前置连向后置
 
         Stack<Integer> stack = new Stack<>();   // 使用 Stack 记录递归的顺序
         int[] marked = new int[numCourses];     // 记录节点的访问状态（未访问_0，访问中_1，已访问_2）
@@ -134,11 +145,10 @@ public class Solution {
         if (marked[i] == 2) return false;	// 遇到已访问的节点
         marked[i] = 1;          // 状态改为访问中
 
-        // 后继结点的集合
-        for (Integer successor : graph[i]) {
+        for (Integer successor : graph[i]) {  // 前置连向后置
             if (dfs(successor, graph, marked, stack)) return true;
         }
-        
+
         marked[i] = 2;          // 已访问（且没有环）
         stack.add(i);
         return false;           // false 表示图中不存在环
@@ -148,5 +158,3 @@ public class Solution {
 **复杂度分析**
 - 时间复杂度: O(n + m)，其中 n 为课程数，m 为先修课程的要求数。这其实就是对图进行深度优先搜索的时间复杂度。
 - 空间复杂度: O(n + m)。题目中是以列表形式给出的先修课程关系，为了对图进行深度优先搜索，我们需要存储成邻接表的形式，空间复杂度为 O(m)。在深度优先搜索的过程中，我们需要最多 O(n) 的栈空间（递归）进行深度优先搜索，并且还需要若干个 O(n) 的空间存储节点状态、最终答案等。
-
-##

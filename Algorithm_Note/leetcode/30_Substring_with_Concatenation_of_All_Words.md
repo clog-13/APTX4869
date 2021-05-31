@@ -1,24 +1,30 @@
-# 30. 串联所有单词的子串
+# 30. Substring with Concatenation of All Words
 
-给定一个字符串 **s** 和一些长度相同的单词 **words。**找出 **s** 中恰好可以由 **words** 中所有单词串联形成的子串的起始位置。
+You are given a string `s` and an array of strings `words` of **the same length**. Return all starting indices of substring(s) in `s` that is a concatenation of each word in `words` **exactly once**, **in any order**, and **without any intervening characters**.
 
-注意子串要与 **words** 中的单词完全匹配，中间不能有其他字符，但不需要考虑 **words** 中单词串联的顺序。 
+You can return the answer in **any order**. 
 
-**示例：**
+
+
+**Example 1:**
 
 ```
-输入：
-  s = "barfoothefoobarman",
-  words = ["foo","bar"]
-输出：[0,9]
-解释：
-从索引 0 和 9 开始的子串分别是 "barfoo" 和 "foobar" 。
-输出的顺序不重要, [9,0] 也是有效答案。
+Input: s = "barfoothefoobarman", words = ["foo","bar"]
+Output: [0,9]
+Explanation: Substrings starting at index 0 and 9 are "barfoo" and "foobar" respectively.
+The output order does not matter, returning [9,0] is fine too.
+```
+
+**Example 2:**
+
+```
+Input: s = "wordgoodgoodgoodbestword", words = ["word","good","best","word"]
+Output: []
 ```
 
 
 
-## 剪枝+枚举
+## 剪枝 + 枚举
 
 ```java
 import java.util.*;
@@ -33,27 +39,21 @@ class Solution {
         for (int start = 0; start < wLen; start++) {    // 要以每个起点匹配一次，否则可能会漏
             int curCnt = 0;    // 记录当前字串有多少个单词
             HashMap<String, Integer> curCntMap = new HashMap<>();
-
             for (int i = start; i <= s.length() - tarCnt*wLen; i += wLen) {    // 每次移动一个单词长度
-                boolean hasRemoved = false; // 防止情况三移除后，情况一继续移除
-
                 while (curCnt < tarCnt) {
                     String cur = s.substring(i + curCnt*wLen, i + (curCnt+1)*wLen);
-                    
                     if (wordCntMap.containsKey(cur)) {
                         curCntMap.put(cur, curCntMap.getOrDefault(cur, 0) + 1);
                         // 情况三: 遇到了符合的单词，但是次数超了
                         if (curCntMap.get(cur) > wordCntMap.get(cur)) {
-                            hasRemoved = true;
-                            int removeNum = 0;
-                            
-                            while (curCntMap.get(cur) > wordCntMap.get(cur)) {
-                                String firstWord = s.substring(i + removeNum*wLen, i + (removeNum+1)*wLen);
+                            int reCnt = 0;
+                            while (curCntMap.get(cur) > wordCntMap.get(cur)) {  // 滑动窗口
+                                String firstWord = s.substring(i + reCnt*wLen, i + (reCnt+1)*wLen);
                                 curCntMap.put(firstWord, curCntMap.get(firstWord)-1);
-                                removeNum++;
+                                reCnt++;
                             }
-                            curCnt -= (removeNum-1);  // 加 1 是因为我们把当前单词加入到了 curCntMap 中
-                            i += (removeNum-1)*wLen;
+                            curCnt -= (reCnt-1);  // 加 1 是因为我们把当前单词加入到了 curCntMap 中
+                            i += (reCnt-1)*wLen;
                             break;
                         }
                         curCnt++;
@@ -65,14 +65,12 @@ class Solution {
                     }
                 }
 
-                if (curCnt == tarCnt) {
+                if (curCnt == tarCnt) {  // 情况一
                     res.add(i);
-                    
-                    if (!hasRemoved) {    // 情况一: 子串匹配，我们将匹配子串的第一个单词移除
-                        String firstWord = s.substring(i, i + wLen);
-                        curCntMap.put(firstWord, curCntMap.get(firstWord) - 1);
-                        curCnt--;
-                    }
+
+                    String firstWord = s.substring(i, i + wLen);
+                    curCntMap.put(firstWord, curCntMap.get(firstWord) - 1);
+                    curCnt--;
                 }
             }
         }
@@ -82,4 +80,3 @@ class Solution {
 }
 ```
 
-#

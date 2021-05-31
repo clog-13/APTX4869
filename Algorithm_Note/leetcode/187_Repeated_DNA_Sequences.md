@@ -1,21 +1,20 @@
-# 187. 重复的DNA序列
+# 187. Repeated DNA Sequences
 
-所有 DNA 都由一系列缩写为 `'A'`，`'C'`，`'G'` 和 `'T'` 的核苷酸组成，例如：`"ACGAATTCCG"`。在研究 DNA 时，识别 DNA 中的重复序列有时会对研究非常有帮助。
+The **DNA sequence** is composed of a series of nucleotides abbreviated as `'A'`, `'C'`, `'G'`, and `'T'`.
 
-编写一个函数来找出所有目标子串，目标子串的长度为 10，且在 DNA 字符串 `s` 中出现次数超过一次。
+- For example, `"ACGAATTCCG"` is a **DNA sequence**.
 
-**示例 1：**
+When studying **DNA**, it is useful to identify repeated sequences within the DNA.
+
+Given a string `s` that represents a **DNA sequence**, return all the **`10`-letter-long** sequences (substrings) that occur more than once in a DNA molecule. You may return the answer in **any order**.
+
+
+
+**Example 1:**
 
 ```
-    输入：s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
-输出：["AAAAACCCCC","CCCCCAAAAA"]
-```
-
-**示例 2：**
-
-```
-输入：s = "AAAAAAAAAAAAA"
-输出：["AAAAAAAAAA"]
+Input: s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+Output: ["AAAAACCCCC","CCCCCAAAAA"]
 ```
 
 
@@ -82,7 +81,7 @@ class Solution {
         if (N <= L) return new ArrayList<>();
 
         Map<Character, Integer> map = new HashMap<>();
-        map.put('A', 0); map.put('C', 1); 
+        map.put('A', 0); map.put('C', 1);
         map.put('G', 2); map.put('T', 3);
         int[] arr = new int[N];
         for (int i = 0; i < N; i++) arr[i] = map.get(s.charAt(i));
@@ -91,13 +90,13 @@ class Solution {
         Set<String> res = new HashSet<>();
         int bitmask = 0;
         for (int i = 0; i < L; i++) {
-            bitmask <<= 2;
+            bitmask <<= 2;  // 四进制
             bitmask |= arr[i];
         }
         set.add(bitmask);
         for (int start = 1; start <= N-L; start++) {
             bitmask <<= 2;                  // 为加上右边留出位置
-            bitmask |= arr[start + L - 1]; // 加上右边
+            bitmask |= arr[start + L - 1];  // 加上右边
             bitmask &= ~(3 << (2*L));       // 去掉左边
 
             if (set.contains(bitmask)) res.add(s.substring(start, start + L));
@@ -107,5 +106,3 @@ class Solution {
     }
 }
 ```
-
-#
