@@ -89,7 +89,6 @@
 import java.io.*;
 
 public class Main {
-    int N;
     char[][] arr = new char[5][5];
 
     public static void main(String[] args) throws IOException {
@@ -98,7 +97,7 @@ public class Main {
 
     void init() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
+        int N = Integer.parseInt(br.readLine());
 
         while (N-- > 0) {
             for (int j = 0; j < 5; j++) arr[j] = br.readLine().toCharArray();
@@ -109,13 +108,13 @@ public class Main {
 
     int dfs() {
         int res = Integer.MAX_VALUE;
-        for (int state = 0; state < 1<<5; state++) {     // 枚举第一行的所有的情況
-            char[][] backups = new char[5][5];
+        for (int st = 0; st < 1<<5; st++) {     // 枚举所有初始化操作
+            char[][] backups = new char[5][5];  // 然后从第一排开始对每个必须操作的地方操作，最后判断
             for (int i = 0; i < 5; i++) System.arraycopy(arr[i], 0, backups[i], 0, 5);
 
             int step = 0;
             for (int i = 0; i < 5; i++) {    // 翻转当前枚举的状态的情況
-                if ((state>>i & 1) == 1) {
+                if ((st>>i & 1) == 1) {
                     step++;
                     turn(0, i);
                 }
@@ -129,7 +128,7 @@ public class Main {
                 }
             }
 
-            boolean flag = true;  // 判断假设
+            boolean flag = true;  // 判断最终状态
             for (int j = 0; j < 5; j++) {
                 if (arr[4][j] == '0') {
                     flag = false;
