@@ -64,15 +64,15 @@ y yz
 
 
 
-## 迭代加深
+## BFS
 
 ```java
 import java.util.*;
 
 class Main {
-    static String[] arr = new String[6], brr = new String[6];
-    static String S, E;
     static int idx;
+    static String S, E;
+    static String[] arr = new String[6], brr = new String[6];
     static HashMap<String, Integer> map1, map2;
 
     public static void main (String [] args) {
@@ -108,7 +108,7 @@ class Main {
         return 11;
     }
 
-    static int extend(Queue<String> queue, HashMap<String,Integer> da, HashMap<String,Integer> db, 
+    static int extend(Queue<String> queue, HashMap<String, Integer> da, HashMap<String, Integer> db,
                       String[] arr, String[] brr){
         for (int s = 0, size = queue.size(); s < size; s++) {
             String cur = queue.poll();
@@ -116,79 +116,10 @@ class Main {
                 for (int j = 0; j < idx; j++) {
                     if (cur.startsWith(arr[j], i)) {
                         String next = cur.substring(0, i) + brr[j] + cur.substring(i+ arr[j].length());
-                        if (da.containsKey(next)) continue;
+                        if (da.containsKey(next)) continue;  // 防止自环
                         if (db.containsKey(next)) return da.get(cur) + db.get(next) + 1;
                         da.put(next, da.get(cur) + 1) ;
                         queue.offer(next);
-                    }
-                }
-            }
-        }
-        return 11;
-    }
-}
-```
-
-
-
-```java
-import java.util.*;
-
-class Main {
-    static String[] arr = new String[6], brr = new String[6];
-    static String S, E;
-    static int idx;
-    static HashMap<String, Integer> map1, map2;
-
-    public static void main (String [] args) {
-        Scanner sc = new Scanner(System.in);
-        map1 = new HashMap<>(); map2 = new HashMap<>();
-        S = sc.next(); E = sc.next();
-        while (sc.hasNext()) {
-            arr[idx] = sc.next(); brr[idx] = sc.next();
-            idx++;
-        }
-
-        int res = bfs();
-        if (res == 11) System.out.println("NO ANSWER!");
-        else System.out.println(res);
-    }
-    
-    static int bfs () {
-        Queue<String> queue1 = new LinkedList<>(), queue2 = new LinkedList<>();
-        queue1.offer(S); queue2.offer(E);
-        map1.put(S, 0); map2.put(E, 0) ;
-        int step = 0 ;
-        while (!queue1.isEmpty() && !queue2.isEmpty()) {  // 迭代加深
-            int t = 0;
-            if (queue1.size() <= queue2.size()) {
-                t = extend(queue1, map1, map2, arr, brr);
-            } else {
-                t = extend(queue2, map2, map1, brr, arr);
-            }
-            if (t <= 10) return t;
-            if (step++ > 10) break;
-        }
-        return 11;
-    }
-
-    static int extend(Queue<String> queue, HashMap<String,Integer> da, HashMap<String,Integer> db,  
-                      String[] arr, String[] brr){
-        int curCnt = da.get(queue.peek());   // 只bfs下一层, 为了得到最小解（迭代加深）
-        while (!queue.isEmpty() && da.get(queue.peek()) == curCnt) {
-            String cur = queue.poll();
-            for (int i = 0; i < cur.length(); i++) {
-                for (int j = i+1; j <= cur.length(); j++) {
-                    String sub = cur.substring(i, j);
-                    for (int k = 0; k < idx; k++) {
-                        if (arr[k].equals(sub)) {
-                            String next = cur.substring(0, i) + brr[k] + cur.substring(j);
-                            
-                            if (db.containsKey(next)) return da.get(cur) + db.get(next) + 1;
-                            if (da.containsKey(next)) continue;
-                            da.put(next, da.get(cur) + 1) ;
-                            queue.offer(next);
-                        }
                     }
                 }
             }

@@ -81,9 +81,9 @@ class Main {
     boolean dfs(int a, int b, int u, int depth) {
         if (a == N) return true;
         if (u == depth || (a<<(depth-u)) < N) return false;  // 可行性剪枝
-        if (N % gcd(a, b) != 0) return false;  // 设gcd(a,b)=d，那么不管之后怎么操作，得到的次数一定会是d的倍数
+        if (N % gcd(a, b) != 0) return false;  // 如果gcd(a,b)=d，那之后操作得到的次数一定会是d的倍数
 
-        int na, nb;
+        int na, nb;  // 枚举各种操作以及存储方案
         na = a+a; nb = a;
         if (nb>0 && dfs(na, nb, u+1, depth)) return true;
         na = a+a; nb = b;

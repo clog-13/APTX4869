@@ -76,8 +76,8 @@ import java.util.*;
 
 class Main {
     int N;
-    int[][] arr = new int[5][7]; int[][][] backup_arr =  new int[5][5][7];
-    int[] cnt = new int[11]; int[][] backup_cnt = new int[5][11];
+    int[][] arr = new int[5][7]; int[][][] arr_backup =  new int[5][5][7];
+    int[] cnt = new int[11]; int[][] cnt_backup = new int[5][11];
     Node[] res = new Node[5];
     boolean[][] st = new boolean[5][7];
 
@@ -94,12 +94,13 @@ class Main {
             String[] str = br.readLine().trim().split(" ");
             for (int j = 0; j < str.length-1; j++) {
                 arr[i][j] = Integer.parseInt(str[j]);
-                cnt[arr[i][j]]++; cnt[0]++;
+                cnt[arr[i][j]]++;
+                cnt[0]++;
             }
         }
 
         if (dfs(0)) {
-            for (int i = 0; i < N; i++) bw.write(res[i].x+" "+res[i].y+" "+res[i].p+"\n");
+            for (int i = 0; i < N; i++) bw.write(res[i].x+" "+res[i].y+" "+res[i].d +"\n");
         } else {
             bw.write("-1\n");
         }
@@ -111,27 +112,27 @@ class Main {
         if (u == N) return cnt[0] == 0;
         for (int i = 1; i <= 10; i++) if (cnt[i]==1 || cnt[i]==2) return false;
 
-        copy(arr, backup_arr[u]);
-        System.arraycopy(cnt, 0, backup_cnt[u], 0, cnt.length);
-        
+        copy(arr, arr_backup[u]);
+        System.arraycopy(cnt, 0, cnt_backup[u], 0, cnt.length);
+
         for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 7; y++) {  // 遍历每个点的所有左移右移情况
                 if (arr[x][y] > 0) {
-                    int tx = x+1;
+                    int tx = x+1;  // 右移
                     if (tx < 5) {
                         res[u] = new Node(x, y, 1);
                         move(x, y, tx);
                         if (dfs(u+1)) return true;
-                        copy(backup_arr[u], arr);
-                        System.arraycopy(backup_cnt[u], 0, cnt, 0,  cnt.length);
+                        copy(arr_backup[u], arr);
+                        System.arraycopy(cnt_backup[u], 0, cnt, 0,  cnt.length);
                     }
                     tx = x-1;
                     if (tx >= 0 && arr[tx][y] == 0) {  // 左移：只有前一位是 0 才计算（没必要重复计算右移的情况）
                         res[u] = new Node(x, y, -1);
                         move(x, y, tx);
                         if (dfs(u+1)) return true;
-                        copy(backup_arr[u], arr);
-                        System.arraycopy(backup_cnt[u], 0, cnt, 0,  cnt.length);
+                        copy(arr_backup[u], arr);
+                        System.arraycopy(cnt_backup[u], 0, cnt, 0,  cnt.length);
                     }
                 }
             }
@@ -144,7 +145,7 @@ class Main {
 
         while (true) {
             boolean flag = false;
-            for (int x = 0; x < 5; x++) {   // 讓方塊自由落體
+            for (int x = 0; x < 5; x++) {   // 让方块掉落
                 int z = 0;
                 for (int y = 0; y < 7; y++)
                     if (arr[x][y] != 0) arr[x][z++] = arr[x][y];
@@ -158,17 +159,17 @@ class Main {
                         int le = x, ri = x;
                         while (le-1 >= 0 && arr[le-1][y] == arr[x][y]) le--;
                         while (ri+1 < 5  && arr[ri+1][y] == arr[x][y]) ri++;
-                        if (ri-le+1 >= 3) { // 竖向超過三
+                        if (ri-le+1 >= 3) { // 竖向超过三
                             flag = true;
                             st[x][y] = true;
-                        } else {    // 當前點 竖向找不到再找 横向（减少计算）
+                        } else {    // 当前点 竖向找不到再找横向
                             le = y; ri = y;
                             while (le-1 >= 0 && arr[x][le-1] == arr[x][y]) le--;
                             while (ri+1 < 7  && arr[x][ri+1] == arr[x][y]) ri++;
-                            if (ri-le+1 >= 3) { // 横向超過三
+                            if (ri-le+1 >= 3) { // 横向超过三
                                 flag = true;
                                 st[x][y] = true;
-                            }                           
+                            }
                         }
                     }
                 }
@@ -193,11 +194,11 @@ class Main {
             System.arraycopy(src[i], 0, des[i], 0, src[i].length);
         }
     }
-    
+
     private static class Node {
-        int x, y, p;
-        public Node (int xx, int yy, int pp) {
-            x = xx; y = yy; p = pp;
+        int x, y, d;
+        public Node (int xx, int yy, int dd) {
+            x = xx; y = yy; d = dd;
         }
     }
 }

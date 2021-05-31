@@ -48,7 +48,7 @@ V 1 0
 
 ## 模拟
 
-仔细观察，我们会发现，要达到终点，必须得经过(x,y,0)且x%3==0,y%3==0的点，我们就称这样的点为模三点吧。
+仔细观察，我们会发现，要达到终点，必须得经过(x,y,0)且x%3=0, y%3=0的点，我们就称这样的点为模三点吧。
 
 所以问题得转化成我们得从当前状态点转移到一个模三点，其次我们得考虑，要从一个模三点如何转移到相邻的一个模三点并且花费的代价最小，显然最小距离最少是2(这里可以画图试一试),归纳一下，从一个模三点转移到任意一个模三点最少代价，其实就是哈密顿距离/3*2，所以问题就转化为了，从当前位置找与他相邻的模三点的代价加上从这个模三点转移到原点的最小代价。
 
@@ -60,7 +60,7 @@ import java.util.*;
 public class Main {
     int INF = 2*0x3f3f3f3f;  // 坑
     int[][][] dist = new int[7][7][3];
-    int[][][] dir = {  // 下右上左
+    int[][][] dir = {  // 下右上左 (0:立 1:横 2:竖)
             {{-2, 0, 2}, {0, 1, 1}, {1, 0, 2}, {0, -2, 1}},
             {{-1, 0, 1}, {0, 2, 0}, {1, 0, 1}, {0, -1, 0}},
             {{-1, 0, 0}, {0, 1, 2}, {2, 0, 0}, {0, -1, 2}}
@@ -86,7 +86,7 @@ public class Main {
         }
     }
 
-    int bfs(Node start, int sx, int sy) {
+    int bfs(Node start, int pastX, int pastY) {
         int res = INF;
         Queue<Node> queue = new LinkedList<>();
         queue.offer(start);
@@ -96,8 +96,8 @@ public class Main {
         while(!queue.isEmpty()) {
             Node cur = queue.poll();
 
-            if (cur.x%3==0 && cur.y%3==0 && cur.st==0) {
-                int dx = ((cur.x-3)+sx)/3*2, dy = ((cur.y-3)+sy)/3*2;
+            if (cur.x%3==0 && cur.y%3==0 && cur.st==0) {  // 模三点的最小移动代价就是哈密顿距离/3*2
+                int dx = ((cur.x-3)+pastX)/3*2, dy = ((cur.y-3)+pastY)/3*2;
                 if (dx<0 || dy<0) continue;
                 res = Math.min(res, dist[cur.x][cur.y][0] + dx + dy);
             }
@@ -107,10 +107,10 @@ public class Main {
                 int tt = dir[cur.st][i][2];
 
                 if (outRange(tx, ty)) continue;
-                if (tt==1 && outRange(tx, ty+1)) continue;
-                if (tt==2 && outRange(tx+1, ty)) continue;
+                if (tt==1 && outRange(tx, ty+1)) continue;  // 横
+                if (tt==2 && outRange(tx+1, ty)) continue;  // 竖
 
-                if (dist[tx][ty][tt] == INF) {
+                if (dist[tx][ty][tt] == INF) {  // 未被访问的点
                     dist[tx][ty][tt] = dist[cur.x][cur.y][cur.st]+1;
                     queue.offer(new Node(tx, ty, tt));
                 }

@@ -63,9 +63,9 @@ import java.util.*;
 
 class Main {
     int N, maxN = 10;
-    int[][] arr = new int[maxN][maxN], st;
-    int[][][] ba_st = new int[70][maxN][maxN];
-    int[] dx = {-1, 1, 0, 0}, dy = { 0, 0,-1, 1};
+    int[][] arr = new int[maxN][maxN], st = new int[maxN][maxN];
+    int[][][] st_backup = new int[70][maxN][maxN];
+    int[] dx = {-1, 1, 0, 0}, dy = {0, 0,-1, 1};
 
     public static void main(String[] args) {
         new Main().init();
@@ -75,16 +75,13 @@ class Main {
         Scanner sc = new Scanner(System.in);
         while (true) {
             N = sc.nextInt(); if (N == 0) break;
-            st = new int[maxN][maxN];
+            for (int[] s : st) Arrays.fill(s, 0);
 
             for (int i = 0; i < N; i++) {
-                for (int j = 0; j < N; j++) {
-                    arr[i][j] = sc.nextInt();
-                }
+                for (int j = 0; j < N; j++) arr[i][j] = sc.nextInt();
             }
 
             fill(0, 0, arr[0][0]);
-
             int depth = f();
             while (!dfs(0, depth)) depth++;
             System.out.println(depth);
@@ -96,7 +93,7 @@ class Main {
         if (u+h > depth) return false;
         if (h == 0) return true;
         for (int c = 0; c <= 5; c++) {
-            copy(st, ba_st[u]);
+            copy(st, st_backup[u]);
             boolean flag = false;
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < N; j++) {
@@ -106,19 +103,19 @@ class Main {
                     }
                 }
             }
-            if (!flag) continue;
+            if (!flag) continue;  // 当前颜色不存在
             if (dfs(u+1, depth)) return true;
-            copy(ba_st[u], st);
+            copy(st_backup[u], st);
         }
         return false;
     }
 
     void fill(int x, int y, int c) {
-        st[x][y] = 1;
+        st[x][y] = 1;  // 已经合法
         for (int s = 0; s < 4; s++) {
             int tx = x+dx[s], ty = y+dy[s];
             if (tx>=0 && tx<N && ty>=0 && ty<N && st[tx][ty] != 1) {
-                if (arr[tx][ty] != c) st[tx][ty] = 2;  // 相邻但暂时不合法
+                if (arr[tx][ty] != c) st[tx][ty] = 2;  // 相邻，待判断
                 else fill(tx, ty, c);
             }
         }
@@ -128,10 +125,10 @@ class Main {
         boolean[] cout = new boolean[6];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                if (st[i][j] != 1) cout[arr[i][j]] = true;  // 没合法
+                if (st[i][j] != 1) cout[arr[i][j]] = true;  // 不合法
             }
         }
-        int cnt = 0;
+        int cnt = 0;  // 外面还有多少种颜色
         for (int i = 0; i <= 5; i++) if (cout[i]) cnt++;
         return cnt;
     }
