@@ -159,8 +159,6 @@ class Main {
 
 ## 递归
 
-数据会溢出，递归
-
 ```java
 import java.util.*;
 
