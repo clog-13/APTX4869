@@ -56,9 +56,10 @@ C 4 2
 import java.io.*;
 
 public class Main {
-    int n, N = 30010;
-    int[] fa = new int[N], size = new int[N];  // 集合的大小
-    int[] dist = new int[N];  // 到根结点的距离
+    int N, maxN = 30010;
+    int[] fa = new int[maxN], size = new int[maxN];  // 集合的大小
+    int[] dist = new int[maxN];  // 到根结点的距离
+
     public static void main(String[] args) throws IOException {
         new Main().run();
     }
@@ -66,26 +67,25 @@ public class Main {
     void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        n = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
         for (int i = 1;i <= 30000;i ++) {
-            fa[i] = i;
-            size[i] = 1;
+            fa[i] = i; size[i] = 1;
         }
-        for (int i = 0;i < n;i ++) {
+
+        for (int i = 0; i < N; i ++) {
             String[] s1 = br.readLine().split(" ");
             String op = s1[0];
-            int a = Integer.parseInt(s1[1]);
-            int b = Integer.parseInt(s1[2]);
+            int a = Integer.parseInt(s1[1]), b = Integer.parseInt(s1[2]);
 
-            if (op.equals("M")) {
+            if (op.equals("M")) {  // 连接
                 int pa = find(a), pb = find(b);
                 fa[pa] = pb;
-                dist[pa] = size[pb];
+                dist[pa] = size[pb];  // dist[]:到父节点的距离
                 size[pb] += size[pa];
-            } else {
-                int fa = find(a), fb = find(b);
-                if (fa != fb) bw.write(-1 + "\n");
-                else bw.write(Math.max(0, Math.abs(dist[a] - dist[b]) - 1) + "\n");  // 之间间隔了多少,所有-1
+            } else {  // 查询
+                int pa = find(a), pb = find(b);
+                if (pa != pb) bw.write(-1 + "\n");
+                else bw.write(Math.max(0, Math.abs(dist[a]-dist[b]) - 1) + "\n");
             }
         }
         bw.flush();
@@ -96,9 +96,6 @@ public class Main {
             int root = find(fa[x]);
             dist[x] += dist[fa[x]];  // 想想边界情况
             fa[x] = root;
-//            find(fa[x]);
-//            dist[x] += dist[fa[x]];
-//            fa[x] = find(fa[x]);  // 这种写法也是对的因为 路径是已经被压缩了的(所以同时复杂度也不会更高)
         }
         return fa[x];
     }
