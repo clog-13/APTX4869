@@ -82,7 +82,8 @@ class Main {
         Scanner sc = new Scanner(System.in);
         row = sc.nextInt(); col = sc.nextInt(); T = sc.nextInt();
         for (int i = 1; i <= T; i++) {
-            rCout[sc.nextInt()]++; cCout[sc.nextInt()]++;
+            rCout[sc.nextInt()]++; 
+            cCout[sc.nextInt()]++;
         }
 
         if (T%row == 0 && T%col == 0) {
@@ -96,13 +97,13 @@ class Main {
         }
     }
 
-    long clac(int[] preSum, int n) {
+    long clac(int[] preSum, int N) {
         long res = 0;
-        for (int i = 1, aveCnt = T/n; i <= n; i++) {   // 每个位置 需要的数量
+        for (int i = 1, aveCnt = T/N; i <= N; i++) {   // 每个位置 需要的数量
             preSum[i] += preSum[i-1] - aveCnt;
         }
-        Arrays.sort(preSum, 1, 1+n);
-        for (int i = 1, mid = (n>>1)+1; i <= n; i++) { // (n>>1)+1 因为数组从 1 开始
+        Arrays.sort(preSum, 1, 1+N);
+        for (int i = 1, mid = (N>>1)+1; i <= N; i++) { // (N>>1)+1 因为数组从 1 开始
             res += Math.abs(preSum[mid] - preSum[i]);  // 移动代价
         }
         return res;

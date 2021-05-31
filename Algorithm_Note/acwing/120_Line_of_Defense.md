@@ -99,7 +99,7 @@ class Main {
                 mi = Math.min(mi, s); mx = Math.max(mx, e);
             }
 
-            if ((getSum(mx) & 1) == 1) {  // 如果存在奇数位，则整个数列的总和必然是奇数
+            if ((getSum(mx) & 1) == 1) {  // 如果存在奇数位，则整个数列的总和必然是奇数，反之
                 int le = mi, ri = mx;
                 while (le <= ri) {  // 二分, 判断区间总和的奇偶性
                     int mid = le+ri >> 1;
@@ -116,7 +116,7 @@ class Main {
     int getSum(int idx) {
         int res = 0;
         for (int i = 1; i <= N; i++) {
-            if (arr[i].s <= idx) {
+            if (arr[i].s <= idx) {  // 区间内[s, e]，当前点的数量
                 res += (Math.min(arr[i].e, idx) - arr[i].s) / arr[i].d + 1;
             }
         }

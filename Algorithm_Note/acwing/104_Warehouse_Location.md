@@ -52,12 +52,11 @@ public class Main {
         int[] arr = new int[N];
         for (int i = 0; i < N; i++) arr[i] = sc.nextInt();
         Arrays.sort(arr);
-        
+
         int res = 0;
         for (int i = 1; i < N; i++) res += arr[i] - arr[0];  // 初始化答案
-        for (int idx = arr[0]+1; idx <= arr[N-1]; idx++) {   // 仓库选址下标
-            int le = 0;     // le表示现在选址左边的仓库数
-            for (int ti = 0; arr[ti] < idx; ti++) le++;  // 当前下标左右的仓库数
+        for (int idx = arr[0]+1, le = 0; idx <= arr[N-1]; idx++) {   // 仓库选址下标
+            while (arr[le] < idx) le++;  // 当前下标左右的仓库数
             res = Math.min(res, res - (N-le) + le);
         }
         System.out.println(res);
