@@ -51,9 +51,8 @@
 import java.util.*;
 
 public class Main{
-    int N, M, maxN = 500010;
-    long T;
-    long[] arr = new long[maxN];
+    int N, M; long T;
+    long[] arr = new long[500010];
 
     public static void main(String[] args){
         new Main().init();
@@ -72,13 +71,13 @@ public class Main{
                 while (len > 0) {
                     if (ri+len<=N && check(le, ri+len)) {
                         ri += len;
-                        len <<= 1;
+                        len <<= 1;  // 区间倍增
                     } else {
-                        len >>= 1;
+                        len >>= 1;  // 区间倍减
                     }
                 }
-                res++;
                 le = ri;
+                res++;
             }
 
             System.out.println(res);
