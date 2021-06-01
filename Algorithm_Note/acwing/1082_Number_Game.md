@@ -40,6 +40,7 @@
 
 ```java
 import java.util.*;
+
 class Main {
     int maxN = 15;
     int[][] f = new int[maxN][maxN];
@@ -54,24 +55,24 @@ class Main {
         init();
         while (sc.hasNext()) {
             int a = sc.nextInt(), b = sc.nextInt();
-            System.out.println(dp(b)-dp(a-1));
+            System.out.println(dp(b) - dp(a-1));
         }
     }
-    
-    int dp(int n) { 
-        if(n==0) return 1;
+
+    int dp(int n) {
+        if (n == 0) return 1;
         List<Integer> list = new ArrayList<>();
         while (n > 0) {
-            list.add(n%10);
-            n/=10;
-        }    
+            list.add(n % 10);
+            n /= 10;
+        }
 
-        int res=0, last=0;  // 保存上一位的值
-        for (int i = list.size()-1; i >= 0; i--) {
+        int res = 0, last = 0;  // 保存上一位的值
+        for (int i = list.size()-1; i >= 0; i--) {  // 从最高位开始遍历
             int cur = list.get(i);
 
             if (last > cur) break;
-            for (int j = last; j < cur; j++) {  // j < cur, 因为在 [0,cur-1] 这个范围才可以为所欲为
+            for (int j = last; j < cur; j++) {  // j < cur, 因为在 [0, cur-1] 这个范围才可以为所欲为
                 res += f[i+1][j];
             }
             if (i == 0) res++;  // 全部枚举完了也同样构成一种方案

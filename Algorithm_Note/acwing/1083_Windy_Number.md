@@ -52,8 +52,8 @@ class Main {
         if (n == 0) return 0;  // 不含前置零
         List<Integer> list = new ArrayList<>();
         while (n > 0) {
-            list.add(n%10);
-            n/=10;
+            list.add(n % 10);
+            n /= 10;
         }
 
         int res = 0, last = -1;  // 初始化last=-1,防止第一位被卡掉
@@ -62,11 +62,11 @@ class Main {
             for (int j = i==list.size()-1?1:0; j < cur; j++) {
                 if (Math.abs(j-last) >= 2) res += f[i+1][j];
             }
-            if (Math.abs(cur-last)<2) break;
+            if (Math.abs(cur-last) < 2) break;
             last = cur;
-            if (i==0) res++;
+            if (i == 0) res++;
         }
-        // 计算被前置零耽误的,比如00017对于31579是合法的,但会因为0_17不合法被耽误
+        // 计算被前置零耽误的,比如00175对于31579是合法的,但会因为0_1...不合法被耽误
         for (int i = list.size()-1; i >= 0; i--) {  // i从list.size-1开始, 上面是list.size
             for (int j = 1; j <= 9; j++) {  // 从 1 开始
                 res += f[i][j];
@@ -84,7 +84,7 @@ class Main {
                 }
             }
         }
-    }   
+    }
 }
 ```
 

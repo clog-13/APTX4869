@@ -4,9 +4,9 @@
 
 例如，设 X=15,Y=20,K=2,B=2，则有且仅有下列三个数满足题意：
 
-17=2^4^+2^0^
-18=2^4^+2^1^
-20=2^4^+2^2^
+17=2^4+2^0
+18=2^4+2^1
+20=2^4+2^2
 
 #### 输入格式
 
@@ -56,11 +56,11 @@ import java.util.*;
 class Main {
     int K, B, maxN = 35;
     int[][] f = new int[maxN][maxN];
-    
+
     public static void main(String[] args) {
         new Main().run();
     }
-    
+
     void run() {
         init();
         Scanner sc = new Scanner(System.in);
@@ -69,27 +69,24 @@ class Main {
 
         System.out.println(dp(ri) - dp(le-1));
     }
-    
+
     int dp(int n) {  // n的B进制中, 小等于 n 并且恰好有K位是 1 的个数
-        if (n==0) return 0;
+        if (n == 0) return 0;
         List<Integer> list = new ArrayList<>();
-        while (n>0) {
-            list.add(n%B);
-            n/=B;
+        while (n > 0) {
+            list.add(n % B);
+            n /= B;
         }
         int res = 0, last = 0;
         for (int i = list.size()-1; i >= 0; i--) {
             int x = list.get(i);
-            if (x > 0) {
-                // 当前这一位是0(并且固定了last个1,因为前面不知道取了后面还能不能取,这时候把前面补上)
-                res += f[i][K-last];  
-                // 当前这一位是 1
-                if (x == 1) {  
-                    // last++;
+            if (x > 0) {  // 大于0，有选择权
+                res += f[i][K-last];  // 当前这一位取0(前面固定了last个1,前面不知道取了后面还能不能取,这时把前面补上)
+                if (x == 1) {  // 当前这一位等于 1
                     if (++last > K) break;
-                } else {  // 1000如果当前点取了,后面的数不一定能取1, 
-                    // 2000如果当前点取了, 后面还是可以取任意多个 1 (1_111,...,1_000,都是小于2000的, 都是合法的)
-                    if (K-last-1 >= 0) res += f[i][K-last-1];  // 所以直接用 组合数 求了就可以返回了
+                } else {  // 1000如果当前点取了,后面的数不一定能取1,
+                    // 2000如果当前点取了, 后面还是可以取任意多个 1 (1_111,...,1_000,都是小于2_000的, 都是合法的)
+                    if (K-last-1 >= 0) res += f[i][K-last-1];  // 即剩下的K-last-1个 1 可以随意组合
                     break;  // 为了防止重复计算, 直接break
                 }
             }
@@ -97,11 +94,11 @@ class Main {
         }
         return res;
     }
-    
-    void init() {
+
+    void init() {  // 组合数
         for (int i = 0; i < maxN; i++) {
             for (int j = 0; j <= i; j++) {
-                if (j==0) f[i][j] = 1;
+                if (j == 0) f[i][j] = 1;
                 else f[i][j] = f[i-1][j-1] + f[i-1][j];
             }
         }
