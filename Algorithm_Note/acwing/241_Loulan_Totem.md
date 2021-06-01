@@ -45,8 +45,8 @@
 import java.util.*;
 class Main {
     int N, maxN = 2000010;
-    int[] ls = new int[maxN], hs = new int[maxN];
-    int[] arr = new int[maxN], trees = new int[maxN];
+    long[] lo_c = new long[maxN], hi_c = new long[maxN];
+    int[] arr = new int[maxN], tr = new int[maxN];
 
     public static void main(String[] args) {
         new Main().run();
@@ -59,36 +59,33 @@ class Main {
 
         for (int i = 1; i <= N; i++) {
             int t = arr[i];
-            ls[i] = query(t-1);
-            hs[i] = query(N)-query(t);
-            update(t, 1);
+            update(t);  // 也可以先查询后更新
+            lo_c[i] = query(t-1);  // （当前）比arr[i]小的数量
+            hi_c[i] = query(N)-query(t);
         }
 
-        Arrays.fill(trees, 0);
+        Arrays.fill(tr, 0);  // !!!
         long resA = 0, resV = 0;
         for (int i = N; i >= 1; i--) {
             int t = arr[i];
-            resV += (query(N)-query(t)) * (long)hs[i];
-            resA += query(t-1) * (long)ls[i];
-            update(t, 1);
+            update(t);  // 也可以先查询后更新
+            resV += (query(N)-query(t)) * hi_c[i];
+            resA += query(t-1) * lo_c[i];
         }
         System.out.println(resV+" "+resA);
     }
 
-
-    void update(int idx, int n) {
-        for (int i = idx; i <= N; i += lowbit(i)) trees[i] += n;
+    void update(int idx) {
+        for ( ; idx <= N; idx += lowbit(idx)) tr[idx] += 1;
     }
 
     int query(int idx) {
         int res = 0;
-        for (int i = idx; i > 0; i -= lowbit(i)) res += trees[i];
+        for ( ; idx > 0; idx -= lowbit(idx)) res += tr[idx];
         return res;
     }
 
-    int lowbit(int x) {
-        return x & -x;
-    }
+    int lowbit(int x) { return x & -x; }
 }
 ```
 

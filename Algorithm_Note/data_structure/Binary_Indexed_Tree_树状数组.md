@@ -13,7 +13,7 @@ C8 = C4 + C6 + C7 + A8 = A1 + A2 + A3 + A4 + A5 + A6 + A7 + A8
 
 **C[x] 储存的是 (x - lowbit(x), x] 之间的前缀和**
 
-## Sample Demo
+## Sample Code
 ```java
 class BinaryIndexTree {
     int[] pre_sum;

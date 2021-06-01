@@ -60,7 +60,7 @@ import java.io.*;
 
 public class Main {
     int N, M, maxN = 100010;
-    long[] arr = new long[maxN], trees = new long[maxN];
+    long[] arr = new long[maxN], tr = new long[maxN];
 
     public static void main(String[] args) throws IOException {
         new Main().run();
@@ -73,35 +73,32 @@ public class Main {
         str = br.readLine().split(" ");
         for (int i = 1; i <= N; i ++) arr[i] = Integer.parseInt(str[i-1]);
 
-        for (int i = 1; i <= N; i ++) add(i, arr[i] - arr[i-1]);  // 差分
+        for (int i = 1; i <= N; i ++) update(i, arr[i] - arr[i-1]);  // 差分
         while (M-- > 0) {
             str = br.readLine().split(" ");
             String op = str[0];
             if (op.equals("C")) {
                 int le = Integer.parseInt(str[1]), ri = Integer.parseInt(str[2]);
                 int n = Integer.parseInt(str[3]);
-                add(le, n); add(ri+1, -n);  // 差分
+                update(le, n); update(ri+1, -n);  // 差分
             } else {
-                int n = Integer.parseInt(str[1]);
-                System.out.println(sum(n));
+                System.out.println(query(Integer.parseInt(str[1])));
             }
         }
+    }
+
+    void update(int idx, long n) {
+        for ( ; idx <= N; idx += lowbit(idx)) tr[idx] += n;
+    }
+
+    long query(int idx) {  // 查询一个点的值（普通BIT是查询点的前缀和）
+        long res = 0;
+        for ( ; idx >= 1; idx -= lowbit(idx)) res += tr[idx];
+        return res;
     }
 
     int lowbit(int x) {
         return x & -x;
     }
-
-    void add(int idx, long n) {
-        for (int i = idx; i <= N; i += lowbit(i)) trees[i] += n;
-    }
-
-    long sum(int idx) {
-        long res = 0;
-        for (int i = idx; i >= 1; i -= lowbit(i)) res += trees[i];
-        return res;
-    }
 }
 ```
-
-.

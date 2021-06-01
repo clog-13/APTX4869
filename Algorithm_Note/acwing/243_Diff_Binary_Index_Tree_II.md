@@ -153,6 +153,8 @@ public class Main {
 
 ## 树状数组(NlogN)
 
+区间修改，区间查询
+
 ```java
 import java.io.*;
 public class Main {
