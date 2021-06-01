@@ -44,45 +44,47 @@
 ```java
 import java.io.*;
 import java.util.*;
-class Main{
-    static BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
-    static int N, W, mid, res = 0;
-    static int[] arr;
-    static Set<Integer> set = new HashSet<>();
-    static List<Integer> setList;
-    
-    public static void main(String[] args) throws Exception{
-        String[] str = read.readLine().split(" ");
-        N = Integer.parseInt(str[1]); W = Integer.parseInt(str[0]);
-        arr = new int[N];
-        for (int i = 0; i < N; i++) arr[i] = Integer.parseInt(read.readLine());
-        Arrays.sort(arr);
 
-        mid = N / 2+3;
-        dfs_ri(N-1, 0);
+class Main{
+    int N, W, res = 0;
+    int[] arr = new int[50];
+    Set<Integer> set = new HashSet<>();
+    List<Integer> setList;
+
+    public static void main(String[] args) throws IOException {
+        new Main().run();
+    }
+
+    void run() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] str = br.readLine().split(" ");
+        N = Integer.parseInt(str[1]); W = Integer.parseInt(str[0]);
+        for (int i = 0; i < N; i++) arr[i] = Integer.parseInt(br.readLine());
+        Arrays.sort(arr, 0, N);
+
+        int mid = N / 2;  // mid取值可以左右适当调整
+        dfs_ri(N-1, 0, mid);
         setList = new ArrayList(set);
         Collections.sort(setList);
 
-        dfs_le(mid+1, 0);
+        dfs_le(mid, 0);
         System.out.println(res);
     }
 
-    public static void dfs_ri(int idx, int sum) {
-        set.add(sum);   // 打表, 去重, 同时也是算法正确性的保证
+    void dfs_ri(int idx, int sum, int mid) {
+        set.add(sum);   // 打表, 去重
         if (idx <= mid) return;
-        if ((long) sum+arr[idx] <= W) dfs_ri(idx-1, sum+arr[idx]);  // add
-        dfs_ri(idx-1, sum);  // not add
+        if ((long) sum+arr[idx] <= W) dfs_ri(idx-1, sum+arr[idx], mid);  // add
+        dfs_ri(idx-1, sum, mid);  // not add
     }
 
-    public static void dfs_le(int idx, int sum) {
-        if (idx < 0) {  // 左边搜索完，去匹配右边搜索结果
-            int le = 0, ri = setList.size();    // 找到小于等于target的最大值
+    void dfs_le(int idx, int sum) {
+        if (idx < 0) {  // 左边dfs搜索完，左边总和，去匹配右边搜索结果
+            int le = 0, ri = setList.size();  // 找到小于等于target的最大值
             int tar = W-sum;
-            while (le < ri) {  // 二分优化
-                int mid = le + ri >> 1;  // 二分细节，右边界
-                if (setList.get(mid) == tar) {
-                    le = mid+1;
-                } else if (setList.get(mid) < tar) {
+            while (le < ri) {  // 二分
+                int mid = le + ri >> 1;
+                if (setList.get(mid) <= tar) {  // 右边界
                     le = mid+1;
                 } else if (setList.get(mid) > tar) {
                     ri = mid;
@@ -92,8 +94,8 @@ class Main{
             return;
         }
 
-        if ((long) sum+arr[idx] <= W) dfs_le(idx-1, sum+arr[idx]);  // add
-        dfs_le(idx-1, sum);  // not add 
+        if ((long) sum+arr[idx] <= W) dfs_le(idx-1, sum+arr[idx]);
+        dfs_le(idx-1, sum);
     }
 }
 ```
