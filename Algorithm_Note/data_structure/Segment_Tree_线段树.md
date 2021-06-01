@@ -5,10 +5,10 @@
 ## 求和
 ```java
 import java.io.*;
-class Main {
-    int N, M, maxN = 100010;
+public class Main {
+    int N, T, maxN = 100010;
     long[] arr = new long[maxN];
-    Node[] segs = new Node[4*maxN];
+    Node[] tr = new Node[4*maxN];
 
     public static void main(String[] args) throws IOException {
         new Main().run();
@@ -17,81 +17,84 @@ class Main {
     void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
+        N = Integer.parseInt(str[0]); T = Integer.parseInt(str[1]);
         str = br.readLine().split(" ");
         for (int i = 1; i <= N; i++) arr[i] = Integer.parseInt(str[i-1]);
         build(1, 1, N);
 
-        while (M-- > 0) {
+        while (T-- > 0) {
             str = br.readLine().split(" ");
             int le = Integer.parseInt(str[1]), ri = Integer.parseInt(str[2]);
             if (str[0].equals("Q")) {
                 System.out.println(query(1, le, ri));
             } else {
                 int n = Integer.parseInt(str[3]);
-                lazy_update(1, le, ri, n);
+                update_lazy(1, le, ri, n);
             }
         }
     }
 
-    void build(int root, int le, int ri) {
-        if (le == ri) segs[root] = new Node(le, ri, arr[le]);  // 做自己
+    void build(int u, int le, int ri) {
+        if (le == ri) tr[u] = new Node(le, ri, arr[le]);
         else {
-            segs[root] = new Node(le, ri, 0);  // 人海茫茫，迷茫ing
-            int mid = le+ri>>1;
-            build(root<<1, le, mid);
-            build(root<<1|1, mid+1, ri);
-            push_up(root);  // 生活再糟也不要忘记push_up
+            tr[u] = new Node(le, ri, 0);
+            int mid = le+ri >> 1;
+            build(u<<1, le, mid);
+            build(u<<1|1, mid+1, ri);
+            push_up(u);
         }
     }
 
-    long query(int root, int start, int end) {
-        if (start > segs[root].ri || end < segs[root].le) return 0;
-        if (start <= segs[root].le && segs[root].ri <= end)
-            return segs[root].sum;
-        push_down(root);  // 自我审视，查缺补漏
+    // 查询操作，start到end之间的和
+    long query(int u, int start, int end) {
+        if (start > tr[u].ri || end < tr[u].le) return 0;
+        if (start <= tr[u].le && tr[u].ri <= end) return tr[u].sum;
+
+        push_down(u);    // 之前懒得更新的值向下传递
         long res = 0;
-        res += query(root<<1, start, end);
-        res += query(root<<1|1, start, end);
+        res += query(u<<1, start, end);
+        res += query((u<<1)|1, start, end);
         return res;
     }
-
-    void update(int root, int idx, int val) {
-        if (idx > segs[root].ri || idx < segs[root].le) return;  // 我要的你给不起
-        if (segs[root].le == segs[root].ri) segs[root].sum += val;  // 目标节点
+    
+    // 单点修改，idx位置加上val
+    void update(int u, int idx, int val) {
+        if (idx > tr[u].ri || idx < tr[u].le) return;  // 我要的你给不起
+        if (tr[u].le == tr[u].ri) tr[u].sum += val;  // 目标节点
         else {
-            update(root<<1, idx, val);    // 如果 需要update的节点在左子节点
-            update(root<<1|1, idx, val);  // 否则 需要update的节点在右子节点
-            push_up(root);    // 生活再糟也不要忘记push_up
+            update(u<<1, idx, val);    // 如果 需要update的节点在左子节点
+            update(u<<1|1, idx, val);  // 否则 需要update的节点在右子节点
+            push_up(u);    // 生活再糟也不要忘记push_up
         }
     }
-	
-    void lazy_update(int root, int start, int end, int val) {
-        if (start > segs[root].ri || end < segs[root].le) return;  // 我要的你给不起
-        if (start <= segs[root].le && segs[root].ri <= end) {  // 大款包养我
-            segs[root].sum += (long) (segs[root].ri-segs[root].le+1) * val;  // 能力多大，责任多大
-            segs[root].tag += val;
+
+    // 区间修改，start到end位置加上val
+    void update_lazy(int u, int start, int end, int val) {
+        if (tr[u].ri < start || tr[u].le > end) return;
+        if (start <= tr[u].le && tr[u].ri <= end) {   // 如果 该节点包含范围全部需要update
+            tr[u].sum += (long) (tr[u].ri - tr[u].le + 1) * val;
+            tr[u].tag += val;
         } else {
-            push_down(root);    // 自我审视，查缺补漏
-            lazy_update(root<<1, start, end, val);
-            lazy_update(root<<1|1, start, end, val);
-            push_up(root);    // 生活再糟也不要忘记push_up
+            push_down(u);    // 向下传递
+            update_lazy(u<<1, start, end, val);  // 如果左子节点在需要update的范围内
+            update_lazy(u<<1|1, start, end, val);   // 如果右子节点在需要update的范围内
+            push_up(u);
         }
     }
 
-    void push_up(int root) {
-        segs[root].sum = segs[root<<1].sum + segs[root<<1|1].sum;
+    void push_up(int u) {
+        tr[u].sum = tr[u<<1].sum + tr[u<<1|1].sum;
     }
 
-    void push_down(int root) {
-        if (segs[root].tag != 0) {
-            int mid = segs[root].le+segs[root].ri >> 1;
-            segs[root<<1].sum += segs[root].tag * (mid - segs[root].le+1);  // 能力多大，责任多大
-            segs[root<<1|1].sum += segs[root].tag * (segs[root].ri - mid);  // 能力多大，责任多大
+    void push_down(int u) {
+        if (tr[u].tag!=0) {	// 如果update()是修改为，则修改为0时这里有bug
+            int mid = (tr[u].le+ tr[u].ri) >> 1;
+            tr[u<<1].sum += tr[u].tag * (mid - tr[u].le + 1);
+            tr[u<<1|1].sum += tr[u].tag * (tr[u].ri - mid);
 
-            segs[root<<1].tag += segs[root].tag;  // 生命不息，传承不止
-            segs[root<<1|1].tag += segs[root].tag;
-            segs[root].tag = 0;
+            tr[u<<1].tag += tr[u].tag;
+            tr[u<<1|1].tag += tr[u].tag;
+            tr[u].tag = 0;
         }
     }
 
