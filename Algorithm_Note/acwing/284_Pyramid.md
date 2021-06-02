@@ -71,9 +71,9 @@ public class Main {
                 for (int le = 0; le+len-1 < N; le++) {
                     int ri = le+len-1;
                     if (len==1) f[le][ri] = 1;
-                    else if (str[le].equals(str[ri])) {
-                        for (int k = le; k < ri; k+=2) {
-                            if (str[k].equals(str[ri])) {  // k 为当前区间的根节点
+                    else if (str[le].equals(str[ri])) {  // 否则不谈
+                        for (int k = le; k < ri; k+=2) {  // k 为当前区间的根节点
+                            if (str[k].equals(str[ri])) {  // 否则不谈
                                 f[le][ri] = (int) ((f[le][ri] + (long)f[le][k]*f[k+1][ri-1])%mod);
                             }
                         }
@@ -86,3 +86,5 @@ public class Main {
         bw.flush(); bw.close();
     }
 }
+```
+

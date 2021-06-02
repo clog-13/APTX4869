@@ -88,8 +88,8 @@ class Main {
         for(int i = info[u]; i != -1; i = from[i]) {
             int t = to[i];
             dfs(t);
-            // 当前人 参加
-            f[u][1] += f[t][0];  // 要累加所有子集节点情况，所以初始赋值放在外面
+            
+            f[u][1] += f[t][0];  // 当前人 参加
             f[u][0] += Math.max(f[t][1], f[t][0]);  // 当前人 不参加
         }  // f[u][1] += arr[u];  初始赋值可以放到最后
     }
@@ -112,7 +112,7 @@ import java.util.*;
 class Main {
     static int N, maxN = 6010;
     static int[] arr = new int[maxN], leader = new int[maxN], ind = new int[maxN];
-    static int[][] f = new int[maxN][2];
+    static int[][] f = new int[2][maxN];
     static boolean[] vis = new boolean[maxN];
 
     public static void main(String[] args) {
@@ -129,17 +129,17 @@ class Main {
         // 叶子节点的ind为 0
         for (int i = 1; i <= N; i++) if (!vis[i] && ind[i]==0) up_dfs(i);
         // dp[0][]：不选当前 dp[1][]：选当前
-        System.out.println(Math.max(f[0][0], f[0][1] + arr[0]));
+        System.out.println(Math.max(f[0][0], f[1][0] + arr[0]));
     }
 
     private static void up_dfs(int u) {
-        if (u == 0) return;
+        if (u == 0) return;  // boss的领导是 0，所以u==0直接返回，最后答案从f[0][...]里返回
         vis[u] = true;
 
-        int fa = leader[u];  // boss的领导是 0，所以u==0直接返回，最后答案从f[0][...]里返回
-        f[fa][0] += Math.max(f[u][1]+arr[u], f[u][0]);
-        f[fa][1] += f[u][0];
-        if (--ind[fa] <= 0) up_dfs(fa);
+        int fa = leader[u];
+        f[0][fa] += Math.max(f[1][u]+arr[u], f[0][u]);
+        f[1][fa] += f[0][u];
+        if (--ind[fa] == 0) up_dfs(fa);
     }
 }
 ```

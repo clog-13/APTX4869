@@ -73,8 +73,8 @@ public class Main {
             Arrays.fill(f, 0);
             f[0] = 1;  // f[i]=1: i可以被凑出来
             for (int i = 1; i <= N; i++) {  // 每种硬币
-                Arrays.fill(g, 0);  // g[j]:当前硬币 在j体积时的 硬币数
-                for (int j = size[i]; j <= M; j++) {  // 遍历每种体积
+                Arrays.fill(g, 0);  // g[j]:当前硬币 在j体积时的 硬币数  (限制条件)
+                for (int j = size[i]; j <= M; j++) {  // 遍历每种体积  (完全背包)
                     if (f[j]==0 && f[j-size[i]]>0 && g[j-size[i]] < cout[i]) {
                         g[j] = g[j-size[i]] + 1;
                         f[j] = 1;

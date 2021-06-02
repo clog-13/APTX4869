@@ -1,12 +1,21 @@
-## 300. 最长上升子序列
-给定一个无序的整数数组，找到其中最长上升子序列的长度。
+# 300. Longest Increasing Subsequence
 
-**示例:**
-输入: [10,9,2,5,3,7,101,18]
-输出: 4 
-解释: 最长的上升子序列是 [2,3,7,101]，它的长度是 4。
+Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
 
-### 二分查找
+A **subsequence** is a sequence that can be derived from an array by deleting some or no elements without changing the order of the remaining elements. For example, `[3,6,2,7]` is a subsequence of the array `[0,3,1,6,2,2,7]`.
+
+**Example:**
+
+```
+Input: nums = [10,9,2,5,3,7,101,18]
+Output: 4
+Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
+```
+
+
+
+## 二分查找
+
 通过dp数组构建一个动态的最长子序列，中途使用Arrays.binarySearch()，它的用法如下：
 ```java
 import java.util.Arrays;
@@ -59,6 +68,7 @@ class Solution {
 }
 ```
 **优化**
+
 ```java
 class Solution {
     public int lengthOfLIS(int[] nums) {
@@ -94,7 +104,10 @@ class Solution {
 }
 ```
 
+
+
 ## DP
+
 时间复杂度：O(n\^2) 
 
 通过 前面子序列的最长长度得出 现子序列的最长长度
@@ -123,7 +136,9 @@ class Solution {
 ```
 
 
-### 记忆化递归
+
+## 记忆化递归
+
 针对两种情况（taken，nottaken）从前往后递归。
 ```java
 public class Solution {
@@ -141,12 +156,9 @@ public class Solution {
         int taken = 0;
         if (pre < 0 || nums[cur] > nums[pre])   // 选取当前字符构成最终的上升子序列
             taken = 1 + lengthofLIS(nums, cur, cur+1, memo);
-        // 不选 （即使符合前面的子序列上升）
-        int nottaken = lengthofLIS(nums, pre, cur+1, memo);
+        int nottaken = lengthofLIS(nums, pre, cur+1, memo);  // 不选 （即使符合前面的子序列上升）
         memo[pre+1][cur] = Math.max(taken, nottaken);
         return memo[pre+1][cur];
     }
 }
 ```
-
-#
