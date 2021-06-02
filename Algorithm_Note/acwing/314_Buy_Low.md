@@ -79,10 +79,6 @@ Price 69 68 64 62
 import java.util.*;
 public class Main {
     public static void main(String[] args) {
-        new Main().run();
-    }
-
-    void run() {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt(), max = 0, cnt = 0;
         int[] arr = new int[N+1], f = new int[N+1], g = new int[N+1];
@@ -90,19 +86,22 @@ public class Main {
         Arrays.fill(f, 1);
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j < i; j++) {  // LIS
-                if (arr[j] > arr[i]) f[i] = Math.max(f[i], f[j]+1);
+                if (arr[i] < arr[j]) f[i] = Math.max(f[i], f[j]+1);
             }
+            max = Math.max(max, f[i]);
+            
             for (int j = 1; j < i; j++) {
                 if (arr[i] == arr[j]) g[j] = 0;  // 价格序列相同，则认为这是相同的方案
-                else if (arr[j]>arr[i] && f[i]==f[j]+1) {
+                else if (arr[i] < arr[j] && f[i] == f[j]+1) {
                     g[i] += g[j];
                 }
             }
-            max = Math.max(max, f[i]);
-            if (f[i]==1) g[i] = 1;
+            
+            
+            if (f[i] == 1) g[i] = 1;
         }
         
-        for (int i = 1; i <= N; i++) if (f[i]==max) cnt += g[i];
+        for (int i = 1; i <= N; i++) if (f[i] == max) cnt += g[i];
         System.out.println(max+" "+cnt);
     }
 }

@@ -57,38 +57,44 @@
 import java.util.*;
 
 public class Main {
+    int N, M, maxN = 4000, INF = 0x3f3f3f3f;
+    int[] arr = new int[maxN]; int[][][] f = new int[2][maxN][2];
+    
     public static void main(String[] args) {
         new Main().run();
     }
 
     void run() {
         Scanner sc = new Scanner(System.in);
-        int maxN = 4000, INF = 0x3f3f3f3f;
-        int[] arr = new int[maxN]; int[][][] f = new int[2][maxN][2];
-        int N = sc.nextInt(), M = sc.nextInt();
+        N = sc.nextInt(); M = sc.nextInt();
         for (int i = 1; i <= N; i++) arr[i] = sc.nextInt();
-        for (int[][] ff: f) for (int[] a: ff) Arrays.fill(a, -INF);
+        
         // 第N项不睡
-        f[1][0][0] = 0;  // 前i项，睡了j小时，第i项不睡觉 的最大收益
-        f[1][1][1] = 0;  // 前i项，睡了j小时，第i项在睡觉 的最大收益
-        for (int i = 2; i <= N; i++) {
-            for (int j = 0; j <= M; j++) {
-                f[i&1][j][0] = Math.max(f[i-1&1][j][0], f[i-1&1][j][1]);
-                if (j>0) f[i&1][j][1] = Math.max(f[i-1&1][j-1][0], f[i-1&1][j-1][1]+arr[i]);
-            }
-        }
-        int res = f[N&1][M][0];
         for (int[][] ff: f) for (int[] a: ff) Arrays.fill(a, -INF);
+        f[1][0][0] = 0;  
+        f[1][1][1] = 0;  
+		helper();
+        int res = f[N&1][M][0];
+        
         // 第N项在睡
-        f[1][0][0] = 0; f[1][1][1] = arr[1];
+        for (int[][] ff: f) for (int[] a: ff) Arrays.fill(a, -INF);
+        f[1][0][0] = 0; 
+        f[1][1][1] = arr[1];
+		helper();
+        res = Math.max(res, f[N&1][M][1]);
+        
+        System.out.println(res);
+    }
+    
+    void helper() {
         for (int i = 2; i <= N; i++) {
             for (int j = 0; j <= M; j++) {
+                // 前i项，睡了j小时，第i项 不睡觉 的最大收益
                 f[i&1][j][0] = Math.max(f[i-1&1][j][0], f[i-1&1][j][1]);
-                if (j>0) f[i&1][j][1] = Math.max(f[i-1&1][j-1][0], f[i-1&1][j-1][1] + arr[i]);
+                // 前i项，睡了j小时，第i项 在睡觉 的最大收益
+                if (j >= 1) f[i&1][j][1] = Math.max(f[i-1&1][j-1][0], f[i-1&1][j-1][1]+arr[i]);
             }
-        }
-        res = Math.max(res, f[N&1][M][1]);
-        System.out.println(res);
+        }        
     }
 }
 ```

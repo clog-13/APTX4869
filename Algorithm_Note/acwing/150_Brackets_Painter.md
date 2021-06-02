@@ -56,12 +56,13 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         char[] s = (" "+sc.nextLine()).toCharArray();
         int res = 0;
-        int[] f = new int[s.length+1];
+        int[] f = new int[s.length+1];  // f[i]：i位置完备括号组的左端点位置-1
         for (int i = 2; i < s.length; i++) {
             if (s[i]=='(' || s[i]=='[' || s[i]=='{') continue;
-            if ((s[i]==')' && s[i-1-f[i-1]]=='(') || (s[i]==']' && s[i-1-f[i-1]]=='[')
-                    || (s[i]=='}' && s[i-1-f[i-1]]=='{')) {
-                f[i] = f[i-1]+2 + (i-2-f[i-1]>0 ? f[i-2-f[i-1]] : 0);
+            if ((s[i]==')' && s[i-1-f[i-1]]=='(') || 
+                (s[i]==']' && s[i-1-f[i-1]]=='[') ||
+                (s[i]=='}' && s[i-1-f[i-1]]=='{')) {  // 非完备括号f[i]为0
+                f[i] = f[i-1] + 2 + (i-2-f[i-1]>0 ? f[i-2-f[i-1]] : 0);
                 res = Math.max(res,f[i]);
             }
         }
@@ -79,7 +80,6 @@ public class Main {
 #include <stack>
 
 using namespace std;
-
 const int N = 100010;
 
 int main() {

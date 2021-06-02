@@ -48,7 +48,7 @@ class Main {
     int N, M, maxN = 14, mod = 10000_0000;
     int arr[] = new int[maxN], dp[][] = new int[maxN][1<<maxN];
     List<Integer> state = new ArrayList<>();
-    List<Integer>[] head = new List[1<<maxN];
+    List<Integer>[] list = new List[1<<maxN];
 
     public static void main(String[] args) {
         new Main().run();
@@ -72,10 +72,10 @@ class Main {
         }
 
         for (int i = 0; i < state.size(); i++) {  // 把可以上下相邻的状态归类
-            head[i] = new ArrayList<>();
+            list[i] = new ArrayList<>();
             int cur = state.get(i);
             for (int j = 0; j < state.size(); j++) {
-                if ((cur&state.get(j)) == 0) head[i].add(j);
+                if ((cur&state.get(j)) == 0) list[i].add(j);
             }
         }
 
@@ -83,7 +83,7 @@ class Main {
         for (int i = 1; i <= N; i++) {  // 每一行
             for (int j = 0; j < state.size(); j++) { // 遍历所有 合法行状态
                 if ((state.get(j) & arr[i]) == 0) {  // 如果状态可以在当前行(判断土地贫瘠)
-                    for (int pre : head[j]) {
+                    for (int pre : list[j]) {  // 从前一行转移方案数
                         dp[i][j] = (dp[i][j]+dp[i-1][pre])%mod;
                     }
                 }

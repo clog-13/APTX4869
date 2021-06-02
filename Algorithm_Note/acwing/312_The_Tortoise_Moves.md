@@ -36,7 +36,7 @@
 
 #### 数据范围
 
-1≤N≤350, 1≤M≤120, 0≤ai≤100, 1≤bi≤4, 每种爬行卡片的张数不会超过 4040。
+1≤N≤350, 1≤M≤120, 0≤ai≤100, 1≤bi≤4, 每种爬行卡片的张数不会超过 40。
 
 #### 输入样例：
 
@@ -79,11 +79,11 @@ public class Main {
                 for (int C = 0; C <= cout[3]; C++) {
                     for (int D = 0; D <= cout[4]; D++) {
                         int cur = arr[A + 2*B + 3*C + 4*D];
-                        int max = cur;  // f[b1][b2][b3][b4] 表示用了b1+b2+b3+b4张 时累计的最大分
-                        if (A>0) max = Math.max(max, f[A-1][B][C][D] + cur);
-                        if (B>0) max = Math.max(max, f[A][B-1][C][D] + cur);
-                        if (C>0) max = Math.max(max, f[A][B][C-1][D] + cur);
-                        if (D>0) max = Math.max(max, f[A][B][C][D-1] + cur);
+                        int max = cur;  // f[b1][b2][b3][b4] 表示用了b1,b2,b3,b4张 时累计的最大分
+                        if (A > 0) max = Math.max(max, f[A-1][B][C][D] + cur);
+                        if (B > 0) max = Math.max(max, f[A][B-1][C][D] + cur);
+                        if (C > 0) max = Math.max(max, f[A][B][C-1][D] + cur);
+                        if (D > 0) max = Math.max(max, f[A][B][C][D-1] + cur);
                         f[A][B][C][D] = max;
                     }
                 }
@@ -93,4 +93,3 @@ public class Main {
     }
 }
 ```
-

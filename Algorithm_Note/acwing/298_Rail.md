@@ -67,14 +67,15 @@ public class Main {
         for (int i = 1; i <= M; i++) {  // 遍历木匠
             int hh = 0, tt = -1;
             for (int j = 0; j <= N; j++) {  // 遍历木板
-                f[i][j] = f[i-1][j];  // 第i个木匠刷到j 总共的报酬
-                if (j>0) f[i][j] = Math.max(f[i][j], f[i][j-1]);
+                f[i][j] = f[i-1][j];  // 到第i个木匠 i木匠刷 j 的最大报酬 (即j是连续木板的右端)
+                if (j > 0) f[i][j] = Math.max(f[i][j], f[i][j-1]);
 
                 int l = arr[i-1].l, p = arr[i-1].p, s = arr[i-1].s;
                 if (hh <= tt && q[hh]+l < j) hh++;
-                if (j < s) {  // 枚举的 木匠刷到j 小于s (非法状态)
-                    while (hh <= tt && f[i-1][q[tt]] + (j-q[tt])*p <= f[i-1][j]) tt--;
-                    q[++tt] = j;
+                if (j < s) {  // 并不是单调队列模板DP
+                    // 如果刷了还没前个的情况高，就不刷
+                    while (hh <= tt && f[i-1][q[tt]] + (j-q[tt])*p <= f[i-1][j]) tt--;  
+                    q[++tt] = j;  // 保留可能的 刷了比前一个报酬高的局部方案
                 }
                 if (j >= s && hh <= tt) {  // 枚举的 木匠刷到j 大于s (合法状态)
                     f[i][j] = Math.max(f[i][j], f[i-1][q[hh]] + (j-q[hh])*p);

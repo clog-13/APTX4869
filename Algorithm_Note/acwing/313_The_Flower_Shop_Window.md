@@ -81,7 +81,7 @@ public class Main {
         f[0][0] = 0;
         for (int i = 1; i <= M; i++) {  // 盆
             for (int j = 0; j <= N; j++) {  // 花
-                if (j == 0) f[i][j] = 0;
+                if (j == 0) f[i][j] = 0;  // 第i个盆放第j朵花
                 else {
                     f[i][j] = f[i-1][j];  // 当前盆 不放 当前花
                     f[i][j] = Math.max(f[i][j], f[i-1][j-1] + arr[j][i]);  // 放
@@ -90,20 +90,18 @@ public class Main {
         }
         System.out.println(f[M][N]);
 
-        int  i = M, j = N;
-        List<Integer> path = new ArrayList<>();
-        while (j>0) {
-            if (i>0 && f[i][j]==f[i-1][j]) i--;  // 字典序(花尽量往前放)
+        int i = M, j = N;
+        Stack<Integer> res = new Stack<Integer>();
+        while (j > 0) {
+            if (i > 0 && f[i][j] == f[i-1][j]) i--;  // 字典序(花尽量往前放)
             else {
                 f[i][j] -= arr[j][i];
-                path.add(i);
+                res.push(i);
                 i--; j--;
             }
         }
 
-        for (i = path.size()-1; i >= 0; i--) {
-            System.out.print(path.get(i) + " ");
-        }
+        while (!res.isEmpty()) System.out.print(res.pop() + " ");
         System.out.println();
     }
 }

@@ -42,10 +42,14 @@
 1.633
 ```
 
+
+
+## DFS
+
 ```java
 import java.io.*;
 
-class Main{
+class Main {
     static int N, INF = 0x3f3f3f3f, maxN = 15, maxM = 9;
     static double X_;
     static double[][] preSum = new double[maxM][maxM];  // 矩阵前缀和
@@ -62,7 +66,8 @@ class Main{
         for (int i = 1; i <= 8; i++) {
             String[] arr = br.readLine().split(" ");
             for(int j = 1; j <= 8; j++){
-                preSum[i][j] = preSum[i-1][j] + preSum[i][j-1] - preSum[i-1][j-1] + Integer.parseInt(arr[j-1]);
+                preSum[i][j] = 
+                    Integer.parseInt(arr[j-1]) + preSum[i-1][j] + preSum[i][j-1] - preSum[i-1][j-1];
             }
         }
         X_ = preSum[8][8] / N;
@@ -75,9 +80,7 @@ class Main{
     public static double dfs(int x1, int y1, int x2, int y2, int k) {
         double val = dp[x1][y1][x2][y2][k];
         if (val > 0) return val;
-        if (k == 1)  {
-            return dp[x1][y1][x2][y2][k] = getVariance(x1, y1, x2, y2);
-        }
+        if (k == 1) return dp[x1][y1][x2][y2][k] = getVariance(x1, y1, x2, y2);
 
         // dp[x1][y1][x2][y2][k]: (x1, y1)到(x2, y2)的矩阵切 k 下的最小方差
         double res = INF;
