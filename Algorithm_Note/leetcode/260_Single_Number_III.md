@@ -1,13 +1,18 @@
-# 260. 只出现一次的数字 III
+# 260. Single Number III
 
-给定一个整数数组 `nums`，其中恰好有两个元素只出现一次，其余所有元素均出现两次。 找出只出现一次的那两个元素。
+Given an integer array `nums`, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once. You can return the answer in **any order**.
 
-**示例 :**
+You must write an algorithm that runs in linear runtime complexity and uses only constant extra space.
+
+**Example:**
 
 ```
-输入: [1,2,1,3,2,5]
-输出: [3,5]
+Input: nums = [1,2,1,3,2,5]
+Output: [3,5]
+Explanation:  [5, 3] is also a valid answer.
 ```
+
+
 
 **注意：**
 
@@ -17,11 +22,7 @@
 
    
 
-## 掩码
-
-- 使用异或运算可以帮助我们消除出现两次的数字；我们计算 `bitmask ^= x`，则 `bitmask` 留下的就是出现奇数次的位。
-
-- `x & (-x)` 是保留位中最右边 `1` ，且将其余的 `1` 设位 `0` 的方法。
+## Bit Manipulation
 
 - 首先计算 bitmask ^= x，则 bitmask 不会保留出现两次数字的值，因为相同数字的异或值为 0。
 
@@ -37,16 +38,15 @@
 class Solution {
     public int[] singleNumber(int[] nums) {
         int bitmask = 0;
-        for (int num : nums) bitmask ^= num;
-        
+        for (int n : nums) bitmask ^= n;
+
         int diff = bitmask & (-bitmask);
-        
+
         int x = 0;
-        for (int num : nums) if ((num & diff) != 0) x ^= num;
+        for (int n : nums) if ((n & diff) != 0) x ^= n;
 
         return new int[]{x, bitmask^x};
     }
 }
  ```
 
-#	
