@@ -58,7 +58,7 @@ class Main {
         sc.close();
     }
 
-    public static String getMin(String s){
+    public static String getMin(String s) {  // 字符串的最小字典序
         int i = 0, j = 1, k, N = s.length();
         char[] ss = (s + s).toCharArray();
         while (i < N && j < N) {
