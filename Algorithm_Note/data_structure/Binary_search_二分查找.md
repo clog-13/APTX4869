@@ -26,15 +26,13 @@ int binarySearch(int[] nums, int tar) {
 
 ```java
 int left_bound(int[] nums, int tar) {
-    int le = 0, ri = nums.length;  // ##
+    int le = 0, ri = nums.length;
 
     while (le < ri) {
         int mid = (le + ri) >> 1;
-        if (nums[mid] == tar) {
-            ri = mid;  // ##
-        } else if (nums[mid] < tar) {
+        if (nums[mid] < tar) {  // ##
             le = mid + 1;
-        } else if (nums[mid] > tar) {
+        } else {
             ri = mid;
         }
     }
@@ -52,11 +50,9 @@ int right_bound(int[] nums, int tar) {
 
     while (le < ri) {
         int mid = (le + ri) >> 1;
-        if (nums[mid] == tar) {
-            le = mid + 1;  // ##
-        } else if (nums[mid] < tar) {
+        if (nums[mid] <= tar) {  // ##
             le = mid + 1;
-        } else if (nums[mid] > tar) {
+        } else {
             ri = mid;
         }
     }

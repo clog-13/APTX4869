@@ -50,10 +50,6 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        new Main().run();
-    }
-
-    void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
         int N = Integer.parseInt(str[0]), T = Integer.parseInt(str[1]);
@@ -66,10 +62,11 @@ public class Main {
         for (int i = 1; i <= T; i++) {  // 一个区间内部点指向最大ri边界
             nxt[i] = Math.max(nxt[i], nxt[i-1]);
         }
+        
         int p = 1, res = 0;
         while (p <= T && p <= nxt[p]) {
-            p = nxt[p]+1;
             res++;
+            p = nxt[p]+1;
         }
         if (p <= T) System.out.println(-1);
         else System.out.println(res);
@@ -113,7 +110,7 @@ public class Main {
         for (int i = 0; i < N; i++) {
             int le = arr[i].le, ri = arr[i].ri;
             int val = query(1, le-1, ri-1) + 1;  // f[le-1]~f[ri-1]:区间最小值
-            update(1, ri, val);
+            update(1, ri, val);  // 如果问题是“每个牛需要v佣金”，则上面 +1 改为 +v
         }
 
         int res = query(1, T, T);  // 单点查询

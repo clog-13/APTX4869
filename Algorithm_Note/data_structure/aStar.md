@@ -256,15 +256,12 @@ class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
-        M = sc.nextInt();
+        N = sc.nextInt(); M = sc.nextInt();
         Arrays.fill(info, -1); Arrays.fill(rnfo, -1);
         while (M-- > 0) {
-            int a = sc.nextInt();
-            int b = sc.nextInt();
+            int a = sc.nextInt(), b = sc.nextInt();
             int c = sc.nextInt();
-            add(0, a, b, c);
-            add(1, a, b, c);
+            add(0, a, b, c); add(1, a, b, c);
         }
         S = sc.nextInt(); E = sc.nextInt(); K = sc.nextInt();
         if (S == E) K++;

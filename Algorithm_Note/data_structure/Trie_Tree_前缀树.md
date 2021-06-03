@@ -50,11 +50,8 @@ class Trie {
         for (int i = 0; i < word.length(); i++) {
             int index = word.charAt(i) - 'a';
             if (node.children[index] == null) {
-                if (insert) {
-                    node.children[index] = new Node();
-                } else {
-                    return null;
-                }
+                if (insert) node.children[index] = new Node();
+                else return null;
             }
             node = node.children[index];
         }

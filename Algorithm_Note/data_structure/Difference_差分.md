@@ -15,8 +15,7 @@ class Main {
         }
         
         while (M-- > 0) {  // update
-            int le = sc.nextInt();
-            int ri = sc.nextInt();
+            int le = sc.nextInt(), ri = sc.nextInt();
             int c = sc.nextInt();
             diff[le] += c;
             diff[ri+1] -= c;
@@ -83,25 +82,27 @@ class Main {
 ![](pic\difference.jpg)
 
 ```java
+import java.util.Scanner;
+
 class Main {
     static int A, B, C, m, maxN = 2000010;
-    static long[] data = new long[N], diff = new long[N];
-    static int[][] op = new int[N >> 1][7];
+    static long[] data = new long[maxN], diff = new long[maxN];
     static int[][] dir = new int[][]{
             {0, 0, 0, 1},
-            
-        	{0, 0, 1,-1},
+
+            {0, 0, 1,-1},
             {0, 1, 0,-1},
             {1, 0, 0,-1},
-            
+
             {0, 1, 1, 1},
             {1, 0, 1, 1},
             {1, 1, 0, 1},
-            
+
             {1, 1, 1,-1},
     };
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
         A = sc.nextInt(); B = sc.nextInt(); C = sc.nextInt();
         m = sc.nextInt();
 
@@ -128,26 +129,26 @@ class Main {
                 }
             }
         }
-        
+
         // update
     }
-    
+
     static void update(int x1, int y1, int z1, int x2, int y2, int z2, int t) {
         backup[get(x1, y1, z1)] += t;
 
-        backup[get(x1, y1, z2+1)] -= t;
-        backup[get(x1, y2+1, z1)] -= t;
         backup[get(x2+1, y1, z1)] -= t;
+        backup[get(x1, y2+1, z1)] -= t;
+        backup[get(x1, y1, z2+1)] -= t;
 
         backup[get(x1, y2+1, z2+1)] += t;
         backup[get(x2+1, y1, z2+1)] += t;
         backup[get(x2+1, y2+1, z1)] += t;
 
-        backup[get(x2+1, y2+1, z2+1)] -= t;        
+        backup[get(x2+1, y2+1, z2+1)] -= t;
     }
 
 
-    static int get(int i, int j, int k) { 
+    static int get(int i, int j, int k) {
         return (i * B + j) * C + k;
     }
 }

@@ -48,28 +48,24 @@ public class ReservoirSamplingTest {
 
     @Before
     public void setUp() throws Exception {
-        // 初始化
-        pool = new int[N];
+        pool = new int[N];  // 初始化
         for (int i = 0; i < N; i++) {
             pool[i] = i;
         }
     }
 
     private int[] sampling(int K) {
-        int[] result = new int[K];
+        int[] res = new int[K];
         for (int i = 0; i < K; i++) { // 前 K 个元素直接放入数组中
-            result[i] = pool[i];
+            res[i] = pool[i];
         }
 
         for (int i = K; i < N; i++) { // K + 1 个元素开始进行概率采样
             int r = random.nextInt(i + 1);
-            // 这里其实就是k/j的体现
-            if (r < K) {
-                result[r] = pool[i];
-            }
+            if (r < K) res[r] = pool[i];
         }
 
-        return result;
+        return res;
     }
 
     @Test

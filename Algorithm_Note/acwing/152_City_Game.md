@@ -62,12 +62,12 @@ class Main{
 
     public static void main(String[] args) throws IOException {
         int N = nextInt(), M = nextInt(), res = 0;
-        int[][] arr = new int[N][M], up = new int[N][M];
+        int[][] arr = new int[N][M], hi = new int[N][M];
         int[][] left = new int[N][M], rigt = new int[N][M];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 arr[i][j] = next().equals("F") ? 1 : 0;
-                left[i][j] = j; rigt[i][j] = j; up[i][j] = 1;
+                left[i][j] = j; rigt[i][j] = j; hi[i][j] = 1;
             }
         }
 
@@ -92,12 +92,12 @@ class Main{
                 if (arr[i][j] != 0) {  // 遍历每个 1
                     int le = left[i][j], ri = rigt[i][j];
                     if (i > 0 && arr[i - 1][j] == 1) {
-                        up[i][j] = up[i - 1][j] + 1;
+                        hi[i][j] = hi[i - 1][j] + 1;
                         le = Math.max(le, left[i - 1][j]);
                         ri = Math.min(ri, rigt[i - 1][j]);
                     }
                     left[i][j] = le; rigt[i][j] = ri;  // 只会变少
-                    res = Math.max((ri - le + 1) * up[i][j], res);
+                    res = Math.max(hi[i][j] * (ri - le + 1), res);
                 }
             }
         }
@@ -148,13 +148,13 @@ class Main {
     static int helper(int[] hi, int[] le, int[] ri, int M) {
         queue.clear(); queue.push(0);
         for (int i = 1; i <= M; i++) {
-            while (hi[queue.peek()] >= hi[i]) queue.pop();  // 高度最小栈
+            while (hi[i] <= hi[queue.peek()]) queue.pop();  // 高度最小栈
             le[i] = queue.peek();  // 先记录再入栈
             queue.push(i);
         }
         queue.clear(); queue.push(M+1);
         for (int i = M; i > 0; i--) {
-            while (hi[queue.peek()] >= hi[i]) queue.pop();  // 高度最小栈
+            while (hi[i] <= hi[queue.peek()]) queue.pop();  // 高度最小栈
             ri[i] = queue.peek();  // 先记录再入栈
             queue.push(i);
         }

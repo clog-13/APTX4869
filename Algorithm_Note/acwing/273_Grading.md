@@ -61,6 +61,7 @@
 
 ```java
 import java.util.*;
+
 class Main {
     int N, maxN = 2010;
     List<Integer> A = new ArrayList<>(), C = new ArrayList<>();

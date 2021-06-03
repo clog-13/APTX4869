@@ -19,8 +19,8 @@ class Main{
             int opt = sc.nextInt(), x = sc.nextInt();
             if (opt==1) root = insert(root, x);  // 插入数值 x
             if (opt==2) root = remove(root, x);  // 删除数值 x(若有多个相同的数，只删除一个)
-			// 查询数值 x 的排名(若有多个相同的数，输出最小的排名)
-            if (opt==3) System.out.println(getRangByKey(root, x));  
+            // 查询数值 x 的排名(若有多个相同的数，输出最小的排名)
+            if (opt==3) System.out.println(getRangByKey(root, x));
             if (opt==4) System.out.println(getKeyByRang(root, x+1));  // 查询排名为 x 的数值
             if (opt==5) System.out.println(getPre(root, x));  // 求数值 x 的前驱(前驱定义为小于 x 的最大的数)
             if (opt==6) System.out.println(getNext(root, x));  // 求数值 x 的后继(后继定义为大于 x 的最小的数)

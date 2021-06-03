@@ -39,7 +39,7 @@ dp[i][j] = max(F[i][j-1], dp[i + 2^(j-1)][j-1]);
 代码如下：
 
 ```
-void RMQ(int num){
+void RMQ(int num) {
     for (int j = 1; j < 31; j++) {
         for (int i = 0 ; i + (1<<j) -1 <= num; i++) {
         	maxNum[i][j] = max(maxNum[i][j-1], maxNum[i+(1<<(j-1))][j-1]);
@@ -71,14 +71,13 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt();
-        int[] data = new int[N];
-        for (int i = 1 ;i <= N; i++)
-            data[i] = sc.nextInt();
+        int[] arr = new int[N];
+        for (int i = 1 ;i <= N; i++) arr[i] = sc.nextInt();
 
         int[][] dp = new int[200010][18];
         for (int j = 0; j < 18; j++) {
             for (int i = 1; i+(1<<j)-1 <= N; i++) {
-                if (j == 0) dp[i][j] = data[i];
+                if (j == 0) dp[i][j] = arr[i];
                 else dp[i][j] = Math.max(dp[i][j-1], dp[i+(1<<(j-1))][j-1]);
             }
         }
