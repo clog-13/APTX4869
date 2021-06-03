@@ -1,6 +1,6 @@
 # 3491. 完全平方数
 
-一个整数 a 是一个完全平方数，是指它是某一个整数的平方，即存在一个整数 b，使得 a=b2。
+一个整数 a 是一个完全平方数，是指它是某一个整数的平方，即存在一个整数 b，使得 a=b^2。
 
 给定一个正整数 n，请找到最小的正整数 x，使得它们的乘积是一个完全平方数。
 
@@ -44,14 +44,14 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         long N = sc.nextLong(), res = 1;
-        for (long i = 2; i*i <= N; i++) {
+        for (long i = 2; i*i <= N; i++) {  // 遍历质因子
             if (N % i == 0) {  // 判断是否为质因子
                 int cnt = 0;
                 while (N % i == 0) {  // 计算质因子次数
                     cnt++;
-                    N /= i;
+                    N /= i;  // N 在变少
                 }
-                if ((cnt&1)==1) res *= i;
+                if ((cnt&1) == 1) res *= i;
             }            
         }
         if (N > 1) res *= N;
