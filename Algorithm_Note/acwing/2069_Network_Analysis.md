@@ -61,6 +61,8 @@
 
 ## 并查集
 
+公共父节点
+
 ```java
 import java.io.*;
 
@@ -81,14 +83,14 @@ public class Main {
             int op= Integer.parseInt(str[0]);
             int a = Integer.parseInt(str[1]), b = Integer.parseInt(str[2]);
 
-            if (op == 1) {
+            if (op == 1) {  // 连接
                 a = find(a); b = find(b);
                 if (a != b) {
                     root++;
                     p[a] = root; p[b] = root;
                 }
-            } else {
-                res[find(a)] += b;  // 新增公共父节点
+            } else {  // 发送
+                res[find(a)] += b;  // 加到新增公共父节点，下次查询会向下传递
             }
         }
 
@@ -107,6 +109,10 @@ public class Main {
     }
 }
 ```
+
+
+
+自连操作
 
 ```java
 import java.io.*;
@@ -140,14 +146,13 @@ public class Main {
         }
 
         for(int i = 1; i <= N; i++) {  // find最后统一再更新一次值
-            if (i == find(i)) bw.write(res[i] + " ");
+            if (i == find(i)) bw.write(res[i] + " ");  // 考虑当作父节点的点
             else bw.write(res[i] + res[find(i)] + " ");
         }
         bw.flush(); bw.close();
     }
 
     private static int find(int n) {
-        // 父节点（可删去） 或 亲子节点 （配合 连接 操作）
         if (p[n] == n || p[n] == p[p[n]]) return p[n];
         int t = find(p[n]);
         res[n] += res[p[n]];  // 父值往下传
@@ -156,6 +161,10 @@ public class Main {
     }
 }
 ```
+
+
+
+？？？，状态记录
 
  ```java
 import java.util.Scanner;
@@ -173,8 +182,8 @@ public class Main {
             String[] str = sc.nextLine().split(" ");
             int op = Integer.parseInt(str[0]);
             int a = Integer.parseInt(str[1]), b = Integer.parseInt(str[2]);
-            if (op == 1) uf.union(a, b);
-            else uf.add(a, b);
+            if (op == 1) uf.union(a, b);  // 连接
+            else uf.add(a, b);  // 发送
         }
 
         for (int i = 1; i <= N; i++) {
@@ -191,7 +200,7 @@ public class Main {
         }
 
         private int find(int a) {
-            while (a != p[a]) {
+            while (a != p[a]) {  // 路径压缩
                 p[a] = p[p[a]];
                 a = p[a];
             }
@@ -200,7 +209,7 @@ public class Main {
 
         private void union(int a, int b) {
             if (a == b || find(a) == find(b)) return;
-            for (int i = 1; i <= N; i++) {
+            for (int i = 1; i <= N; i++) {  // 遍历更新所有点
                 if (find(i) == p[a] || p[i] == p[b]) {
                     res[i] += cout[p[i]];
                 }
