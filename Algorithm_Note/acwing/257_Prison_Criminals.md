@@ -84,7 +84,7 @@ public class Main {
             String[] s2 = br.readLine().split(" ");
             int a = Integer.parseInt(s2[0]), b = Integer.parseInt(s2[1]);
             int c = Integer.parseInt(s2[2]);
-            add(a, b, c); add(b, a, c);
+            add(a, b, c); add(b, a, c);  // 建立无向边
         }
         int le = 0, ri = 1000000000;
         while (le < ri) {  // “二分-迭代加深”
@@ -102,15 +102,15 @@ public class Main {
             if (color[i] == 0) {  // 如果还没被染色
                 color[i] = 1;
                 queue.add(i);
-                while (!queue.isEmpty()) {  // 邻接表检索
+                while (!queue.isEmpty()) {  // 遍历当前罪犯的所有相邻边
                     int cur = queue.poll();
                     for(int j = info[cur]; j != -1; j = from[j]) {
-                        if (val[j] <= mid) continue;  // 若怨气值小于mid则不连边
+                        if (val[j] <= mid) continue;  // 若怨气值小于mid则不管，不连边
                         int t = to[j];
                         if (color[t] == 0) {  // 没染色, 分到到前的另一边
                             color[t] = 3 - color[cur];
                             queue.add(t);
-                        } else if (color[t] == color[cur]) {  // 相同染色, 返回false
+                        } else if (color[t] == color[cur]) {  // 相同染色,val[j] > mid,返回false
                             return false;
                         }  // 不同颜色, 跳过, 不入边
                     }
