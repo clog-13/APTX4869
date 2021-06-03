@@ -6,7 +6,7 @@
 
 现在 freda 要在这里卖萌。。。它要找一块矩形土地，要求这片土地都标着 `F` 并且面积最大。
 
-但是 rainbow 和 freda 的 OI 水平都弱爆了，找不出这块土地，而蓝兔也想看 freda 卖萌（她显然是不会编程的……），所以它们决定，如果你找到的土地面积为 S，它们将给你 3×S 两银子。
+但是 rainbow 和 freda 的 OI 水平都弱爆了，找不出这块土地，而蓝兔也想看 **freda** 卖萌（她显然是不会编程的……），所以它们决定，如果你找到的土地面积为 S，它们将给你 3×S 两银子。
 
 #### 输入格式
 
@@ -87,8 +87,8 @@ class Main{
             }
         }
 
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
+        for (int i = 0; i < N; i++) {  // 行
+            for (int j = 0; j < M; j++) {  // 列
                 if (arr[i][j] != 0) {  // 遍历每个 1
                     int le = left[i][j], ri = rigt[i][j];
                     if (i > 0 && arr[i - 1][j] == 1) {
@@ -96,7 +96,7 @@ class Main{
                         le = Math.max(le, left[i - 1][j]);
                         ri = Math.min(ri, rigt[i - 1][j]);
                     }
-                    left[i][j] = le; rigt[i][j] = ri;
+                    left[i][j] = le; rigt[i][j] = ri;  // 只会变少
                     res = Math.max((ri - le + 1) * up[i][j], res);
                 }
             }
@@ -135,7 +135,7 @@ class Main {
         for (int i = 0; i <= N; i++) hi[i][0] = hi[i][M+1] = -1;  // 将两侧初始化为-1
         for (int i = 1; i <= N; i++) {  // 读入数据
             for (int j = 1; j <= M; j++) {
-                hi[i][j] = next().equals("R") ? 0 : hi[i-1][j] + 1;
+                hi[i][j] = next().equals("F") ? hi[i-1][j] + 1 : 0;
             }
         }
         int res = 0;
@@ -148,18 +148,18 @@ class Main {
     static int helper(int[] hi, int[] le, int[] ri, int M) {
         queue.clear(); queue.push(0);
         for (int i = 1; i <= M; i++) {
-            while (hi[queue.peek()] >= hi[i]) queue.pop();  // 最小单调栈
-            le[i] = queue.peek();
+            while (hi[queue.peek()] >= hi[i]) queue.pop();  // 高度最小栈
+            le[i] = queue.peek();  // 先记录再入栈
             queue.push(i);
         }
         queue.clear(); queue.push(M+1);
         for (int i = M; i > 0; i--) {
-            while (hi[queue.peek()] >= hi[i]) queue.pop();  // 最小单调栈
-            ri[i] = queue.peek();
+            while (hi[queue.peek()] >= hi[i]) queue.pop();  // 高度最小栈
+            ri[i] = queue.peek();  // 先记录再入栈
             queue.push(i);
         }
         int res = 0;
-        for (int i = 1; i <= M; i++) {
+        for (int i = 1; i <= M; i++) {  // 当前层的情况
             res = Math.max(res, hi[i] * (ri[i]-le[i]-1));
         }
         return res;
