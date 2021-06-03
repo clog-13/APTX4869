@@ -55,8 +55,6 @@ import java.io.*;
 import java.util.*;
 
 public class Main{
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     long base = 131L, mod = Long.MAX_VALUE;
     List<Long> power = new ArrayList<>(), hash = new ArrayList<>();
 
@@ -65,16 +63,18 @@ public class Main{
     }
 
     void run() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         char[] chs = br.readLine().toCharArray();
         power.add(1L);
         hash.add(0L);
-        for (int i = 0 ; i < chs.length; i++){
-            hash.add((hash.get(i)*base%mod + (chs[i]-'a'+1)) % mod);
+        for (int i = 0 ; i < chs.length; i++) {
+            hash.add((hash.get(i)*base%mod + (chs[i]-'a'+1))%mod);
             power.add(power.get(i)*base%mod);
         }
 
         int N = Integer.parseInt(br.readLine());
-        for (int i = 0 ; i < N ; i++){
+        for (int i = 0 ; i < N ; i++) {
             String[] str = br.readLine().split(" ");
             int l1 = Integer.parseInt(str[0]), r1 = Integer.parseInt(str[1]);
             int l2 = Integer.parseInt(str[2]), r2 = Integer.parseInt(str[3]);
@@ -84,9 +84,9 @@ public class Main{
         bw.flush(); bw.close();
     }
 
-    boolean check(int l1, int r1, int l2, int r2){
-        long h1 = hash.get(r1) - hash.get(l1-1)*power.get(r1-l1+1)%mod;
-        long h2 = hash.get(r2) - hash.get(l2-1)*power.get(r2-l2+1)%mod;
+    boolean check(int l1, int r1, int l2, int r2) {
+        long h1 = hash.get(r1) - hash.get(l1-1) * power.get(r1-l1+1)%mod;
+        long h2 = hash.get(r2) - hash.get(l2-1) * power.get(r2-l2+1)%mod;
         return h1 == h2;
     }
 }
