@@ -58,7 +58,7 @@ class Main {
             if (diff[i] > 0) pos += diff[i];
             else neg -= diff[i];
         }
-        System.out.println(Math.max(pos, neg));
+        System.out.println(Math.max(pos, neg));  // pos,neg是累计的差分量（不是某某总和）
         System.out.println(Math.abs(pos-neg)+1);
     }
 }
