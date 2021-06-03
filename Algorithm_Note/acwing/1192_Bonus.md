@@ -63,7 +63,7 @@ public class Main {
         while (M-- > 0) {
             str = br.readLine().split(" ");
             int a = Integer.parseInt(str[0]), b = Integer.parseInt(str[1]);
-            add(b, a);  // a比b高
+            add(b, a);  // a比b高,低连向高
             cout[a]++;
         }
 
