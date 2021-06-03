@@ -4,7 +4,7 @@
 
 现在我们可以从每个序列中选择一个数字以形成具有 m 个整数的序列。
 
-很明显，我们一共可以得到 n^m^ 个这种序列，然后我们可以计算每个序列中的数字之和，并得到 n^m^ 个值。
+很明显，我们一共可以得到 n^m 个这种序列，然后我们可以计算每个序列中的数字之和，并得到 n^m 个值。
 
 现在请你求出这些序列和之中最小的 n 个值。
 
@@ -64,7 +64,7 @@ public class Main {
 
             for (int i = 0; i < N; i++) arr[i] = sc.nextInt();
             Arrays.sort(arr);
-            for (int i = 1; i < M; i++) {
+            for (int i = 1; i < M; i++) {  // 每个序列
                 for (int j = 0; j < N; j++) brr[j] = sc.nextInt();
                 arr = merge(arr, brr);
             }
@@ -81,7 +81,7 @@ public class Main {
         for (int i = 0; i < N; i++) queue.add(new Node(arr[0]+brr[i], 0));
         for (int i = 0; i < N ; i++) {
             Node t = queue.poll();
-            res[i] = t.val;
+            res[i] = t.val;  // brr[i]选择arr[i]的第id位数
             if (t.id+1 < N) queue.add(new Node(t.val - arr[t.id] + arr[t.id+1], t.id+1));
         }
         return res;

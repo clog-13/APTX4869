@@ -51,18 +51,19 @@ public class Main {
         while (sc.hasNext()) {
             int N = sc.nextInt();
             Attribute[] arr = new Attribute[N];
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < N; i++) {  // 读入数据
                 int val = sc.nextInt(), time = sc.nextInt();
                 arr[i] = new Attribute(val, time);
             }
-            Arrays.sort(arr, (a, b) -> (a.endTime - b.endTime));
-            PriorityQueue<Integer> queue = new PriorityQueue<>();
+            Arrays.sort(arr, (a, b) -> (a.endTime - b.endTime));  // 过期日期升序
+            PriorityQueue<Integer> heap = new PriorityQueue<>();  // 价格最小堆
             for (int i = 0; i < N; i++) {
-                queue.add(arr[i].val);
-                if (arr[i].endTime < queue.size()) queue.poll();
+                heap.add(arr[i].val);  // size：售卖天数，代码保证局部最优性
+                // 即前i物品中不管如何最多只能其中卖endTime件，除去之中价格最小的
+                if (arr[i].endTime < heap.size()) heap.poll();
             }
             int res = 0;
-            while (!queue.isEmpty()) res += queue.poll();
+            while (!heap.isEmpty()) res += heap.poll();
             System.out.println(res);
         }
     }
