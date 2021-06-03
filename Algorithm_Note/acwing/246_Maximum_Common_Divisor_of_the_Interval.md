@@ -51,6 +51,7 @@ Q 2 4
 
 ```java
 import java.io.*;
+
 public class Main {
     int N, M, maxN = 500010;
     long[] arr = new long[maxN], diff = new long[maxN];
@@ -87,43 +88,40 @@ public class Main {
     }
 
     void build(int u, int le, int ri) {
-        if (le==ri) tr[u] = new Node(le, ri, diff[le], diff[le]);
+        if (le == ri) tr[u] = new Node(le, ri, diff[le], diff[le]);
         else {
             tr[u] = new Node(le, ri, 0, 0);
-
             int mid = (le+ri)>>1;
             build(u<<1, le, mid);
             build(u<<1|1, mid+1, ri);
-
             push_up(u);
         }
     }
 
     void update(int u, int idx, long val) {
         if (idx > tr[u].ri || idx < tr[u].le) return;
-
         if (tr[u].le == tr[u].ri) {
-            tr[u].dif += val; tr[u].gcd += val;
+            tr[u].dif += val;
+            tr[u].gcd += val;
         } else {
             update(u<<1, idx, val);
             update(u<<1|1, idx, val);
-
             push_up(u);
         }
     }
 
-    long query_dif(int u, int start, int end) {
-        if (start > tr[u].ri || end < tr[u].le) return 0;
-        if (tr[u].le >= start && tr[u].ri <= end) return tr[u].dif;
+    long query_dif(int u, int st, int ed) {
+        if (st > tr[u].ri || ed < tr[u].le) return 0;
+        if (tr[u].le >= st && tr[u].ri <= ed) return tr[u].dif;
 
-        return query_dif(u<<1, start, end) + query_dif(u<<1|1, start, end);
+        return query_dif(u<<1, st, ed) + query_dif(u<<1|1, st, ed);
     }
 
-    long query_gcd(int u, int start, int end) {
-        if (start > tr[u].ri || end < tr[u].le) return 0;
-        if (tr[u].le >= start && tr[u].ri <= end) return tr[u].gcd;
+    long query_gcd(int u, int st, int ed) {
+        if (st > tr[u].ri || ed < tr[u].le) return 0;
+        if (tr[u].le >= st && tr[u].ri <= ed) return tr[u].gcd;
 
-        return gcd(query_gcd(u<<1, start, end), query_gcd(u<<1|1, start, end));
+        return gcd(query_gcd(u<<1, st, ed), query_gcd(u<<1|1, st, ed));
     }
 
     void push_up(int u) {
@@ -145,4 +143,3 @@ public class Main {
     }
 }
 ```
-
