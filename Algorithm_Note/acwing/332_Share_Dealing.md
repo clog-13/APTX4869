@@ -66,29 +66,31 @@ class Main{
         N = Integer.parseInt(str[0]); C = Integer.parseInt(str[1]);
         W = Integer.parseInt(str[2]);
         Arrays.fill(f[0], -INF);
-        for (int i = 1; i <= N; i++) {
+        for (int i = 1; i <= N; i++) {  // 遍历每天
             str = br.readLine().split(" ");
-            int AP = Integer.parseInt(str[0]), BP = Integer.parseInt(str[1]);
-            int AC = Integer.parseInt(str[2]), BC = Integer.parseInt(str[3]);
+            int BP = Integer.parseInt(str[0]), SP = Integer.parseInt(str[1]);
+            int BC = Integer.parseInt(str[2]), SC = Integer.parseInt(str[3]);
 
-            int hh = 1, tt = 0, pre = i-W-1;
             for (int j = 0; j <= C; j++) {
-                if (j <= AC) f[i][j] = -AP * j;  // 第 i 天持股数为 j 的最大收益
-                else f[i][j] = -INF;
+                if (j <= BC) f[i][j] = -(BP * j);  // 第 i 天持股数为 j 的收益
+                else f[i][j] = -INF;  // 不可能事件，初始值-INF
                 f[i][j] = Math.max(f[i][j], f[i-1][j]);
             }
             if (i <= W) continue;
-            for (int j = 0; j <= C; j++) {  // buying
-                while (hh<=tt && j-q[hh] > AC) hh++;  // j是变值,有关q[hh]的值可以单调对列优化,也可以循环
-                if (hh<=tt) f[i][j] = Math.max(f[i][j], f[pre][q[hh]] - (j-q[hh])*AP);
-                while (hh<=tt && f[pre][q[tt]] + q[tt]*AP <= f[pre][j] + j*AP) tt--; // j如果入列就变成q[tt]了
-                q[++tt] = j;  // q仅仅记录下标
+
+            int hh = 0, tt = -1, pre = i-W-1;
+            for (int j = 0; j <= C; j++) {  // buying,不同买进情况的最大现金流方案(j:持有总量)
+                while (hh<=tt && j-q[hh] > BC) hh++;  // j-q[hh]是以当前价格买进的数量
+                if (hh<=tt) f[i][j] = Math.max(f[i][j], f[pre][q[hh]] - (j-q[hh])*BP);
+                while (hh<=tt && f[pre][q[tt]] + q[tt]*BP <= f[pre][j] + j*BP) tt--;  // 最大栈
+                q[++tt] = j;
             }
-            hh = 1; tt = 0;
-            for (int j = C; j >= 0; j--) {  // sell
-                while (hh<=tt && q[hh]-j > BC) hh++;
-                if (hh<=tt) f[i][j] = Math.max(f[i][j], f[pre][q[hh]] + (q[hh]-j)*BP);
-                while (hh<=tt && f[pre][q[tt]] + q[tt]*BP <= f[pre][j] + j*BP) tt--;
+
+            hh = 0; tt = -1;
+            for (int j = C; j >= 0; j--) {  // selling(j是持有总量, q[hh]-j 是以现在价格卖出的数量)
+                while (hh<=tt && q[hh]-j > SC) hh++;  // q[hh]恒大于j
+                if (hh<=tt) f[i][j] = Math.max(f[i][j], f[pre][q[hh]] + q[hh]*SP - j*SP);
+                while (hh<=tt && f[pre][q[tt]] + q[tt]*SP <= f[pre][j] + j*SP) tt--;  // 最大栈
                 q[++tt] = j;
             }
         }
