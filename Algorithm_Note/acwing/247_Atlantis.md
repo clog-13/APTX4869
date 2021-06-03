@@ -16,7 +16,7 @@
 
 对于每组测试用例，第一行包含整数 n，表示总的地图数量。
 
-接下来 n 行，描绘了每张地图，每行包含四个数字 xx1,y1,x2,y2（不一定是整数），(x1,y1) 和 (x2,y2) 分别是地图的左上角位置和右下角位置。
+接下来 n 行，描绘了每张地图，每行包含四个数字 x1,y1,x2,y2（不一定是整数），(x1,y1) 和 (x2,y2) 分别是地图的左上角位置和右下角位置。
 
 注意，坐标轴 x 轴从上向下延伸，y 轴从左向右延伸。
 
@@ -91,11 +91,11 @@ class Main{
                 double x1 = Double.parseDouble(str[0]), y1 = Double.parseDouble(str[1]);
                 double x2 = Double.parseDouble(str[2]), y2 = Double.parseDouble(str[3]);
                 arr[idx++] = new Node(x1, y1, y2, 1);
-                arr[idx++] = new Node(x2, y1, y2, -1);  // 离散化 点
+                arr[idx++] = new Node(x2, y1, y2,-1);  // 离散化 点
                 list.add(y1); list.add(y2);  // 立散化 y下标
             }
-            // 排序，去重 实现离散化
-            Arrays.sort(arr, (o1, o2) -> (int) (o1.x - o2.x));
+            
+            Arrays.sort(arr, (o1, o2) -> (int) (o1.x - o2.x));  // 排序，去重 实现离散化
             Collections.sort(list);
             list = unique(list);
 
@@ -104,7 +104,7 @@ class Main{
             double res = 0;
             for (int i = 0; i < N*2; i++) {
                 if (i > 0) res += tr[1].len * (arr[i].x - arr[i-1].x);
-                update(1, query(arr[i].y1), query(arr[i].y2) - 1, arr[i].val);
+                update(1, getIdx(arr[i].y1), getIdx(arr[i].y2) - 1, arr[i].val);
             }
 
             bw.write("Test case #" + T++ + "\n");
@@ -125,16 +125,6 @@ class Main{
         pushUp(u);
     }
 
-    int query(double target) {
-        int le = 0, ri = list.size();
-        while (le < ri) {
-            int mid = le + ri >> 1;
-            if (list.get(mid) < target)  le = mid+1;
-            else ri = mid;
-        }
-        return le;
-    }
-
     void pushUp(int u) {
         if (tr[u].cnt > 0) {  // 如果cnt>0, 则整个区间长度就是len
             // 因为存的是线段(区间), tr[u].r是线段(区间)从r到r+1的左端点, tr[u].r+1是线段(区间)从r到r+1的右端点
@@ -148,12 +138,24 @@ class Main{
         }
     }
 
-    void build(int u, int le, int ri){
-        tr[u] = new Seg(le, ri, 0, 0);
-        if (le == ri) return;
-        int mid = le + ri >> 1;
-        build(u<<1, le, mid);
-        build(u<<1|1, mid + 1, ri);  //不需要pushup,因为cnt和len都是0,pushup后结果一样
+    void build(int u, int le, int ri) {
+        if (le == ri) tr[u] = new Seg(le, ri, 0, 0);
+        else {
+            tr[u] = new Seg(le, ri, 0, 0);
+            int mid = le + ri >> 1;
+            build(u<<1, le, mid);
+            build(u<<1|1, mid + 1, ri);  //不需要pushup,因为cnt和len都是0,pushup后结果一样            
+        }
+    }
+
+    int getIdx(double target) {
+        int le = 0, ri = list.size();
+        while (le < ri) {
+            int mid = le + ri >> 1;
+            if (list.get(mid) < target)  le = mid+1;
+            else ri = mid;
+        }
+        return le;
     }
 
     List<Double> unique(List<Double> list){

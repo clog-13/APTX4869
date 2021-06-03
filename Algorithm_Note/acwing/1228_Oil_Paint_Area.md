@@ -88,7 +88,7 @@ class Main {
             data[idx++] = new Node(x1, y1, y2, 1);
             data[idx++] = new Node(x2, y1, y2, -1);
         }
-        
+
         build(1, 0, 10000);
 
         Arrays.sort(data, 0, idx);
