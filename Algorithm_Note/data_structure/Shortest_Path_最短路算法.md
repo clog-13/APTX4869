@@ -40,7 +40,7 @@ private static int[] dijkstra(int[][] graph, int s){
 public class Dijkstra_Pro {
     static int maxN = 1000010, INF = 0x3f3f3f3f;
     static int N, M, idx = 0;
-
+    // Arrays.fill(info, -1);
     static int[] info = new int[maxN]; // 按 from节点 来储存当前边的 ID
     static int[] from = new int[maxN]; // 按 ID 来储存 当前 from节点的 ID
     static int[] to = new int[maxN];   // 按 ID 来储存 to节点
@@ -52,14 +52,14 @@ public class Dijkstra_Pro {
     private static void dijkstra(int s) {
         Arrays.fill(dist, INF);
         dist[s] = 0;
-        //维护当前未在 vis 中标记过且离源点最近的点
+        // !!! 维护当前未在 vis 中标记过且离源点最近的点
         PriorityQueue<PII> queue = new PriorityQueue<>((a, b) -> (a.dis - b.dis));
         queue.add(new PII(s, 0));
         while(!queue.isEmpty()) {
-            PII p = queue.poll(); 
-            int cur = p.id, dis = p.dis;
+            PII p = queue.poll(); int cur = p.id, dis = p.dis;
             
-            if(vis[cur]) continue; vis[cur] = true;
+            if(vis[cur]) continue; 
+            vis[cur] = true;
 
 			// 用邻接表遍历当前点的邻点
             for(int i = info[cur]; i != -1; i = from[i]) {
@@ -127,7 +127,7 @@ private static int spfs(int s) {
     Arrays.fill(dist, INF);
     dist[s] = 0;
 
-    Queue<Integer> queue = new LinkedList<>();
+    Queue<Integer> queue = new LinkedList<>();  // !!! 非优先队列
     queue.add(s);
     while (!queue.isEmpty()) {
         int cur = queue.poll();
@@ -180,7 +180,8 @@ private static void dijkstra(int s) {
 
 ## Floyd算法
 ```java
-// dp[i][j]： i点到 j点的最短距离
+// dp[i][j]： i点到 j点的最短距离, dp[i][i] = 0
+for (int i = 1; i <= N; i++) dp[i][i] = 0; 
 for (int k = 1; k <= N; k++) {
     for (int i = 1; i <= N; i++) {
         for (int j = 1; j <= N; j++) {
@@ -214,8 +215,8 @@ void bfs(int u) {
         for (int i = info[cur]; i != -1; i = from[i]) {
             int t = to[i];
             if (st[t]) continue;
-            dist[t] = dist[cur] + w[i];
             st[t] = true;
+            dist[t] = dist[cur] + w[i];
             queue.add(t);
         }
     }

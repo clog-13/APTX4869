@@ -74,10 +74,10 @@ public class Main {
         int[] arr = new int[N];
         for (int i = 1 ;i <= N; i++) arr[i] = sc.nextInt();
 
-        int[][] dp = new int[200010][18];
-        for (int j = 0; j < 18; j++) {
-            for (int i = 1; i+(1<<j)-1 <= N; i++) {
-                if (j == 0) dp[i][j] = arr[i];
+        int[][] dp = new int[200010][18];  // 数组大小与数据量(2^18 >= 200010)有关
+        for (int j = 0; j < 18; j++) {  // 遍历次数
+            for (int i = 1; i+(1<<j)-1 <= N; i++) {  // 与查询相反
+                if (j == 0) dp[i][j] = arr[i];  // 幂次为0
                 else dp[i][j] = Math.max(dp[i][j-1], dp[i+(1<<(j-1))][j-1]);
             }
         }
@@ -86,7 +86,8 @@ public class Main {
         while (M-- > 0) {
             int le = sc.nextInt(), ri = sc.nextInt();
             int len = ri - le + 1;
-            int k = (int) (Math.log(len) / Math.log(2));	// Math.log(len)/Math.log(2) == log2(len);
+            // Math.log(len)/Math.log(2) == log2(len)
+            int k = (int) (Math.log(len) / Math.log(2));	
             int res = Math.max(dp[le][k], dp[ri-(1<<k)+1][k]);
             System.out.println(res);
         }

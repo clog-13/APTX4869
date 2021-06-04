@@ -39,14 +39,12 @@
 class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
+        int N = sc.nextInt(), V = sc.nextInt();
 
         int[] dp = new int[V+1];
         for (int s = 1; s <= N; s ++ ) {
-            int size = sc.nextInt();
-            int val = sc.nextInt();
-            for (int v = V; v >= size; v -- ) {
+            int size = sc.nextInt(), val = sc.nextInt();
+            for (int v = V; v >= size; v--) {  // 01，反向
                 dp[v] = Math.max(dp[v], dp[v-size] + val); 
             }
         }
@@ -59,7 +57,7 @@ class Main {
 
 有 N 种物品和一个容量是 V 的背包，每种物品都有无限件可用。
 
-第 ii 种物品的体积是 vi，价值是 wi。
+第 i 种物品的体积是 vi，价值是 wi。
 
 求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量，且总价值最大。
 输出最大价值。
@@ -94,14 +92,12 @@ class Main {
 class Main {
     public static void main(String[] args) {
         Scanner sc  =new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
+        int N = sc.nextInt(), V = sc.nextInt();
         int[] dp = new int[V+1];
         for (int s = 0; s < N; s ++ ) {
-            int size = sc.nextInt();
-            int val = sc.nextInt();
-            for (int v = size; v <= V; v ++ ) {
-                dp[v] = Math.max(dp[v], dp[v-size]+val);
+            int size = sc.nextInt(), val = sc.nextInt();
+            for (int v = size; v <= V; v++) {
+                dp[v] = Math.max(dp[v], dp[v-size] + val);
             }
         }
         System.out.println(dp[V]);
@@ -148,17 +144,14 @@ class Main {
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
+        int N = sc.nextInt(), V = sc.nextInt();
 
         int[] dp = new int[V + 1];
         for (int s = 1; s <= N; s ++ ) {
-            int size = sc.nextInt();
-            int val = sc.nextInt();
-            int cout =  sc.nextInt();
+            int size = sc.nextInt(), val = sc.nextInt(), cout =  sc.nextInt();
             
-            for (int v = V; v >= size; v -- ) {	
-                for (int c = 0; c<=cout && c*size<=v; c ++ ) {
+            for (int v = V; v >= size; v--) {  // 01,反向
+                for (int c = 0; c<=cout && c*size<=v; c++) {  // 遍历个数
                     dp[v] = Math.max(dp[v], dp[v - c*size] + c*val);
                 }
             }
@@ -177,23 +170,19 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
+        int N = sc.nextInt(), V = sc.nextInt();
 
         // 预处理
-        int[] vals = new int[200002];
-        int[] wgts = new int[200002];
+        int[] vals = new int[200002], wgts = new int[200002];
         int idx = 0;
-        for (int s = 0; s < N; s ++ ) {
-            int size = sc.nextInt();
-            int val = sc.nextInt();
-            int cout =  sc.nextInt();
+        for (int s = 0; s < N; s++) {
+            int size = sc.nextInt(), val = sc.nextInt(), cout = sc.nextInt();
 
             for (int k = 1; k < cout; k *= 2) {
                 wgts[idx] = k * size;
                 vals[idx] = k * val;
-                cout -= k;
                 idx++;
+                cout -= k;
             }
             if (cout > 0) {
                 wgts[idx] = cout * size;
@@ -205,8 +194,8 @@ public class Main {
         // 01背包模板
         int[] dp = new int[V + 1];
         int res = 0;
-        for (int i = 0; i < idx; i ++ ) {	// 注意这里是 idx
-            for (int v = V; v >= wgts[i]; v -- ) {
+        for (int i = 0; i < idx; i++) {	// 注意这里是 idx
+            for (int v = V; v >= wgts[i]; v--) {  // 01, 遍历组合方案
                 dp[v] = Math.max(dp[v], dp[v-wgts[i]] + vals[i]);
                 res = Math.max(res, dp[v]);
             }
@@ -241,8 +230,7 @@ public class Main {
 
 #### 数据范围
 
-0<N,V≤1000
-0<vi,wi≤1000
+0<N,V≤1000, 0<vi,wi≤1000
 
 #### 输入样例：
 
@@ -266,19 +254,17 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int V = sc.nextInt();
+        int N = sc.nextInt(), V = sc.nextInt();
+        int[] wgts = new int[N+1], vals = new int[N+1];
         int[][] dp = new int[N+2][V+1];
-        int[] wgts = new int[N+1];
-        int[] vals = new int[N+1];
 
-        for (int i = 1; i <= N; i ++ ) {
+        for (int i = 1; i <= N; i++) {
             wgts[i] = sc.nextInt();
             vals[i] = sc.nextInt();
         }
-        // 倒序01背包
-        for (int s = N; s > 0; s -- ) {
-            for (int v = 0; v <= V; v ++ ) {
+
+        for (int s = N; s > 0; s--) {  // 倒序
+            for (int v = 0; v <= V; v++) {  // 二维数组，所以01不要求倒序
                 dp[s][v] = dp[s+1][v];
                 if (v >= wgts[s]) {
                     dp[s][v] = Math.max(dp[s][v], dp[s+1][v-wgts[s]] + vals[s]);
@@ -287,17 +273,14 @@ public class Main {
         }
 
         int cur_v = V;
-        for (int i = 1; i <= N; i ++ ) {
-            if (i == N && cur_v >= wgts[i]) {   // 如果是最后一个元素，特判一下，防止越界即可
-                System.out.printf("%d ", i);
-                break;
-            }
-            if (cur_v <= 0) break;  // 判断下标是否越界
+        for (int i = 1; i < N; i++) {
+            if (cur_v <= 0) break;  // 结束循环
             if (cur_v-wgts[i] >= 0 && dp[i][cur_v] == dp[i+1][cur_v - wgts[i]]+vals[i]) {
                 System.out.printf("%d ", i);
                 cur_v = cur_v - wgts[i];    // 选了第i个物品，剩余容量就要减小。
             }
         }
+        if (cur_v >= wgts[N]) System.out.printf("%d ", N);
     }
 }
 ```

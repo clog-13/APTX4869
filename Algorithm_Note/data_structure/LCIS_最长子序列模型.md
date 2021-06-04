@@ -357,17 +357,17 @@ class Main {
 
 ```java
 class Main {
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
 
-        int[] dp01 = new int[1000];
-        int[] dp02 = new int[1000];
+        int[] dp01 = new int[1000], dp02 = new int[1000];
         int res = 1, cout = 1;
         for (int i = 0; i < str.length; i++) {
             dp01[i] = 1; dp02[i] = 1;
             for (int j = 0; j < i; j++) {
-                if (Integer.parseInt(str[i]) <= Integer.parseInt(str[j])) dp01[i] = Math.max(dp01[i], dp01[j]+1);
+                if (Integer.parseInt(str[i]) <= Integer.parseInt(str[j]))
+                    dp01[i] = Math.max(dp01[i], dp01[j]+1);
                 else dp02[i] = Math.max(dp02[i], dp02[j]+1);
             }
             res = Math.max(res, dp01[i]);

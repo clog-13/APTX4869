@@ -16,12 +16,12 @@ private static int gcd(int a, int b) {
 
 ```java
 void get_primes(int N) {
-	for (int i = 2; i <= N; i ++ ) {
-		if (!st[i]) primes[idx++] = i;
-	    
-        for (int j = 0; primes[j]*i <= maxN; j++) {
-            st[primes[j] * i] = true;
-			if (i % primes[j] == 0) break;
+    for (int n = 2; n <= N; n ++ ) {
+        if (!st[n]) primes[idx++] = n;
+		// 遍历一些已经确定的素数
+        for (int i = 0; primes[i]*n <= maxN; i++) {
+            st[primes[i] * n] = true;
+            if (n % primes[i] == 0) break;
         }
     }
 }
@@ -29,25 +29,25 @@ void get_primes(int N) {
 
 ```c++
 // 朴素筛法-O(nlogn)
-void get_primes(int n) {
-    for (int i = 2; i <= n; i++) {
-        if (!st[i]) prime[cnt++] = i;
-        for (int j = i+i; j <= n; j += i) {
-            st[j] = true;
+void get_primes(int N) {
+    for (int n = 2; n <= N; n++) {
+        if (!st[n]) prime[cnt++] = n;
+        for (int i = n+n; i <= N; i += n) {
+            st[i] = true;
         }
     }
 }
 
 // 埃式筛法-O(nloglogn)
-void get_primes(int n) {
-    for (int i = 2; i <= n; i++) {
-        if (!st[i]) { 
-            prime[cnt++] = i;
-            for (int j = i; j <= n; j += i) {
-                st[j] = true;
+void get_primes(int N) {
+    for (int n = 2; n <= N; n++) {
+        if (!st[n]) {
+            primes[cnt++] = n;
+            for (int i = n; i <= N; i += n) {
+                st[i] = true;
             }
         }
-    } 
+    }
 }
 ```
 

@@ -57,20 +57,19 @@ class Main{
         int N = sc.nextInt(), S = sc.nextInt();
         int[] wgts = new int[20002], vals = new int[20002];
         int[] dp = new int[S+1];
-        
+
         for (int t = 0; t < N; t++) {
             int C = sc.nextInt();
             for (int c = 0; c < C; c++) {
-                wgts[c] = sc.nextInt();
-                vals[c] = sc.nextInt();
+                wgts[c] = sc.nextInt(); vals[c] = sc.nextInt();
             }
-            
+
             // 这是一个 01背包 和 完全背包 的组合问题
             // 01: for (s = S; s >= 0; s--)
             // 完全:for (s = 0; s <= S; s++)
-            
-            for (int s = S; s >= 0; s--) {  // 01
-                for (int c = 0; c < C; c++) {  // 在这个容量区间遍历每个物品
+
+            for (int s = S; s >= 0; s--) {  // 01 （下一层循环正反向不影响01性质）
+                for (int c = 0; c < C; c++) {  // 在当前 容量大小下 遍历 组内 每个物品 
                     if (s >= wgts[c]) dp[s] = Math.max(dp[s], dp[s-wgts[c]]+vals[c]);
                 }
             }
@@ -90,7 +89,7 @@ class Main{
 
 求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量，且总价值最大。
 
-输出 **最优选法的方案数**。注意答案可能很大，请输出答案模 10^9^+7 的结果。
+输出 **最优选法的方案数**。注意答案可能很大，请输出答案模 10^9+7 的结果。
 
 **输入格式**
 
@@ -201,40 +200,38 @@ class Main {
 1 4
 ```
 ```java
+import java.util.*;
+
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt(), S = sc.nextInt();
-        int[][] dp = new int[N+2][S+1];
+        int N = sc.nextInt(), V = sc.nextInt();
         int[] wgts = new int[N+1], vals = new int[N+1];
+        int[][] dp = new int[N+2][V+1];
 
-        for (int i = 1; i <= N; i ++ ) {
+        for (int i = 1; i <= N; i++) {
             wgts[i] = sc.nextInt();
             vals[i] = sc.nextInt();
         }
-        
-        // 倒序01背包(倒序是为了后面能从第一个开始演算dp)
-        for (int i = N; i > 0; i -- ) {
-            for (int s = 0; s <= S; s ++ ) {
-                dp[i][s] = dp[i+1][s];
-                if (s >= wgts[i]) {
-                    dp[i][s] = Math.max(dp[i][s], dp[i+1][s-wgts[i]] + vals[i]);
+
+        for (int s = N; s > 0; s--) {  // 倒序
+            for (int v = 0; v <= V; v++) {  // 二维数组，所以01不要求倒序
+                dp[s][v] = dp[s+1][v];
+                if (v >= wgts[s]) {
+                    dp[s][v] = Math.max(dp[s][v], dp[s+1][v-wgts[s]] + vals[s]);
                 }
             }
         }
 
-        int cur_s = S;
-        for (int i = 1; i <= N; i ++ ) {
-            if (i == N && cur_s >= wgts[i]) {  // 如果是最后一个元素，特判一下，防止越界即可
+        int cur_v = V;
+        for (int i = 1; i < N; i++) {
+            if (cur_v <= 0) break;  // 结束循环
+            if (cur_v-wgts[i] >= 0 && dp[i][cur_v] == dp[i+1][cur_v - wgts[i]]+vals[i]) {
                 System.out.printf("%d ", i);
-                return;
-            }
-            if (cur_s <= 0) return;  // 判断下标是否越界
-            if (cur_s-wgts[i] >= 0 && dp[i][cur_s] == dp[i+1][cur_s - wgts[i]]+vals[i]) {
-                System.out.printf("%d ", i);
-                cur_s -=  wgts[i];    // 选了第i个物品，剩余容量就要减小。
+                cur_v = cur_v - wgts[i];    // 选了第i个物品，剩余容量就要减小。
             }
         }
+        if (cur_v >= wgts[N]) System.out.printf("%d ", N);
     }
 }
 ```
@@ -296,13 +293,12 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int N = sc.nextInt(), S = sc.nextInt();
-        int[][] arr = new int[N+1][S+1];
-        int[][] dp = new int[N+1][S+1];
+        int[][] arr = new int[N+1][S+1], dp = new int[N+1][S+1];
 
         // 分组背包问题 (1个机器的盈利*2 不等于 2个机器的盈利)
-        for (int i = 1; i <= N; i++) {  
+        for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= S; j++) arr[i][j] = sc.nextInt();
-            
+
             for (int j = S; j > 0; j--) {  // 01背包
                 for (int c = 0; c <= j; c++) {  // 在这个容量区间遍历每个物品
                     dp[i][j] = Math.max(dp[i][j], dp[i-1][j-c]+arr[i][c]);
@@ -399,7 +395,7 @@ class Main {
             master[i] = new PII(0, 0);
             servant[i] = new ArrayList<>();
         }
-        
+
         for (int i = 1; i <= N; i++) {  // 输入
             int size = sc.nextInt(), priority = sc.nextInt(), parent = sc.nextInt();
             if (parent == 0) master[i].set(size, size * priority);
@@ -408,10 +404,11 @@ class Main {
 
         for (int i = 1; i <= N; i++) {
             for (int s = S; s >= 0; s--) {  // 01背包, 分组背包
-                for (int k = 0; k < (1<<servant[i].size()); k++) {  // 枚举状态（00，01，10，11）
+                // 枚举状态（00，01，10，11,...）
+                for (int st = 0; st < (1<<servant[i].size()); st++) {
                     int ts = master[i].size, tv = master[i].val;
                     for (int u = 0; u < servant[i].size(); u++) {   // 偏移量
-                        if (((k >> u) & 1) == 1) {
+                        if (((st >> u) & 1) == 1) {
                             ts += servant[i].get(u).size;
                             tv += servant[i].get(u).val;
                         }

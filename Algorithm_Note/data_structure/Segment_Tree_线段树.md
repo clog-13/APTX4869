@@ -8,7 +8,7 @@ import java.io.*;
 public class Main {
     int N, T, maxN = 100010;
     long[] arr = new long[maxN];
-    Node[] tr = new Node[4*maxN];
+    Segs[] tr = new Segs[4*maxN];
 
     public static void main(String[] args) throws IOException {
         new Main().run();
@@ -35,9 +35,9 @@ public class Main {
     }
 
     void build(int u, int le, int ri) {
-        if (le == ri) tr[u] = new Node(le, ri, arr[le]);
+        if (le == ri) tr[u] = new Segs(le, ri, arr[le]);
         else {
-            tr[u] = new Node(le, ri, 0);
+            tr[u] = new Segs(le, ri, 0);
             int mid = le+ri >> 1;
             build(u<<1, le, mid);
             build(u<<1|1, mid+1, ri);
@@ -46,22 +46,23 @@ public class Main {
     }
 
     // 查询操作，start到end之间的和
-    long query(int u, int start, int end) {
-        if (start > tr[u].ri || end < tr[u].le) return 0;
-        if (start <= tr[u].le && tr[u].ri <= end) return tr[u].sum;
+    long query(int u, int st, int ed) {
+        if (st > tr[u].ri || ed < tr[u].le) return 0;
+        if (st <= tr[u].le && tr[u].ri <= ed) return tr[u].sum;
 
         push_down(u);    // 之前懒得更新的值向下传递
         long res = 0;
-        res += query(u<<1, start, end);
-        res += query((u<<1)|1, start, end);
+        res += query(u<<1, st, ed);
+        res += query((u<<1)|1, st, ed);
         return res;
     }
-    
+
     // 单点修改，idx位置加上val
     void update(int u, int idx, int val) {
         if (idx > tr[u].ri || idx < tr[u].le) return;  // 我要的你给不起
-        if (tr[u].le == tr[u].ri) tr[u].sum += val;  // 目标节点
-        else {
+        if (tr[u].le == tr[u].ri) {  // 目标节点
+            tr[u].sum += val;
+        } else {
             update(u<<1, idx, val);    // 如果 需要update的节点在左子节点
             update(u<<1|1, idx, val);  // 否则 需要update的节点在右子节点
             push_up(u);    // 生活再糟也不要忘记push_up
@@ -69,15 +70,15 @@ public class Main {
     }
 
     // 区间修改，start到end位置加上val
-    void update_lazy(int u, int start, int end, int val) {
-        if (tr[u].ri < start || tr[u].le > end) return;
-        if (start <= tr[u].le && tr[u].ri <= end) {   // 如果 该节点包含范围全部需要update
+    void update_lazy(int u, int st, int ed, int val) {
+        if (tr[u].ri < st || tr[u].le > ed) return;
+        if (st <= tr[u].le && tr[u].ri <= ed) {   // 当前节点范围完全在更新区间内
             tr[u].sum += (long) (tr[u].ri - tr[u].le + 1) * val;
             tr[u].tag += val;
         } else {
             push_down(u);    // 向下传递
-            update_lazy(u<<1, start, end, val);  // 如果左子节点在需要update的范围内
-            update_lazy(u<<1|1, start, end, val);   // 如果右子节点在需要update的范围内
+            update_lazy(u<<1, st, ed, val);  // 如果左子节点在需要update的范围内
+            update_lazy(u<<1|1, st, ed, val);   // 如果右子节点在需要update的范围内
             push_up(u);
         }
     }
@@ -87,7 +88,7 @@ public class Main {
     }
 
     void push_down(int u) {
-        if (tr[u].tag!=0) {	// 如果update()是修改为，则修改为0时这里有bug
+        if (tr[u].tag != 0) {	// 如果update()是修改为，则修改为0时这里有bug
             int mid = (tr[u].le+ tr[u].ri) >> 1;
             tr[u<<1].sum += tr[u].tag * (mid - tr[u].le + 1);
             tr[u<<1|1].sum += tr[u].tag * (tr[u].ri - mid);
@@ -98,10 +99,10 @@ public class Main {
         }
     }
 
-    static class Node {
+    static class Segs {
         int le, ri;
         long sum, tag;
-        public Node(int l, int r, long s) {
+        public Segs(int l, int r, long s) {
             le = l; ri = r; sum = s; tag = 0;
         }
     }
@@ -112,88 +113,82 @@ public class Main {
 
 ```java
 class Segment_tree {
-    int maxN = 100010;
+    int N, maxN = 100010;
     int[] arr = new int[maxN];
-    Node[] segs = new Node[4*maxN];
+    Segs[] tr = new Segs[4*maxN];
 
-    public Segment_tree(int[] nums) {
-        System.arraycopy(nums, 0, arr, 1, nums.length);
-        build(1, 1, nums.length+1);
+    public Segment_tree() {
+        build(1, 1, N);  // arr下标从1开始
     }
 
-    void build(int root, int le, int ri) {
-        if (le == ri) {
-            segs[root] = new Node(le, ri, arr[le]);
-        } else {
-            segs[root] = new Node(le, ri, 0);
-
+    void build(int u, int le, int ri) {
+        if (le == ri) tr[u] = new Segs(le, ri, arr[le]);
+        else {
+            tr[u] = new Segs(le, ri, 0);
             int mid = le+ri >> 1;
-            build(root<<1, le, mid);
-            build(root<<1|1, mid+1, ri);
-
-            push_up(root);
+            build(u<<1, le, mid);
+            build(u<<1|1, mid+1, ri);
+            push_up(u);
         }
     }
 
     // 查询操作，start到end之间的和
-    long query(int root, int start, int end) {
-        if (start > segs[root].ri || end < segs[root].le) return 0;
-        if (start <= segs[root].le && segs[root].ri <= end) return segs[root].max;
+    long query(int u, int start, int end) {
+        if (start > tr[u].ri || end < tr[u].le) return 0;
+        if (start <= tr[u].le && tr[u].ri <= end) return tr[u].max;
 
-        push_down(root);    // 之前懒得更新的值向下传递
+        push_down(u);    // 之前懒得更新的值向下传递
         long res = 0;
-        res = Math.max(res, query(root<<1, start, end));
-        res = Math.max(res, query((root<<1)|1, start, end));
+        res = Math.max(res, query(u<<1, start, end));
+        res = Math.max(res, query((u<<1)|1, start, end));
         return res;
     }
 
-    void update(int root, int idx, int val) {
-        if (segs[root].le == segs[root].ri) segs[root].max = Math.max(segs[root].max, val);  // 目标节点
-        else {
-            int mid = (segs[root].le + segs[root].ri) >> 1;
-            if (idx <= mid) update(root<<1, idx, val);  // 如果 需要update的节点在左子节点
-            else update(root<<1|1, idx, val);   // 否则 需要update的节点在右子节点
-
-            push_up(root);
-        }
-    }
-    
-    // 区间修改，start到end位置加上val
-    void update_lazy(int root, int start, int end, int val) {
-        if (segs[root].ri < start || segs[root].le > end) return;
-        if (start <= segs[root].le && segs[root].ri <= end) {   // 如果 该节点包含范围全部需要update
-            segs[root].max = Math.max(segs[root].max, val);
-            segs[root].tag += val;
+    void update(int u, int idx, int val) {
+        if (tr[u].le == tr[u].ri) {  // 目标节点
+            tr[u].max = Math.max(tr[u].max, val);
         } else {
-            push_down(root);    // 向下传递
-            update_lazy(root<<1, start, end, val);  // 如果左子节点在需要update的范围内
-            update_lazy(root<<1|1, start, end, val);   // 如果右子节点在需要update的范围内
-
-            push_up(root);
+            int mid = (tr[u].le + tr[u].ri) >> 1;
+            if (idx <= mid) update(u<<1, idx, val);  // 如果 需要update的节点在左子节点
+            else update(u<<1|1, idx, val);   // 否则 需要update的节点在右子节点
+            push_up(u);
         }
     }
 
-    void push_up(int root) {
-        long sMax = Math.max(segs[root<<1].max, segs[root<<1|1].max);
-        segs[root].max = Math.max(segs[root].max, sMax);
+    // 区间修改，start到end位置加上val
+    void update_lazy(int u, int st, int ed, int val) {
+        if (tr[u].ri < st || tr[u].le > ed) return;
+        if (st <= tr[u].le && tr[u].ri <= ed) {   // 如果 该节点包含范围全部需要update
+            tr[u].max = Math.max(tr[u].max, val);
+            tr[u].tag += val;
+        } else {
+            push_down(u);    // 向下传递
+            update_lazy(u<<1, st, ed, val);  // 如果左子节点在需要update的范围内
+            update_lazy(u<<1|1, st, ed, val);   // 如果右子节点在需要update的范围内
+            push_up(u);
+        }
+    }
+
+    void push_up(int u) {
+        long sMax = Math.max(tr[u<<1].max, tr[u<<1|1].max);
+        tr[u].max = Math.max(tr[u].max, sMax);
     }
 
     void push_down(int idx) {
-        if (segs[idx].tag!=0) {	 // 如果update()是修改为，则修改为0时这里有bug
-            segs[idx<<1].max = Math.max(segs[idx<<1].max, segs[idx].tag);
-            segs[idx<<1|1].max = Math.max(segs[idx<<1|1].max, segs[idx].tag);
+        if (tr[idx].tag!=0) {	 // 如果update()是修改为，则修改为0时这里有bug
+            tr[idx<<1].max = Math.max(tr[idx<<1].max, tr[idx].tag);
+            tr[idx<<1|1].max = Math.max(tr[idx<<1|1].max, tr[idx].tag);
 
-            segs[idx<<1].tag = Math.max(segs[idx<<1].tag, segs[idx].tag);
-            segs[idx<<1|1].tag = Math.max(segs[idx<<1|1].tag, segs[idx].tag);
-
-            segs[idx].tag = 0;
+            tr[idx<<1].tag = Math.max(tr[idx<<1].tag, tr[idx].tag);
+            tr[idx<<1|1].tag = Math.max(tr[idx<<1|1].tag, tr[idx].tag);
+            tr[idx].tag = 0;
         }
     }
 
-    static class Node {
+    static class Segs {
         int le, ri, tag;
         long max;
-        public Node(int l, int r, int s) {
+        public Segs(int l, int r, int s) {
             le = l; ri = r; max = s; tag = 0;
         }
     }
@@ -202,8 +197,7 @@ class Segment_tree {
 
 
 
-**什么情况下，无法使用线段树？**
-如果我们删除或者增加区间中的元素，那么区间的大小将发生变化，此时是无法使用线段树解决这种问题的。
+**如果我们删除或者增加区间中的元素，那么区间的大小将发生变化，此时是无法使用线段树解决这种问题的。**
 
 
 
@@ -294,3 +288,6 @@ int query(int node, int le, int ri, int start, int end) {  //区间查询
     return res;
 }
 ```
+
+
+

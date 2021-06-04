@@ -1,4 +1,4 @@
-# Knapsack Problem 背包问题
+# Knapsack_Problem_I_背包问题I
 
 
 
@@ -47,20 +47,17 @@ import java.util.*;
 class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt(), S = sc.nextInt();
+        int N = sc.nextInt(), S = sc.nextInt(), idx = 0;
         int[] wgts = new int[200002], vals = new int[200002];
-        int idx = 0;
         for (int s = 0; s < N;s++) {
-            int size = sc.nextInt();
-            int val = sc.nextInt();
-            int cout = sc.nextInt();
-            
+            int size = sc.nextInt(), val = sc.nextInt(), cout = sc.nextInt();
+
             // 这里比较直观的取了二进制的每个1,(1, 10, 100, 1000, ...)
             for (int k = 1; k < cout; k <<= 1) {
                 wgts[idx] = k*size;
                 vals[idx] = k*val;
-                cout -= k;
                 idx++;
+                cout -= k;
             }
             // cout:[0, 上面前n-1个数的和]
             // 可以通过二进制的“图像性质”理解，或者记住 cout <= k
@@ -70,18 +67,18 @@ class Main {
                 idx++;
             }
         }
-        
+
         // 01背包模板
-        int[] dp = new int[V+1];
-        int res  = 0;
-        for (int i =0; i < idx; i++) {  // 注意这里是 idx
-            for (int s = S; s >= wgts[i]; s--) {
+        int[] dp = new int[S+1];
+        int res = 0;
+        for (int i = 0; i < idx; i++) {  // 注意这里是 idx
+            for (int s = S; s >= wgts[i]; s--) {  // !!! 01背包
                 dp[s] = Math.max(dp[s], dp[s-wgts[i]]+vals[i]);
                 res = Math.max(res, dp[s]);
             }
         }
         // 朴素完全背包代码 O(n^3), 二进制优化(n^2*logS)
-        // for (int s = S; s >= size; s--) {  
+        // for (int s = S; s >= size; s--) {
         //     for (int c = 0; c<=cout && c*size<=s; c++) {
         //         dp[s] = Math.max(dp[s], dp[s - c*size] + c*val);
         //     }
@@ -177,33 +174,35 @@ import java.util.*;
 class Main {
     static int N, M, maxN = 200010;
     static int[] dp = new int[maxN];
-    static Node[] queue = new Node[maxN];
-    
+    static Node[] q = new Node[maxN];
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt(); M = sc.nextInt();
-        
-        for (int i = 0; i <= M; i++) queue[i] = new Node(0, 0);
+
+        for (int i = 0; i <= M; i++) q[i] = new Node(0, 0);
         for (int i = 0; i < N; i++) {
             int size = sc.nextInt(), val = sc.nextInt(), cnt = sc.nextInt();
-            
-            for (int j = 0; j < size; j++) {  // mod
-                int head = 0, tail = 0, stop = (M-j)/size;
+
+            for (int j = 0; j < size; j++) {  // 当前物品选择数量，“空剩”的面积
+                int hh = 0, tt = -1, stop = (M-j)/size;  // M背包总面积
                 for (int k = 0; k <= stop; k++) {  // 当前物品 选几个 的方案
-                    
+                    if (hh <= tt && q[hh].pos < k-cnt) hh++;  // 当前物品最多 cnt 个
+
                     int t = dp[j + k*size] - k*val;  // 最大的值放在head
-                    while (tail > head && t >= queue[tail-1].val) tail--;  
-                    queue[tail].pos = k; queue[tail++].val = t;
-                    
-                    if (queue[head].pos < k-cnt) head++;  // 当前物品最多 cnt 个
-                    dp[j + k*size] = queue[head].val + k*val;
+                    while (hh<=tt && t >= q[tt].val) tt--;
+
+                    q[++tt].pos = k;
+                    q[tt].val = t;
+
+                    dp[j + k*size] = q[hh].val + k*val;
                 }
             }
         }
         System.out.println(dp[M]);
     }
     static class Node {
-        int val,pos;
+        int val, pos;
         public Node(int p, int v){
             pos = p; val = v;
         }
@@ -278,7 +277,7 @@ public class Main {
                 arr[i] = sc.nextInt();
                 mx = Math.max(mx, arr[i]);
             }
-            
+
             dp[0] = 1;
             for (int i = 1; i <= N; i++) {  // 遍历物品
                 for (int j = arr[i]; j <= mx; j++) {  // 遍历体积
@@ -287,14 +286,11 @@ public class Main {
             }
 
             int res = 0;
-            for (int i = 1; i <= N; i++) {
-                if(dp[arr[i]] == 1) res++;
-            }
+            for (int i = 1; i <= N; i++) if (dp[arr[i]] == 1) res++;
             System.out.println(res);
         }
     }
 }
-
 ```
 
 
@@ -313,9 +309,9 @@ public class Main {
 
 **输入格式**
 
-第一行两个整数，N，V,MN，V,M，用空格隔开，分别表示物品件数、背包容积和背包可承受的最大重量。
+第一行两个整数，N，V，M，用空格隔开，分别表示物品件数、背包容积和背包可承受的最大重量。
 
-接下来有 NN 行，每行三个整数 vi,mi,wivi,mi,wi，用空格隔开，分别表示第 ii 件物品的体积、重量和价值。
+接下来有 N 行，每行三个整数 vi,mi,wi，用空格隔开，分别表示第 i 件物品的体积、重量和价值。
 
 **输出格式**
 输出一个整数，表示最大价值。
@@ -349,8 +345,8 @@ class Main {
         int[][] dp = new int[S+1][M+1];
         for (int i = 0; i < N; i++) {
             int size = sc.nextInt(), wei = sc.nextInt(), val = sc.nextInt();
-            for (int s = S; s >= size; s--) {
-                for (int m = M; m >= wei; m--) {
+            for (int s = S; s >= size; s--) {  // 01
+                for (int m = M; m >= wei; m--) {  // 01
                     dp[s][m] = Math.max(dp[s][m], dp[s-size][m-wei]+val);
                 }
             }
@@ -416,8 +412,8 @@ class Main {
         int[][] dp = new int[C+1][S+1];
         for (int i = 0; i < N; i++) {
             int cnt = sc.nextInt(), size = sc.nextInt();
-            for (int c = C; c >= cnt; c--) {
-                for (int s = S-1; s >= size; s--) {
+            for (int c = C; c >= cnt; c--) {  // 01
+                for (int s = S-1; s >= size; s--) {  // 01
                     dp[c][s] = Math.max(dp[c][s], dp[c-cnt][s-size]+1);
                 }
             }
@@ -516,42 +512,39 @@ class Main {
     static int maxN = 105, maxS = 10005;
     static Node[] arr = new Node[maxN];
     static int[] dp = new int[maxS];
-    
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int T = sc.nextInt();
         for (int t = 1; t <= T; t++) {
             int N = sc.nextInt(), sum = 0;
             for (int i = 1; i <= N; i++) {
-                int s = sc.nextInt();
-                int e = sc.nextInt();
-                int l = sc.nextInt();
+                int s = sc.nextInt(), e = sc.nextInt(), l = sc.nextInt();
                 sum += s;
                 arr[i] = new Node(s, e, l);
             }
-            
+
             // 升序
             // 必须排序，因为不仅要考虑 选哪些，还要考虑 选的顺序。
-            // 普通 01背包 用作比较的值是 “所选组合的 总和”， 
+            // 普通 01背包 用作比较的值是 “所选组合的 总和”，
             // 而这题用作比较的值是 “所选组合的 吃法最大值”，需要排序后才能确定。
             // 假设 i, j 吃法比 j, i 吃法 能得到最大值，则必须是满足 Si*Lj <= Sj*Li
             // 同时因为等式恒等性， 若Si*Lj <= Sj*Li，则 i, j的吃法值 必定大于 j, i 的吃法值
             Arrays.sort(arr, 1, N+1, (v1, v2) -> (v1.s*v2.l - v2.s*v1.l));
-
             Arrays.fill(dp, 0xcfcfcfcf);  // 0xcf == -0x3f
             dp[0] = 0;  // dp[j]: j时刻的最大值
             for (int i = 1; i <= N; i++) {  // 循环已排序的每个宝石
-                for (int j = sum; j >= arr[i].s; j--) {  // 循环时刻，最大为吃所有宝石的总和
+                for (int j = sum; j >= arr[i].s; j--) {  // 循环时刻(01)，最大为吃所有宝石的总和
                     dp[j] = Math.max(dp[j], dp[j-arr[i].s] + arr[i].e-(j-arr[i].s)*arr[i].l);
                 }
             }
-            
+
             int res = 0;
             for (int i = 1; i <= sum; i++) res = Math.max(res, dp[i]);
             System.out.println("Case #"+t+": "+res);
         }
     }
-    
+
     static class Node {
         int s, e, l;
         public Node(int ss, int ee, int ll) {
