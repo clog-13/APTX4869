@@ -45,7 +45,7 @@
 3
 ```
 
-## 拓扑排序
+## 拓扑排序+最长路
 
 临时停靠站 ≥ 始发站、终点站 
 
@@ -74,7 +74,7 @@ public class Main {
         N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
 
         Arrays.fill(info, -1);
-        for (int i = 1; i <= M; i++) {
+        for (int i = 1; i <= M; i++) {  // 输入信息
             Arrays.fill(vis, false);
             str = br.readLine().split(" ");
             int start = N, end = 1;
