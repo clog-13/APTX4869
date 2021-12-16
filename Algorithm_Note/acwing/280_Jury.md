@@ -97,7 +97,8 @@ public class Main {
                         int preD = d - (Drr[i] - Prr[i]);  // 最后寻路径时仍然是 (D[]-P[])
                         if (preD < 0 || preD >= maxV) continue;
                         if (j == 0) continue;
-                        f[i][j][d] = Math.max(f[i][j][d], f[i-1][j-1][preD]+Drr[i]+Prr[i]);  // 选 第j个, ..最大总分之和
+                        // 选 第j个, ..最大总分之和
+                        f[i][j][d] = Math.max(f[i][j][d], f[i-1][j-1][preD]+Drr[i]+Prr[i]);
                     }
                 }
             }
@@ -124,7 +125,8 @@ public class Main {
             }
 
             System.out.printf("Jury #%d\n", T++);
-            System.out.printf("Best jury has value %d for prosecution and value %d for defence:\n", sumD, sumP);
+            System.out.printf(
+                    "Best jury has value %d for prosecution and value %d for defence:\n", sumD, sumP);
             Arrays.sort(res);
             for (i = 0; i < idx; i++) System.out.printf(" %d", res[i]);
             System.out.println("\n");

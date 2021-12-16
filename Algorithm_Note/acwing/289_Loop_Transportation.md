@@ -48,13 +48,16 @@ public class Main {
         int N = sc.nextInt(), maxN = 2000010;
         int[] arr = new int[maxN], q = new int[maxN];
         for (int i = 1; i <= N; i++) {
-            arr[i] = sc.nextInt(); 
+            arr[i] = sc.nextInt();
             arr[i+N] = arr[i];
         }
+
         int res = 0, hh = 0, tt = -1, len = N/2;
         for (int i = 1; i <= N*2; i++) {
             if (hh <= tt && q[hh]+len < i) hh++;  // 限定区间在 N 内
+
             res = Math.max(res, i+arr[i]+arr[q[hh]]-q[hh]);  // arr[i]-i => arr[q[hh]]-a[hh]
+
             while (hh <= tt && arr[i]-i >= arr[q[tt]]-q[tt]) tt--;  // 最大栈
             q[++tt] = i;
         }

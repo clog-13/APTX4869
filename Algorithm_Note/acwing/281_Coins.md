@@ -75,18 +75,19 @@ public class Main {
             for (int i = 1; i <= N; i++) {  // 每种硬币
                 Arrays.fill(g, 0);  // g[j]:当前硬币 在j体积时的 硬币数  (限制条件)
                 for (int j = size[i]; j <= M; j++) {  // 遍历每种体积  (完全背包)
-                    if (f[j]==0 && f[j-size[i]]>0 && g[j-size[i]] < cout[i]) {
+                    if (f[j] == 1) continue;
+                    if (f[j-size[i]]>0 && g[j-size[i]] < cout[i]) {
                         g[j] = g[j-size[i]] + 1;
                         f[j] = 1;
                     }
                 }
             }
             int res = 0;
-            for (int i = 1; i <= M; i++) res += f[i];
+            for (int i = 1; i <= M; i++) if (f[i] == 1) res++;
             System.out.println(res);
         }
 
-        bw.flush(); bw.close();
+        bw.close();
     }
 }
 ```

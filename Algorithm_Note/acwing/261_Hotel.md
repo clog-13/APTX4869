@@ -63,8 +63,8 @@
 
 ```java
 import java.io.*;
+
 class Main {
-    int N, M;
     Node[] tr = new Node[4*50010];
 
     public static void main(String[] args) throws IOException {
@@ -74,7 +74,7 @@ class Main {
     void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] str = br.readLine().split(" ");
-        N = Integer.parseInt(str[0]); M = Integer.parseInt(str[1]);
+        int N = Integer.parseInt(str[0]), M = Integer.parseInt(str[1]);
 
         build(1, 1, N);
 
@@ -93,13 +93,13 @@ class Main {
     }
 
     void build(int root, int le, int ri) {
-        if (le == ri) tr[root] = new Node(le, ri, 1);  // 做自己
+        if (le == ri) tr[root] = new Node(le, ri, 1);
         else {
-            tr[root] = new Node(le, ri, 0);  // 人海茫茫，迷茫ing
+            tr[root] = new Node(le, ri, 0);
             int mid = le+ri>>1;
             build(root<<1, le, mid);
             build(root<<1|1, mid+1, ri);
-            push_up(root);  // 生活再糟也不要忘记push_up
+            push_up(root);
         }
     }
 
@@ -108,9 +108,8 @@ class Main {
 
         push_down(u);
         if (tr[u<<1].d >= len) return query(u<<1, len);  // 左节点完全满足，递归
-        if (tr[u<<1].rd + tr[u<<1|1].ld >= len) {  // 左边界+右节点左边部分 （左节点不完全满足）
+        if (tr[u<<1].rd + tr[u<<1|1].ld >= len)  // 左边界+右节点左边部分 （左节点不完全满足）
             return tr[u<<1].ri - tr[u<<1].rd + 1;
-        }
         if (tr[u<<1|1].d >= len) return query(u<<1|1, len);  // 右节点，递归
         return 0;
     }
@@ -118,31 +117,32 @@ class Main {
     void lazy_update(int u, int start, int end, int val) {
         if (start > tr[u].ri || end < tr[u].le) return;
         if (start <= tr[u].le && tr[u].ri <= end) {
-            if (val == 2) {
-                tr[u].d = tr[u].ld = tr[u].rd = tr[u].ri-tr[u].le+1;
-            } else {
+            if (val == 1) {  // 入住
                 tr[u].d = tr[u].ld = tr[u].rd = 0;
+            } else {  // 退房
+                tr[u].d = tr[u].ld = tr[u].rd = tr[u].ri-tr[u].le+1;
             }
             tr[u].tag = val;
         } else {
             push_down(u);
-            lazy_update(u << 1, start, end, val);
-            lazy_update(u << 1 | 1, start, end, val);
+            lazy_update(u<<1, start, end, val);
+            lazy_update(u<<1|1, start, end, val);
             push_up(u);
         }
     }
 
     void push_up(int u) {
         Node LE = tr[u<<1], RI = tr[u<<1|1];
-        tr[u].ld = LE.ld;  // 左节点左边必然时u的左边
+        tr[u].ld = LE.ld;
         if (LE.d == LE.ri-LE.le+1) tr[u].ld = LE.d + RI.ld;  // 左节点完全覆盖
-        tr[u].rd = RI.rd;  // 右节点右边必然时u的右边
+        tr[u].rd = RI.rd;
         if (RI.d == RI.ri-RI.le+1) tr[u].rd = RI.d + LE.rd;  // 右节点完全覆盖
         tr[u].d = Math.max(LE.rd + RI.ld, Math.max(LE.d, RI.d));  // 取最长连续长度
     }
 
     void push_down(int u) {
         if (tr[u].tag == 0) return;
+
         Node LE = tr[u<<1], RI = tr[u<<1|1];
         if (tr[u].tag == 1) {  // 入住(push_down必然是整个区间需要修改)
             LE.d = LE.ld = LE.rd = RI.d = RI.ld = RI.rd = 0;
@@ -150,8 +150,9 @@ class Main {
             LE.d = LE.ld = LE.rd = LE.ri-LE.le+1;
             RI.d = RI.ld = RI.rd = RI.ri-RI.le+1;
         }
+
         LE.tag = RI.tag = tr[u].tag;
-        tr[u].tag = 0;  // 完成使命，tag归零
+        tr[u].tag = 0;
         tr[u<<1] = LE; tr[u<<1|1] = RI;
     }
 
