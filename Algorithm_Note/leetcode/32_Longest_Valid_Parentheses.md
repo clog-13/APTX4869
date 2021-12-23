@@ -19,10 +19,10 @@ class Solution {
         int[] dp = new int[s.length()];
         for (int i = 1; i < s.length(); i++) {
             if (s.charAt(i) == ')') {
-                if (s.charAt(i - 1) == '(') {
-                    dp[i] = 0 + (i - 2>=0 ? dp[i - 2] : 0) + 2;
-                } else if (i-dp[i-1] > 0 && s.charAt(i-dp[i-1] - 1)=='(') {
-                    dp[i] = dp[i-1] + (i-dp[i-1] - 2>=0 ? dp[i-dp[i-1] - 2] : 0) + 2;
+                if (s.charAt(i-1) == '(') {
+                    dp[i] = (i-2 >= 0 ? dp[i-2] : 0) + 2;
+                } else if (i-dp[i-1]-1 >= 0 && s.charAt(i-dp[i-1]-1) == '(') {
+                    dp[i] = dp[i-1] + (i-dp[i-1]-2 >= 0 ? dp[i-dp[i-1]-2] : 0) + 2;
                 }
                 res = Math.max(res, dp[i]);
             }
@@ -48,9 +48,9 @@ class Solution {
             } else {
                 stack.pop();
                 if (stack.isEmpty()) {
-                    stack.push(i);
+                    stack.push(i);  // Vailded!!!
                 } else {
-                    res =  Math.max(res, i-stack.peek());
+                    res = Math.max(res, i-stack.peek());
                 }
             }
         }
@@ -68,27 +68,22 @@ class Solution {
     public int longestValidParentheses(String s) {
         int res = 0, le = 0, ri = 0;
         for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '(') {
-                le++;
-            } else {
-                ri++;
-            }
+            if (s.charAt(i) == '(') le++;
+            else ri++;
             if (le == ri) {
                 res = Math.max(res, 2*ri);
-            } else if (ri > le) {
+            } else if (le < ri) {  // Invalid
                 le = ri = 0;
             }
         }
+
         le = ri = 0;
         for (int i = s.length()-1; i >= 0; i--) {
-            if (s.charAt(i) == '(') {
-                le++;
-            } else {
-                ri++;
-            }
+            if (s.charAt(i) == '(') le++;
+            else ri++;
             if (le == ri) {
                 res = Math.max(res, 2*le);
-            } else if (le > ri) {
+            } else if (le > ri) {  // Invalid
                 le = ri = 0;
             }
         }
