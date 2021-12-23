@@ -1,6 +1,6 @@
 # 319. 灯泡开关
 
-初始时有 *n* 个灯泡关闭。 第 1 轮，你打开所有的灯泡。 第 2 轮，每两个灯泡你关闭一次。 第 3 轮，每三个灯泡切换一次开关（如果关闭则开启，如果开启则关闭）。第 *i* 轮，每 *i* 个灯泡切换一次开关。 对于第 *n* 轮，你只切换最后一个灯泡的开关。 找出 *n* 轮后有多少个亮着的灯泡。
+**初始时有 *n* 个灯泡关闭**。 第 1 轮，你打开所有的灯泡。 第 2 轮，每两个灯泡你关闭一次。 第 3 轮，每三个灯泡切换一次开关（如果关闭则开启，如果开启则关闭）。第 *i* 轮，每 *i* 个灯泡切换一次开关。 对于第 *n* 轮，你只切换最后一个灯泡的开关。 **找出 *n* 轮后有多少个亮着的灯泡。**
 
 **示例:**
 
@@ -18,7 +18,7 @@
 
 ## 数学 + 脑筋急转弯
 
-不严谨的说就是 2 关闭的会被 4 打开，3 关闭的会被 9 打开...
+不严谨的说就是 '2 关闭的'会被 '4' 打开，'3 关闭的'会被 '9' 打开...
 
 所以答案就是n的算术平方根下取整，
 
@@ -32,7 +32,13 @@ n=11, res=3
 
 ...
 
-n=16, res=4（4关闭的第16个被16打开） 
+n=16, res=4（'4 关闭的'第16个被16打开） 
+
+(想象整个过程分为三个阶段
+
+1. 第 1 轮全部打开。
+2. （小鬼关灯）较小的数会关闭一些灯。
+3. （大鬼开灯）较大的数会打开其对应的方根'关闭的灯'的一些数（其实只有一个）。
 
 ```java
 class Solution {
@@ -51,17 +57,15 @@ class Solution {
     public int bulbSwitch(int n) {
         int res = 0;
         int[] arr = new int[n];
-        for (int i=0; i<arr.length; i++) arr[i] = 1;
-        
-        for (int i=2; i<=n; i++) {
-            for (int j=i-1; j<n; j+=i) {
-                arr[j] = ((j + 1) % i == 0) ? arr[j] ^ 1 : arr[j];
+        for (int i = 0; i < n; i++) arr[i] = 1;
+
+        for (int i = 2; i <= n; i++) {
+            for (int j = i-1; j < n; j += i) {
+                arr[j] = ((j+1)%i == 0) ? arr[j]^1 : arr[j];
             }
         }
-        
-        for (int i=0; i<n; i++) {
-            res = arr[i] == 1 ? res += 1 : res;
-        }
+
+        for (int i = 0; i < n; i++) if (arr[i] == 1) res++;
         return res;
     }
 }
@@ -97,16 +101,16 @@ class Solution {
     public int flipLights(int n, int m) {
         Set<Integer> set = new HashSet();
         n = Math.min(n, 6);
-        int shift = 6-n;
-        for (int cand = 0; cand < 16; ++cand) { // 16 --> 10000, 这里是模拟排列组合
-            int bcount = Integer.bitCount(cand);
-            if (bcount % 2 == m % 2 && bcount <= m) {
-                int lights = 0;
-                if (((cand >> 0) & 1) > 0) lights ^= 0b111111 >> shift;
-                if (((cand >> 1) & 1) > 0) lights ^= 0b010101 >> shift;
-                if (((cand >> 2) & 1) > 0) lights ^= 0b101010 >> shift;
-                if (((cand >> 3) & 1) > 0) lights ^= 0b100100 >> shift;
-                set.add(lights);
+        int s = 6-n;
+        for (int cand = 0; cand < 16; cand++) {  // 16 --> 10000, 这里是模拟排列组合
+            int b_cnt = Integer.bitCount(cand);
+            if (b_cnt%2 == m%2 && b_cnt <= m) {
+                int st = 0;  // 判断模拟排列组合变化
+                if (((cand>>0) & 1) > 0) st ^= 0b111111 >> s;
+                if (((cand>>1) & 1) > 0) st ^= 0b010101 >> s;
+                if (((cand>>2) & 1) > 0) st ^= 0b101010 >> s;
+                if (((cand>>3) & 1) > 0) st ^= 0b100100 >> s;
+                set.add(st);
             }
         }
         return set.size();
@@ -145,7 +149,7 @@ class Solution {
 class Solution {
     public int numTimesAllBlue(int[] light) {
         int cout = 0, idx = 0, res = 0;
-        for (int i=0; i<light.length; i++) {
+        for (int i = 0; i < light.length; i++) {
             if (light[i] > idx) idx = light[i];
             cout++;
             if (cout == idx) res++;
@@ -192,12 +196,12 @@ class Solution {
 
 ```java
 class Solution {
-	public static int minFlips(String target) {
-		int res = 0;
-		for (char c : target.toCharArray()) 
-			res += (c-'0') ^ (res&1);
-		return res;
-	}
+    public static int minFlips(String target) {
+        int res = 0;
+        for (char c : target.toCharArray())
+            res += (c-'0') ^ (res&1);  // st ^ 第奇/偶次翻转
+        return res;
+    }
 }
 ```
 
