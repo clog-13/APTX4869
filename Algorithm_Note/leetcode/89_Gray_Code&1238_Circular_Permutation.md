@@ -36,14 +36,14 @@
 ```java
 class Solution {
     public List<Integer> grayCode(int n) {
-        List<Integer> res = new LinkedList<>();
+        List<Integer> res = new ArrayList<>();
         res.add(0);
-        int clapboard = 1;
-        for (int c = 0; c < n; c++) {
-            for (int i = clapboard-1; i >= 0; i--) {
-                res.add(clapboard + res.get(i));
+        int st = 1;
+        for (int t = 0; t < n; t++) {
+            for (int i = st-1; i >= 0; i--) {
+                res.add(st + res.get(i));  // 可以为 +,|,^
             }
-            clapboard <<= 1;
+            st <<= 1;
         }
         return res;
     }
@@ -51,10 +51,10 @@ class Solution {
 ```
 
 ```java
-class Solution {
+class Solution {  // trick
     public List<Integer> grayCode(int n) {
         List<Integer> res = new LinkedList<>();
-        for (int i = 0; i < 1<<n; i++) res.add(i ^ i>>1);
+        for (int st = 0; st < 1<<n; st++) res.add(st ^ st>>1);
         return res;
     }
 }
@@ -87,15 +87,15 @@ class Solution {
 class Solution {
     public List<Integer> circularPermutation(int n, int start) {
         List<Integer> res = new ArrayList<>();
-        res.add(start);
-        int clapboard = 1;
-        for (int c = 0; c < n; c++) {
-            for (int i = clapboard-1; i >= 0; i--) {
-                res.add(clapboard ^ res.get(i));	// 不确定挡板位的状态，需要异或(上一题相同位置可以为“^,|,+“)
+        res.add(start);  // !!! start
+        int st = 1;
+        for (int t = 0; t < n; t++) {
+            for (int i = st-1; i >= 0; i--) {
+                res.add(st ^ res.get(i));  // 不确定挡板位的状态，需要异或(上一题相可以为“^,|,+“)
             }
-            clapboard <<= 1;
+            st <<= 1;
         }
-        return res;
+        return res;        
     }
 }
 ```
@@ -104,7 +104,9 @@ class Solution {
 class Solution {
     public List<Integer> circularPermutation(int n, int start) {
         List<Integer> res = new LinkedList<>();
-        for (int i = 0; i < 1<<n; i++) res.add(i ^ (i>>1) ^ start);
+        for (int i = 0; i < 1<<n; i++) {
+            res.add(i ^ (i>>1) ^ start);  // !!! ^ start
+        }
         return res;
     }
 }
@@ -114,29 +116,25 @@ class Solution {
 
 ```java
 class Solution {
-    boolean[] marked;
-    List<Integer> res;
+    boolean[] st;
+    List<Integer> res = new ArrayList<>();
 
     public List<Integer> circularPermutation(int n, int start) {
-        marked = new boolean[1<<n];
-        res = new ArrayList<>();
+        st = new boolean[1<<n];
         dfs(start, 0, n);
         return res;
     }
 
     boolean dfs(int val, int cnt, int n) {
         if (cnt == (1<<n)) return true;
-        if (marked[val]) return false;
-        marked[val] = true;
+        if (st[val]) return false;
+        st[val] = true;
         res.add(val);
         for (int i = 0; i < n; i++) {
-            int next = val ^ (1<<i);
-
-            if (dfs(next, cnt+1, n)) return true;
+            int nex = val ^ (1<<i);
+            if (dfs(nex, cnt+1, n)) return true;
         }
         return false;
     }
 }
 ```
-
-#
