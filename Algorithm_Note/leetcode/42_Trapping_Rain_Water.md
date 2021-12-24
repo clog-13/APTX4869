@@ -8,53 +8,57 @@
 输出: 6
 ```
 
-## 动态编程
+
+
+## 前后缀
+
 ```java
 class Solution {
     public int trap(int[] height) {
         if (height.length <= 2) return 0;
-        int[] maxRs = new int[height.length];  
-
-        int maxR = 0;
-        for (int i = height.length-1; i >= 0; i--) {
+        int maxR = 0, N = height.length;
+        int[] maxRs = new int[N];
+        for (int i = N-1; i >= 0; i--) {
             if (height[i] > maxR) maxR = height[i];
             maxRs[i] = maxR;
-        } 
+        }
 
         int maxL = height[0], res = 0;
-        for (int i = 1; i < height.length; i++) {
+        for (int i = 1; i < N; i++) {  // traverse row
             if (height[i] < maxL) {
-                res += Math.max((Math.min(maxL, maxRs[i]) - height[i]), 0);
-            } else {
-                maxL = height[i];       
+                int s = Math.min(maxL, maxRs[i]) - height[i];
+                if (s > 0) res += s;
+            } else {  // height[i] > maxL
+                maxL = height[i];
             }
         }
-        
+
         return res;
     }
 }
 ```
 
+
+
 ## 双指针
+
 ```java
 class Solution {
     public int trap(int[] height) {
         int le = 0, ri = height.length-1;
-        int maxL = 0, maxR = 0;    
-    
-        int res = 0;
-        while (le < ri) {
-            if (height[le] < height[ri]) {	// 其中一边到达最高点后就不会移动了
+        int maxL = 0, maxR = 0, res = 0;
+        while (le < ri) {  // 其中一边到达最高点后就不会移动了
+            if (height[le] < height[ri]) {	
                 if (height[le] > maxL) {
                     maxL = height[le];
                 } else {
                     res += (maxL - height[le]); 
                 }
                 le++;
-            } else {
+            } else {  // h[le] >= h[ri]
                 if (height[ri] > maxR) {
                     maxR = height[ri];
-                } else { 
+                } else {
                     res += (maxR - height[ri]);
                 }
                 ri--;
@@ -65,25 +69,29 @@ class Solution {
 }
 ```
 
+
+
 ## 单调栈	
+
 ```java
 class Solution {
     public int trap(int[] height) {
         Stack<Integer> stack = new Stack<>();
         int cur = 0, res = 0;
         while (cur < height.length) {
-            // 如果当前元素高度 大于 栈顶元素 （非严格单调递减）
+            // 如果当前元素高度 大于 栈顶元素 （非严格单调 递减）
             while (!stack.empty() && height[cur] > height[stack.peek()]) {
                 int h = height[stack.pop()];
                 if (stack.empty()) break;
-                
-                int dis = cur - stack.peek() - 1; // 两堵墙之前的距离。
+
+                int dis = cur - stack.peek() - 1;  // 两堵墙之前的距离（长度）
                 int min = Math.min(height[stack.peek()], height[cur]) - h;
                 res += dis * min;
             }
-            stack.push(cur++); // 当前指向的墙入栈, 并且指针后移
+            stack.push(cur++);  // 当前墙入栈，上一步保证栈 非严格单调 递减
         }
         return res;
     }
 }
 ```
+
