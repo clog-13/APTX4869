@@ -55,15 +55,14 @@ public class ArraysBinarySearch {
 class Solution {
     public int lengthOfLIS(int[] nums) {
         int[] dp = new int[nums.length];
-
-        int len = 0, i;
-        for (int n : nums) {
-            i = Arrays.binarySearch(dp, 0, len, n);
-            if (i < 0) i = -(i+1);
-            dp[i] = n;
-            if (i == len) len++;	// len就像是‘占’在预设目标位，当有 i 达到长度目标后就把 len 往前挤
+        int res = 0;
+        for (int num: nums) {
+            int idx = Arrays.binarySearch(dp, 0, res, num);
+            if (idx < 0) idx = -idx-1;
+            dp[idx] = num;
+            if (idx == res) res++;
         }
-        return len;
+        return res;
     }
 }
 ```
@@ -108,29 +107,25 @@ class Solution {
 
 ## DP
 
-时间复杂度：O(n\^2) 
+时间复杂度：O(n^2) 
 
 通过 前面子序列的最长长度得出 现子序列的最长长度
 
 ```java
 class Solution {
     public int lengthOfLIS(int[] nums) {
-        int len = nums.length;
-        if(len < 2) return len;
-
-        int[] res = new int[len];
-        res[0] = 1;
-        int maxLen = 1;
-        for(int i = 1; i < len; i++) {
-            int tmp = res[i];
-            res[i] = 1;
+        int[] dp = new int[nums.length];
+        dp[0] = 1;
+        int res = 1;
+        for(int i = 1; i < nums.length; i++) {
+            dp[i] = 1;
             for(int j = 0; j < i; j++) {
-                if(nums[j] < nums[i]) res[i] = Math.max(res[j]+1, res[i]); 
+                if(nums[j] < nums[i]) dp[i] = Math.max(dp[j]+1, dp[i]); 
             }
-            maxLen = Math.max(maxLen, res[i]);
+            res = Math.max(res, dp[i]);
         }
 
-        return maxLen;
+        return res;
     }
 }
 ```
@@ -154,7 +149,7 @@ public class Solution {
         if (memo[pre+1][cur] >= 0) return memo[pre+1][cur]; 
 
         int taken = 0;
-        if (pre < 0 || nums[cur] > nums[pre])   // 选取当前字符构成最终的上升子序列
+        if (pre < 0 || nums[cur] > nums[pre])   // 选取 当前字符构成最终的上升子序列
             taken = 1 + lengthofLIS(nums, cur, cur+1, memo);
         int nottaken = lengthofLIS(nums, pre, cur+1, memo);  // 不选 （即使符合前面的子序列上升）
         memo[pre+1][cur] = Math.max(taken, nottaken);
