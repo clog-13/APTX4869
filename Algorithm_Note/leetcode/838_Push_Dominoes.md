@@ -89,10 +89,7 @@ class Solution {
 }
 ```
 
-
-
-## Simulation
-
+## IQ
 ```java
 class Solution {
     public String pushDominoes(String S) {
@@ -118,6 +115,46 @@ class Solution {
         StringBuilder res = new StringBuilder();
         for (int f: forces) res.append(f>0 ? 'R' : f<0?'L':'.');
         return res.toString();
+    }
+}
+```
+
+## Simulation
+```java
+class Solution {
+    public String pushDominoes(String dominoes) {
+        int N = dominoes.length();
+        int[] indexes = new int[N+2];
+        char[] symbols = new char[N+2];
+        
+        int len = 1;
+        indexes[0] = -1;
+        symbols[0] = 'L';
+        for (int i = 0; i < N; i++) {
+            if (dominoes.charAt(i) != '.') {
+                indexes[len] = i;
+                symbols[len++] = dominoes.charAt(i);
+            }
+        }
+        indexes[len] = N;
+        symbols[len++] = 'R';
+
+        char[] res = dominoes.toCharArray();
+        for (int idx = 0; idx < len - 1; idx++) {
+            int i = indexes[idx], j = indexes[idx+1];
+            char x = symbols[idx], y = symbols[idx+1];
+            if (x == y) {  // RR or LL
+                for (int k = i+1; k < j; k++) {
+                    res[k] = x;
+                }
+            } else if (x > y) { // RL
+                for (int k = i+1; k < j; k++) {
+                    res[k] = k-i==j-k ? '.' : k-i<j-k ? 'R' : 'L';
+                }
+            }
+        }
+
+        return String.valueOf(res);
     }
 }
 ```

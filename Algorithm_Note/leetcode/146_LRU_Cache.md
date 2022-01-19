@@ -39,13 +39,6 @@ lRUCache.get(4);    // return 4
 ## Go
 
 ```go
-package main
-
-import (
-	"container/list"
-	"runtime/debug"
-)
-
 func init() { debug.SetGCPercent(-1) } // !!!
 
 type lruEntry struct {
@@ -85,10 +78,6 @@ func (this *LRUCache) Put(key, value int) {
 ```
 
 ```go
-package main
-
-import "runtime/debug"
-
 func init() { debug.SetGCPercent(-1) }  // !!!
 
 type LRUCache struct {
