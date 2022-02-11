@@ -48,16 +48,16 @@ Explanation: The billboard cannot be supported, so we return 0.
 class Solution {
     public int tallestBillboard(int[] rods) {
         Map<Integer, Integer> dict = new HashMap<>();
-        Map<Integer, Integer> temp = new HashMap<>();
+        Map<Integer, Integer> pre = new HashMap<>();
         dict.put(0, 0);
-        for (int i : rods) {
-            temp.clear(); 
-            temp.putAll(dict);
-            for (Integer len : temp.keySet()) {
-                dict.put(len+i, Math.max(
-                    dict.getOrDefault(len+i, 0), temp.get(len) + i));
-                dict.put(len-i, Math.max(
-                    dict.getOrDefault(len-i, 0), temp.get(len)));
+        for (int i: rods) {
+            pre.clear(); 
+            pre.putAll(dict);
+            for (int len: pre.keySet()) {  // getOrDefault(..., 0) 等于两边都不要
+                dict.put(len+i, 
+                    Math.max(dict.getOrDefault(len+i, 0), pre.get(len) + i));  // len+i：加在左边
+                dict.put(len-i, 
+                    Math.max(dict.getOrDefault(len-i, 0), pre.get(len)));  // len-i:加在右边等于减左边
             }
         }
         return dict.get(0);
@@ -72,22 +72,24 @@ class Solution {
 ```java
 class Solution {
     int NINF = Integer.MIN_VALUE / 3;
-    Integer[][] memo;  // !!!
+    Integer[][] memo;  // Integer !!!
+    int[] rods;
     public int tallestBillboard(int[] rods) {
+        this.rods = rods;
         memo = new Integer[rods.length][10001];
-        return (int) dfs(rods, 0, 5000);
+        return (int) dfs(0, 5000);
     }
 
-    public int dfs(int[] rods, int i, int s) {
+    public int dfs(int i, int ost) {
         if (i == rods.length) {
-            return s == 5000 ? 0 : NINF;
-        } else if (memo[i][s] != null) {  // !!!
-            return memo[i][s];
+            return ost == 5000 ? 0 : NINF;
+        } else if (memo[i][ost] != null) {  // null !!!
+            return memo[i][ost];
         } else {
-            int res = dfs(rods, i+1, s);  // 0
-            res = Math.max(res, dfs(rods, i+1, s-rods[i]));  // -1
-            res = Math.max(res, rods[i] + dfs(rods, i+1, s+rods[i])); // 1
-            memo[i][s] = res;
+            int res = dfs(i+1, ost);  // 丢弃
+            res = Math.max(res, dfs(i+1, ost-rods[i]));  // 加在le
+            res = Math.max(res, rods[i] + dfs(i+1, ost+rods[i]));  // 加在ri
+            memo[i][ost] = res;  // 记录le
             return res;
         }
     }
@@ -102,16 +104,13 @@ class Solution {
 class Solution {
     public int tallestBillboard(int[] rods) {
         int N = rods.length;
-        Map<Integer, Integer> le_map = make(Arrays.copyOfRange(rods, 0, N/2));
-        Map<Integer, Integer> ri_map = make(Arrays.copyOfRange(rods, N/2, N));
+        Map<Integer, Integer> leMap = make(Arrays.copyOfRange(rods, 0, N/2));
+        Map<Integer, Integer> riMap = make(Arrays.copyOfRange(rods, N/2, N));
 
-        // 我们的目标是将两个状态合并，使得 delta 之和为 0
-        // score 是所有正数之和，我们希望获得最高的 score
-        // 对于每个 delta 我们只会记录具有最高 score 的状态
         int res = 0;
-        for (int st: le_map.keySet()) {
-            if (ri_map.containsKey(-st)) {
-                res = Math.max(res, le_map.get(st) + ri_map.get(-st));
+        for (int st: leMap.keySet()) {
+            if (riMap.containsKey(-st)) {
+                res = Math.max(res, leMap.get(st) + riMap.get(-st));
             }
         }
         return res;
@@ -125,23 +124,24 @@ class Solution {
             int len = idx;
             for (int i = 0; i < len; i++) {
                 Point p = dp[i];
-                dp[idx++] = new Point(p.x + v, p.y);
-                dp[idx++] = new Point(p.x, p.y + v);
+                dp[idx++] = new Point(p.le + v, p.ri);
+                dp[idx++] = new Point(p.le, p.ri + v);
             }
         }
 
-        Map<Integer, Integer> res = new HashMap();
-        for (int i = 0; i < idx; ++i) {
-            int a = dp[i].x, b = dp[i].y;
-            res.put(a-b, Math.max(res.getOrDefault(a-b, 0), a));
+        Map<Integer, Integer> res = new HashMap();  // <le-ri的差值， 差值时的le(max)>
+        for (int i = 0; i < idx; i++) {
+            int le = dp[i].le, ri = dp[i].ri;
+            res.put(le-ri, 
+                Math.max(res.getOrDefault(le-ri, 0), le));  // !!! max, le
         }
         return res;
     }
 
     static class Point {
-        int x, y;
+        int le, ri;
         public Point(int xx, int yy) {
-            x = xx; y = yy;
+            le = xx; ri = yy;
         }
     }
 }

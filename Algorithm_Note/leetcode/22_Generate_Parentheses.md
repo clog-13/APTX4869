@@ -23,24 +23,23 @@ class Solution {
         return res;
     }
 
-    public void backtrack(List<String> res, StringBuilder str, int open, int close, int max) {
-        if (str.length() == max * 2) {
+    public void backtrack(List<String> res, StringBuilder str, int le, int ri, int n) {
+        if (str.length() == n * 2) {
             res.add(str.toString());
             return;
         }
-        if (open < max) {
+        if (le < n) {
             str.append('(');
-            backtrack(res, str, open + 1, close, max);
+            backtrack(res, str, le + 1, ri, n);
             str.deleteCharAt(str.length() - 1);
         }
-        if (close < open) {
+        if (ri < le) {
             str.append(')');
-            backtrack(res, str, open, close + 1, max);
+            backtrack(res, str, le, ri + 1, n);
             str.deleteCharAt(str.length() - 1);
         }
     }
 }
-s
 ```
 
 
@@ -49,26 +48,26 @@ s
 
 ```java
 class Solution {
-    List[] cache = new ArrayList[100];
+    List[] memo = new ArrayList[100];
     public List<String> generateParenthesis(int n) {
         return generate(n);
     }
     
     public List<String> generate(int n) {
-        if (cache[n] != null) return cache[n];
+        if (memo[n] != null) return memo[n];
         List<String> res = new ArrayList<String>();
         if (n == 0) {
             res.add("");  // !!!
         } else {
             for (int i = 0; i < n; i++) {
                 for (String le: generate(i)) {
-                    for (String ri: generate(n - 1 - i)) {
+                    for (String ri: generate(n - i - 1)) {
                         res.add("(" + le + ")" + ri);
                     }
                 }
             }
         }
-        cache[n] = res;
+        memo[n] = res;
         return res;
     }
 }
