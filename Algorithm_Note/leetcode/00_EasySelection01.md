@@ -4,7 +4,7 @@
 **示例：**
 输入: n = 3
 输出: 6
-```cpp
+```c
 typedef unsigned int (*fun)(unsigned int);
 
 unsigned int sumNums_finally(unsigned int n) {
@@ -15,7 +15,7 @@ unsigned int sumNums(unsigned int n) {
 	return n + f[!!n](n - 1);
 }
 ```
-```cpp
+```c
 int sumNums(int n){
     n && (n += sumNums(n-1));	// &&有短路性质
     return n;
@@ -27,7 +27,7 @@ int sumNums(int n){
 **示例：**
 输入: numbers = [1,2]
 输出: [2,1]
-```cpp
+```c
 int* swapNumbers(int* nums, int numbersSize, int* returnSize){
     nums[0] = nums[0]+nums[1];
     nums[1] = nums[0]-nums[1];
@@ -438,3 +438,4 @@ class Solution {
     }
 }
 ```
+
