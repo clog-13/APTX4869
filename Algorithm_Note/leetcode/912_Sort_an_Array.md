@@ -11,9 +11,16 @@ Input: nums = [5,2,3,1]
 Output: [1,2,3,5]
 ```
 
+**Example 2:**
+
+```
+Input: nums = [5,1,1,2,0,0]
+Output: [0,0,1,1,2,5]
+```
 
 
-## QuickSort
+
+## Quick Sort
 
 ```java
 class Solution {
@@ -33,8 +40,8 @@ class Solution {
     int partition(int[] nums, int le, int ri) {
         int i = new Random().nextInt(ri - le + 1) + le;
         swap(nums, ri, i);  // random
-        
         int pivot = nums[ri];  // ri
+        
         i = le - 1;
         for (int j = le; j <= ri-1; j++) {
             if (nums[j] <= pivot) {
@@ -56,7 +63,7 @@ class Solution {
 
 
 
-## HeapSort
+## Heap Sort
 
 ```java
 class Solution {
@@ -67,30 +74,33 @@ class Solution {
 
     void heapSort(int[] nums) {
         int len = nums.length - 1;
-        for (int i = len / 2; i >= 0; i--) {  // 非叶向上
-            sift(nums, i, len);
+        for (int i = len / 2; i >= 0; --i) {  // 非叶(but !!!
+            maxHeapify(nums, i, len);
         }
-        for (int i = len; i > 0; i--) {  // 叶向上
+        for (int i = len; i >= 1; --i) {  // 逆序轮流
             swap(nums, i, 0);
             len -= 1;
-            sift(nums, 0, len);
+            maxHeapify(nums, 0, len);
         }
     }
 
-    void sift(int[] nums, int i, int len) {
-        for ( ; (i<<1)+1 <= len; ) {
-            int large = i, lson = (i<<1)+1, rson = (i<<1)+2;
-            if (lson <= len && nums[lson] > nums[i]) {
+    void maxHeapify(int[] nums, int i, int len) {
+        while ((i << 1) + 1 <= len) {
+            int lson = (i << 1) + 1;
+            int rson = (i << 1) + 2;
+            int large = i;  // !!!
+            if (lson <= len && nums[lson] > nums[large]) {
                 large = lson;
             }
             if (rson <= len && nums[rson] > nums[large]) {
                 large = rson;
             }
+
             if (large != i) {
                 swap(nums, i, large);
                 i = large;
             } else {
-                break;
+                break;  // !!!
             }
         }
     }
@@ -105,36 +115,38 @@ class Solution {
 
 
 
-## MergeSort
+## Merge Sort
 
 ```java
 class Solution {
     int[] tmp;
 
     public int[] sortArray(int[] nums) {
-        tmp = new int[nums.length];
+        tmp = new int[nums.length];  // !!!
         mergeSort(nums, 0, nums.length - 1);
         return nums;
     }
 
-    public void mergeSort(int[] nums, int le, int ri) {
-        if (le >= ri) return;
-        int mi = (le + ri) >> 1;
-        mergeSort(nums, le, mi);
-        mergeSort(nums, mi + 1, ri);
-        
-        int cnt = 0, i = le, j = mi + 1;
-        while (i <= mi && j <= ri) {
+    public void mergeSort(int[] nums, int l, int r) {
+        if (l >= r) return;  // !!!
+
+        int mid = (l + r) >> 1;
+        mergeSort(nums, l, mid);
+        mergeSort(nums, mid + 1, r);
+        int i = l, j = mid + 1;
+        int cnt = 0;
+        while (i <= mid && j <= r) {
             if (nums[i] <= nums[j]) {
                 tmp[cnt++] = nums[i++];
             } else {
                 tmp[cnt++] = nums[j++];
             }
         }
-        while (i <= mi) tmp[cnt++] = nums[i++];
-        while (j <= ri) tmp[cnt++] = nums[j++];
-        for (int k = 0; k < ri - le + 1; ++k) {
-            nums[le + k] = tmp[k];
+        while (i <= mid) tmp[cnt++] = nums[i++]; // !!!
+        while (j <= r) tmp[cnt++] = nums[j++];   // !!!
+
+        for (int k = 0; k < r - l + 1; ++k) {  // !!!
+            nums[k + l] = tmp[k];
         }
     }
 }

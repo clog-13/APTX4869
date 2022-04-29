@@ -1,19 +1,20 @@
-# 410. 分割数组的最大值
+# 410. Split Array Largest Sum
 
-给定一个非负整数数组 `nums` 和一个整数 `m` ，你需要将这个数组分成 `m` 个非空的连续子数组。
+Given an array `nums` which consists of non-negative integers and an integer `m`, you can split the array into `m` non-empty continuous subarrays.
 
-设计一个算法使得这 `m` 个子数组各自和的最大值最小。
+Write an algorithm to minimize the largest sum among these `m` subarrays.
 
  
 
-**示例：**
+**Example 1:**
 
 ```
-输入：nums = [7,2,5,10,8], m = 2
-输出：18
-解释：
-一共有四种方法将 nums 分割为 2 个子数组。 其中最好的方式是将其分为 [7,2,5] 和 [10,8] 。
-因为此时这两个子数组各自的和的最大值为18，在所有情况中最小。
+Input: nums = [7,2,5,10,8], m = 2
+Output: 18
+Explanation:
+There are four ways to split nums into two subarrays.
+The best way is to split it into [7,2,5] and [10,8],
+where the largest sum among the two subarrays is only 18.
 ```
 
 
@@ -38,6 +39,47 @@ class Solution {
         }
         return dp[N][m];
     }
+}
+```
+
+```go
+func splitArray(nums []int, m int) int {
+    N := len(nums)
+    dp := make([][]int, N+1)
+    preSum := make([]int, N+1)
+    for i := 0; i < len(dp); i++ {
+        dp[i] = make([]int, m+1)
+        for j := 0; j < m+1; j++ {
+            dp[i][j] = math.MaxInt32
+        }
+    }
+
+    for i := 0; i < N; i++ {
+        preSum[i+1] = preSum[i] + nums[i]
+    }
+    dp[0][0] = 0 // dp[i][j] 表示将数组的前 i 个数分割为 j 段所能得到的最小值。
+    for i := 1; i <= N; i++ {
+        for j := 1; j <= min(i, m); j++ {
+            for k := 0; k < i; k++ {
+                dp[i][j] = min(dp[i][j], max(dp[k][j - 1], preSum[i] - preSum[k]))
+            }
+        }
+    }
+    return dp[N][m]
+}
+
+func min(x, y int) int {
+    if x < y {
+        return x
+    }
+    return y
+}
+
+func max(x, y int) int {
+    if x > y {
+        return x
+    }
+    return y
 }
 ```
 
@@ -77,6 +119,42 @@ class Solution {
         }
         return cnt <= m;
     }
+}
+```
+
+
+
+```go
+func splitArray(nums []int, m int) int {
+    le, ri := 0, 0
+    for i := 0; i < len(nums); i++ {
+        ri += nums[i]
+        if le < nums[i] {
+            le = nums[i]
+        }
+    }
+    for le < ri {
+        mid := (ri - le) / 2 + le
+        if check(nums, mid, m) {
+            ri = mid
+        } else {
+            le = mid + 1
+        }
+    }
+    return le
+}
+
+func check(nums []int, x, m int) bool {
+    sum, cnt := 0, 1
+    for i := 0; i < len(nums); i++ {
+        if sum + nums[i] > x {
+            cnt++
+            sum = nums[i]
+        } else {
+            sum += nums[i]
+        }
+    }
+    return cnt <= m
 }
 ```
 
