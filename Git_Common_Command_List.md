@@ -6,7 +6,7 @@
 
 ![](C:\APTX4869\pic\git02.png)
 
-下面是我整理的常用 Git 命令清单。几个专用名词的译名如下。
+下面是常用 Git 命令清单。几个专用名词的译名如下。
 
 > - Workspace：工作区
 > - Index / Stage：暂存区
@@ -36,17 +36,15 @@
 - 作比较
 
   ```bash
-$ git diff master origin/master
+  $ git diff master origin/master
   ```
   
 - 合并本地仓库代码
 
   ```bash
-$ git merge origin/master
+  $ git merge origin/master
   $ git rebase origin/master
   ```
-
-
 
 ## 一、新建代码库
 
@@ -170,8 +168,6 @@ Git的设置文件为`.gitconfig`，它可以在用户主目录下（全局配�
 ![](C:\APTX4869\pic\git03.webp)
 
 ![](C:\APTX4869\pic\git04.webp)
-
-
 
 ## 六、远程同步
 
